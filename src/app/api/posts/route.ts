@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     if (!session || !session.user) {
       return NextResponse.json({ success: false, error: "Giriş yapmanız gerekmektedir." }, { status: 401 });
     }
-
+  const role = (session.user as any).role;
     if (role !== "TEACHER" && role !== "ADMIN" && role !== "VERIFIED_CONTENT_CREATOR") {
       return NextResponse.json({ success: false, error: "Sadece içerik üreticileri, eğitmenler veya yöneticiler paylaşım yapabilir." }, { status: 403 });
     }
