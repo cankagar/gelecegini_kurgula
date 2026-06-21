@@ -1,0 +1,54 @@
+:root {
+  /* Core Colors */
+  --color-primary: #2563eb;      /* Blue 600 - High contrast tech blue */
+  --color-secondary: #4f46e5;    /* Indigo 600 - Elite tech accent */
+  --color-accent: #0ea5e9;       /* Sky 500 - Vibrant cyan/blue */
+  
+  /* Background & Text */
+  --color-bg: #ffffff;           /* Pure white background for maximum readability */
+  --color-surface: #ffffff;      /* Pure white for surfaces and cards */
+  --color-text: #0f172a;         /* Slate 900 - Dark text for perfect readability */
+  --color-text-muted: #475569;   /* Slate 600 - Darker muted text for contrast */
+  --color-border: #e2e8f0;       /* Slate 200 */
+
+  /* Fonts */
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Base utility classes for global use if needed, but mostly CSS modules will be used */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
