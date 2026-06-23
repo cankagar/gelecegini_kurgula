@@ -4,10 +4,12 @@ import Link from "next/link";
 import styles from "./Navbar.module.css";
 import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
+import { ChevronDownIcon } from "./icons";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
 
   // Close dropdown when clicking outside of it
@@ -21,6 +23,15 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Close mobile menu on resize back to desktop
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 860) setIsMobileOpen(false);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
@@ -29,16 +40,27 @@ export default function Navbar() {
             <span className={styles.logoText}>Nex<span className={styles.logoAccent}>STEM</span></span>
           </Link>
         </div>
-        
-        <div className={styles.rightSection}>
+
+        <button
+          className={styles.mobileToggle}
+          onClick={() => setIsMobileOpen((v) => !v)}
+          aria-label={isMobileOpen ? "Menüyü kapat" : "Menüyü aç"}
+          aria-expanded={isMobileOpen}
+        >
+          <span className={`${styles.bar} ${isMobileOpen ? styles.barOpen1 : ""}`} />
+          <span className={`${styles.bar} ${isMobileOpen ? styles.barOpen2 : ""}`} />
+          <span className={`${styles.bar} ${isMobileOpen ? styles.barOpen3 : ""}`} />
+        </button>
+
+        <div className={`${styles.rightSection} ${isMobileOpen ? styles.rightSectionOpen : ""}`}>
           <ul className={styles.navLinks}>
             <li className={styles.dropdown} ref={dropdownRef}>
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={styles.dropdownBtn}
                 aria-expanded={isDropdownOpen}
               >
-                PayaSTEM <span className={`${styles.arrow} ${isDropdownOpen ? styles.arrowOpen : ""}`}>▾</span>
+                PayaSTEM <ChevronDownIcon className={`${styles.arrow} ${isDropdownOpen ? styles.arrowOpen : ""}`} size={16} />
               </button>
               {isDropdownOpen && (
                 <div className={styles.dropdownContent}>
@@ -51,16 +73,16 @@ export default function Navbar() {
               )}
             </li>
             <li>
-              <Link href="/serbest-kursu" className={styles.dropdownBtn}>
+              <Link href="/serbest-kursu" className={styles.dropdownBtn} onClick={() => setIsMobileOpen(false)}>
                 Serbest Kürsü
               </Link>
             </li>
             <li>
-              <Link href="/oyun-merkezi" className={styles.dropdownBtn}>Oyun Merkezi</Link>
+              <Link href="/oyun-merkezi" className={styles.dropdownBtn} onClick={() => setIsMobileOpen(false)}>Oyun Merkezi</Link>
             </li>
             {session?.user && (session.user as any).role === "ADMIN" && (
               <li>
-                <Link href="/admin/basvurular" className={styles.dropdownBtn}>
+                <Link href="/admin/basvurular" className={styles.dropdownBtn} onClick={() => setIsMobileOpen(false)}>
                   Yönetim
                 </Link>
               </li>
@@ -69,13 +91,13 @@ export default function Navbar() {
 
           <div className={styles.authContainer}>
             {session ? (
-              <Link href="/dashboard" className={styles.profileBtn}>
+              <Link href="/dashboard" className={styles.profileBtn} onClick={() => setIsMobileOpen(false)}>
                 Profilim
               </Link>
             ) : (
               <>
-                <Link href="/login" className={styles.loginBtn}>Giriş</Link>
-                <Link href="/register" className={styles.registerBtn}>Kayıt Ol</Link>
+                <Link href="/login" className={styles.loginBtn} onClick={() => setIsMobileOpen(false)}>Giriş</Link>
+                <Link href="/register" className={styles.registerBtn} onClick={() => setIsMobileOpen(false)}>Kayıt Ol</Link>
               </>
             )}
           </div>

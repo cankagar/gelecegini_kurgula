@@ -2,12 +2,14 @@
 
 import React from "react";
 import styles from "./oyun-merkezi.module.css";
+import { GamepadIcon } from "@/components/icons";
 
 export default function OyunMerkeziPage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1>🎮 Oyun Merkezi</h1>
+        <div className={styles.headerIcon}><GamepadIcon size={28} /></div>
+        <h1>Oyun Merkezi</h1>
         <p>Küçük demo oyunlarımızı burada keşfedebilirsiniz.</p>
       </header>
       <section className={styles.gamesGrid}>

@@ -4,6 +4,20 @@ import React, { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 import styles from "./payastem.module.css";
 import Link from "next/link";
+import {
+  ClockIcon,
+  LockIcon,
+  AlertTriangleIcon,
+  MegaphoneIcon,
+  ClipboardListIcon,
+  BookIcon,
+  BellIcon,
+  FileTextIcon,
+  VideoIcon,
+  LinkIcon,
+  WrenchIcon,
+  GraduationCapIcon,
+} from "@/components/icons";
 
 interface LevelData {
   classLevel: {
@@ -142,7 +156,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
     return (
       <div className={styles.container}>
         <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}>⏳</div>
+          <div className={styles.emptyStateIcon}><ClockIcon size={28} /></div>
           <p>Yükleniyor...</p>
         </div>
       </div>
@@ -153,7 +167,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
     return (
       <div className={styles.container}>
         <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}>🔒</div>
+          <div className={styles.emptyStateIcon}><LockIcon size={28} /></div>
           <h2>Giriş Yapılması Gerekiyor</h2>
           <p style={{ margin: "1rem 0 2rem" }}>PayaSTEM eğitim içeriklerini görebilmek için üye girişi yapmalısınız.</p>
           <Link href="/login" className={styles.actionBtn}>
@@ -168,7 +182,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
     return (
       <div className={styles.container}>
         <div className={styles.emptyState} style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <div className={styles.emptyStateIcon}>🚫</div>
+          <div className={styles.emptyStateIcon}><AlertTriangleIcon size={28} /></div>
           <h2>Erişim Kısıtlandı</h2>
           <p style={{ color: 'var(--color-text-muted)', margin: '1rem 0 2rem', lineHeight: '1.6' }}>
             {errorMsg || "Bu eğitim seviyesindeki içerikleri görüntüleme yetkiniz bulunmamaktadır."}
@@ -190,7 +204,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
     return (
       <div className={styles.container}>
         <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}>⚠️</div>
+          <div className={styles.emptyStateIcon}><AlertTriangleIcon size={28} /></div>
           <h2>Bir Hata Oluştu</h2>
           <p style={{ margin: '1rem 0 2rem' }}>{errorMsg}</p>
           <button onClick={fetchLevelData} className={styles.actionBtn}>Tekrar Dene</button>
@@ -216,19 +230,19 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
               onClick={() => setActiveTab("announcements")}
               className={`${styles.tabBtn} ${activeTab === "announcements" ? styles.activeTabBtn : ""}`}
             >
-              📢 Duyurular ({levelData?.announcements.length || 0})
+              <MegaphoneIcon size={18} /> Duyurular ({levelData?.announcements.length || 0})
             </button>
             <button
               onClick={() => setActiveTab("assignments")}
               className={`${styles.tabBtn} ${activeTab === "assignments" ? styles.activeTabBtn : ""}`}
             >
-              📋 Haftalık Ödevler ({levelData?.assignments.length || 0})
+              <ClipboardListIcon size={18} /> Haftalık Ödevler ({levelData?.assignments.length || 0})
             </button>
             <button
               onClick={() => setActiveTab("resources")}
               className={`${styles.tabBtn} ${activeTab === "resources" ? styles.activeTabBtn : ""}`}
             >
-              📚 Kaynaklar ({levelData?.resources.length || 0})
+              <BookIcon size={18} /> Kaynaklar ({levelData?.resources.length || 0})
             </button>
           </div>
 
@@ -237,7 +251,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
               <div className={styles.itemList}>
                 {levelData?.announcements.length === 0 ? (
                   <div className={styles.emptyState}>
-                    <div className={styles.emptyStateIcon}>🔔</div>
+                    <div className={styles.emptyStateIcon}><BellIcon size={28} /></div>
                     <p>Henüz bir duyuru yayınlanmamış.</p>
                   </div>
                 ) : (
@@ -258,7 +272,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
               <div className={styles.itemList}>
                 {levelData?.assignments.length === 0 ? (
                   <div className={styles.emptyState}>
-                    <div className={styles.emptyStateIcon}>📝</div>
+                    <div className={styles.emptyStateIcon}><ClipboardListIcon size={28} /></div>
                     <p>Bu seviye için henüz bir ödev atanmamış.</p>
                   </div>
                 ) : (
@@ -280,14 +294,14 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
               <div className={styles.itemList}>
                 {levelData?.resources.length === 0 ? (
                   <div className={styles.emptyState}>
-                    <div className={styles.emptyStateIcon}>📖</div>
+                    <div className={styles.emptyStateIcon}><BookIcon size={28} /></div>
                     <p>Henüz bir kaynak veya PDF/video dokümanı yüklenmemiş.</p>
                   </div>
                 ) : (
                   levelData?.resources.map((item) => (
                     <div key={item.id} className={styles.resourceCard}>
                       <div className={styles.resourceIcon}>
-                        {item.type === "PDF" ? "📄" : item.type === "VIDEO" ? "🎥" : "🔗"}
+                        {item.type === "PDF" ? <FileTextIcon size={26} /> : item.type === "VIDEO" ? <VideoIcon size={26} /> : <LinkIcon size={26} />}
                       </div>
                       <div className={styles.resourceInfo}>
                         <h3>{item.title}</h3>
@@ -314,7 +328,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
         <aside>
           {isTeacher ? (
             <div className={styles.sidebarCard}>
-              <h2>🛠️ İçerik Ekle (Öğretmen Paneli)</h2>
+              <h2><WrenchIcon size={20} /> İçerik Ekle (Öğretmen Paneli)</h2>
               
               {formStatus && (
                 <div className={`${styles.notification} ${formStatus.success ? styles.successNotification : styles.errorNotification}`}>
@@ -430,7 +444,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
             </div>
           ) : (
             <div className={styles.sidebarCard}>
-              <h2>🎓 NexSTEM Seviye Bilgisi</h2>
+              <h2><GraduationCapIcon size={20} /> NexSTEM Seviye Bilgisi</h2>
               <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
                 Bulunduğunuz seviyedeki haftalık ödevleri zamanında tamamlayarak XP puanları kazanabilirsiniz. 
                 Kazandığınız puanlar seviyenizi yükseltirken, öğretmenlerin paylaştığı kaynaklar ve PDF'ler 

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import styles from "./assignments.module.css";
 import Link from "next/link";
+import { ClipboardListIcon, TrendingUpIcon, LightbulbIcon, CheckCircleIcon } from "@/components/icons";
 
 interface Assignment {
   id: string;
@@ -71,7 +72,7 @@ export default function AssignmentsPage() {
       <div className={styles.grid}>
         <section className={styles.mainContent}>
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>📋 Görevler</h2>
+            <h2 className={styles.cardTitle}><ClipboardListIcon size={20} /> Görevler</h2>
             <div className={styles.assignmentList}>
               {assignments.map((item) => (
                 <div key={item.id} className={styles.assignmentItem}>
@@ -82,7 +83,7 @@ export default function AssignmentsPage() {
                   <div className={styles.assignmentMeta}>
                     <span className={styles.points}>+{item.xp} XP</span>
                     {item.completed ? (
-                      <span className={styles.completedBtn}>✓ Tamamlandı</span>
+                      <span className={styles.completedBtn}><CheckCircleIcon size={16} /> Tamamlandı</span>
                     ) : (
                       <button
                         onClick={() => handleComplete(item.id)}
@@ -100,7 +101,7 @@ export default function AssignmentsPage() {
 
         <aside className={styles.sidebar}>
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>📈 Genel İlerleme</h2>
+            <h2 className={styles.cardTitle}><TrendingUpIcon size={20} /> Genel İlerleme</h2>
             <div className={styles.progressContainer}>
               <div className={styles.progressSection}>
                 <div className={styles.progressLabel}>
@@ -128,10 +129,10 @@ export default function AssignmentsPage() {
           </div>
 
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>💡 İpucu</h2>
+            <h2 className={styles.cardTitle}><LightbulbIcon size={20} /> İpucu</h2>
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', lineHeight: '1.5' }}>
-              Her tamamladığın görevden kazandığın XP puanları, seviyeni yükseltir. Kazandığın kredileri ise 
-              <Link href="/store" style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}> STEM Mağazası</Link>'nda 
+              Her tamamladığın görevden kazandığın XP puanları, seviyeni yükseltir. Kazandığın kredileri ise
+              <Link href="/store" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}> STEM Mağazası</Link>'nda
               dilediğince harcayabilirsin!
             </p>
           </div>

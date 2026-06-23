@@ -46,7 +46,7 @@ function LoginForm() {
         <h1 className={styles.title}>Giriş Yap</h1>
         <p className={styles.subtitle}>Tekrar hoş geldin!</p>
 
-        {message && <div style={{background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem'}}>{message}</div>}
+        {message && <div className={styles.success}>{message}</div>}
         {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>

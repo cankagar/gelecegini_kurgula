@@ -3,6 +3,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import styles from "./basvuru.module.css";
 import { useSession } from "next-auth/react";
+import { FileTextIcon, GraduationCapIcon, LightbulbIcon, HelpCircleIcon, FolderIcon } from "@/components/icons";
 
 interface Application {
   id: string;
@@ -186,7 +187,7 @@ export default function CreatorApplicationPage() {
       <form className={styles.card} onSubmit={handleSubmit}>
         {/* Personal Info */}
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>📄 Kişisel Bilgiler</h3>
+          <h3 className={styles.sectionTitle}><FileTextIcon size={20} /> Kişisel Bilgiler</h3>
           <div className={styles.formGrid}>
             <div className={styles.inputGroup}>
               <label className={styles.label}>Tam İsim<span className={styles.required}>*</span></label>
@@ -225,7 +226,7 @@ export default function CreatorApplicationPage() {
 
         {/* Academic Info */}
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>🎓 Akademik Bilgiler</h3>
+          <h3 className={styles.sectionTitle}><GraduationCapIcon size={20} /> Akademik Bilgiler</h3>
           <div className={styles.formGrid}>
             <div className={styles.inputGroup}>
               <label className={styles.label}>Eğitim Seviyesi<span className={styles.required}>*</span></label>
@@ -258,7 +259,7 @@ export default function CreatorApplicationPage() {
 
         {/* Interests */}
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>💡 İlgi Alanları</h3>
+          <h3 className={styles.sectionTitle}><LightbulbIcon size={20} /> İlgi Alanları</h3>
           <div className={styles.interestsGrid}>
             {interestOptions.map((opt) => (
               <label key={opt} className={styles.checkboxContainer}>
@@ -287,7 +288,7 @@ export default function CreatorApplicationPage() {
 
         {/* Additional Info */}
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>📝 Ek Bilgiler</h3>
+          <h3 className={styles.sectionTitle}><FileTextIcon size={20} /> Ek Bilgiler</h3>
           <div className={styles.formGrid}>
             <div className={styles.inputGroupFull}>
               <label className={styles.label}>Kısa Biyografi<span className={styles.required}>*</span></label>
@@ -318,7 +319,7 @@ export default function CreatorApplicationPage() {
 
         {/* Motivation Questions */}
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>❓ Motivasyon Soruları</h3>
+          <h3 className={styles.sectionTitle}><HelpCircleIcon size={20} /> Motivasyon Soruları</h3>
           <div className={styles.formGrid}>
             <div className={styles.inputGroupFull}>
               <label className={styles.label}>Neden içerik üreticisi olmak istiyorsunuz?<span className={styles.required}>*</span></label>
@@ -337,10 +338,10 @@ export default function CreatorApplicationPage() {
 
         {/* File Upload Simulation */}
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>📂 Dosya Yükleme (Simülasyon)</h3>
+          <h3 className={styles.sectionTitle}><FolderIcon size={20} /> Dosya Yükleme (Simülasyon)</h3>
           <div className={styles.fileUploaderArea} onClick={() => {}}
             >
-            <div className={styles.fileUploaderIcon}>📁</div>
+            <div className={styles.fileUploaderIcon}><FolderIcon size={32} /></div>
             <div className={styles.fileUploaderText}>Dosyaları sürükleyip bırakın veya <span>seçin</span></div>
             <input type="file" name="files" multiple style={{ display: "none" }} onChange={handleChange} />
           </div>

@@ -4,6 +4,20 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import styles from "./serbest-kursu.module.css";
 import Link from "next/link";
+import {
+  StarIcon,
+  PenIcon,
+  RocketIcon,
+  TrophyIcon,
+  BookIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  AlertTriangleIcon,
+  FileTextIcon,
+  HeartIcon,
+  MessageCircleIcon,
+  MegaphoneIcon,
+} from "@/components/icons";
 
 interface Comment {
   id: string;
@@ -195,21 +209,21 @@ export default function SerbestKursuPage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1>Serbest Kürsü 💬</h1>
+        <h1>Serbest Kürsü</h1>
         <p>Eğitmenlerimizin paylaştığı makaleleri okuyun, yorum yapın ve bilimsel tartışmalara katılın.</p>
       </header>
 
       {/* Promotional Card */}
       {!isVerifiedCreator ? (
         <div className={styles.promoCard}>
-          <h2 className={styles.promoTitle}>⭐ Doğrulanmış İçerik Üreticisi</h2>
+          <h2 className={styles.promoTitle}><StarIcon size={20} /> Doğrulanmış İçerik Üreticisi</h2>
           <p className={styles.promoText}>Yazar Olmak İster misin?</p>
           <p className={styles.promoText}>Bilimsel makaleler, teknoloji haberleri ve eğitici içerikler paylaşarak topluluğa katkı sağlayabilirsin.</p>
           <ul className={styles.promoList}>
-            <li>✍️ Kendi makalelerini yayınla</li>
-            <li>🚀 Bilim topluluğuna katkıda bulun</li>
-            <li>🏅 Özel rozetler ve ayrıcalıklar kazan</li>
-            <li>📚 Bilimsel içerik üreticileri arasına katıl</li>
+            <li><PenIcon size={18} /> Kendi makalelerini yayınla</li>
+            <li><RocketIcon size={18} /> Bilim topluluğuna katkıda bulun</li>
+            <li><TrophyIcon size={18} /> Özel rozetler ve ayrıcalıklar kazan</li>
+            <li><BookIcon size={18} /> Bilimsel içerik üreticileri arasına katıl</li>
           </ul>
           <Link href="/icerik-uretici-basvuru">
             <button className={styles.promoButton}>Başvuru Yap</button>
@@ -217,7 +231,7 @@ export default function SerbestKursuPage() {
         </div>
       ) : (
         <div className={styles.verifiedMessage}>
-          <p className={styles.verifiedText}>✅ Doğrulanmış İçerik Üreticisisin</p>
+          <p className={styles.verifiedText}><CheckCircleIcon size={18} /> Doğrulanmış İçerik Üreticisisin</p>
           <p className={styles.verifiedText}>Bilimsel içerikler paylaşmaya başlayabilirsin.</p>
           <Link href="/posts/create">
             <button className={styles.promoButton}>Yeni Makale Oluştur</button>
@@ -229,19 +243,19 @@ export default function SerbestKursuPage() {
         <main>
           {isLoading ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyStateIcon}>⏳</div>
+              <div className={styles.emptyStateIcon}><ClockIcon size={28} /></div>
               <p>Gönderiler yükleniyor...</p>
             </div>
           ) : errorMsg ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyStateIcon}>⚠️</div>
+              <div className={styles.emptyStateIcon}><AlertTriangleIcon size={28} /></div>
               <h2>Bir Hata Oluştu</h2>
               <p>{errorMsg}</p>
               <button onClick={fetchPosts} className={styles.commentSubmitBtn} style={{ marginTop: '1rem' }}>Tekrar Dene</button>
             </div>
           ) : posts.length === 0 ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyStateIcon}>📄</div>
+              <div className={styles.emptyStateIcon}><FileTextIcon size={28} /></div>
               <h2>Henüz Paylaşım Yok</h2>
               <p>Burada henüz hiçbir yazı paylaşılmamış. Eğitmenlerimizin ilk gönderiyi yapmasını bekleyin!</p>
             </div>
@@ -281,13 +295,13 @@ export default function SerbestKursuPage() {
                         onClick={() => handleLike(post.id)}
                         className={`${styles.actionBtn} ${post.isLiked ? styles.liked : ""}`}
                       >
-                        ❤️ {post.isLiked ? "Beğendin" : "Beğen"} ({post.likeCount})
+                        <HeartIcon size={16} /> {post.isLiked ? "Beğendin" : "Beğen"} ({post.likeCount})
                       </button>
                       <button
                         onClick={() => toggleComments(post.id)}
                         className={styles.actionBtn}
                       >
-                        💬 Tartışma ({post.comments.length})
+                        <MessageCircleIcon size={16} /> Tartışma ({post.comments.length})
                       </button>
                     </div>
 
@@ -333,11 +347,11 @@ export default function SerbestKursuPage() {
                         ) : (
                           <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
                             Yorum yazmak veya tartışmaya katılmak için lütfen{" "}
-                            <Link href="/login" style={{ color: "var(--color-accent)", fontWeight: "bold" }}>giriş yapın</Link>.
+                            <Link href="/login" style={{ color: "var(--color-primary)", fontWeight: "bold" }}>giriş yapın</Link>.
                           </p>
                         )}
                         {commentErrors[post.id] && (
-                          <p style={{ color: "#ef4444", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+                          <p style={{ color: "var(--color-danger)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
                             {commentErrors[post.id]}
                           </p>
                         )}
@@ -353,7 +367,7 @@ export default function SerbestKursuPage() {
         <aside>
           {isTeacher ? (
             <div className={styles.sidebarCard}>
-              <h2>📝 Yeni Paylaşım Yap</h2>
+              <h2><PenIcon size={20} /> Yeni Paylaşım Yap</h2>
               
               {editorStatus && (
                 <div className={`${styles.notification} ${editorStatus.success ? styles.successNotification : styles.errorNotification}`}>
@@ -402,7 +416,7 @@ export default function SerbestKursuPage() {
             </div>
           ) : (
             <div className={styles.sidebarCard}>
-              <h2>📢 Serbest Kürsü Hakkında</h2>
+              <h2><MegaphoneIcon size={20} /> Serbest Kürsü Hakkında</h2>
               <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
                 Burası, öğretmenlerimizin bilim, teknoloji ve mühendislik alanındaki makalelerden kesitler 
                 paylaştığı, güncel teknolojik gelişmeleri tartıştığı açık bir bilim panosudur.
