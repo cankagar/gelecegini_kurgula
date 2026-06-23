@@ -1,11 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, use } from "react";
 import styles from "./payastem.module.css";
-import Link from "next/link";
 import {
-  ClockIcon,
-  AlertTriangleIcon,
   MegaphoneIcon,
   ClipboardListIcon,
   BookIcon,
@@ -50,12 +47,90 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
   const resolvedParams = use(params);
   const { level } = resolvedParams;
 
+  // Static sample data (no backend / network).
+  const levelData: LevelData = {
+    classLevel: {
+      id: level,
+      name: `NexSTEM ${level}. Seviye`,
+      description: "Bu seviyedeki haftalık ödevleri, duyuruları ve kaynakları buradan takip edebilirsiniz.",
+    },
+    announcements: [
+      {
+        id: "ann-1",
+        title: "Yeni Döneme Hoş Geldiniz!",
+        content:
+          "Sevgili öğrenciler, yeni STEM dönemimize başlıyoruz. Lütfen haftalık ödevlerinizi zamanında tamamlamayı unutmayın. Sorularınız için eğitmenlerinize ulaşabilirsiniz.",
+        createdAt: "2026-06-10T09:00:00.000Z",
+        author: { name: "Ayşe Yılmaz" },
+      },
+      {
+        id: "ann-2",
+        title: "Robotik Atölyesi Ertelendi",
+        content:
+          "Bu hafta planlanan robotik atölyesi teknik sebeplerden dolayı bir sonraki haftaya ertelenmiştir. Yeni tarih en kısa sürede paylaşılacaktır.",
+        createdAt: "2026-06-15T14:30:00.000Z",
+        author: { name: "Mehmet Demir" },
+      },
+      {
+        id: "ann-3",
+        title: "XP Sıralaması Güncellendi",
+        content:
+          "Bu ayki XP sıralaması güncellendi. İlk üçe giren öğrencilerimizi tebrik ederiz! Daha fazla puan kazanmak için ödevlerinizi tamamlayın.",
+        createdAt: "2026-06-20T11:15:00.000Z",
+        author: { name: "Ayşe Yılmaz" },
+      },
+    ],
+    assignments: [
+      {
+        id: "asg-1",
+        title: "Basit Devre Tasarımı",
+        description:
+          "LED, direnç ve buton kullanarak basit bir devre tasarlayın. Devrenizin fotoğrafını ve kısa bir açıklama yükleyin.",
+        creditReward: 20,
+        dueDate: "2026-06-30T23:59:00.000Z",
+      },
+      {
+        id: "asg-2",
+        title: "Algoritma Akış Şeması",
+        description:
+          "Günlük rutininizi bir akış şeması olarak çizin. Karar noktalarını ve döngüleri doğru sembollerle gösterin.",
+        creditReward: 30,
+      },
+      {
+        id: "asg-3",
+        title: "3B Model Tasarımı",
+        description:
+          "Seçtiğiniz basit bir nesnenin 3 boyutlu modelini tasarlayın ve tasarım dosyasını paylaşın.",
+        creditReward: 40,
+        dueDate: "2026-07-05T23:59:00.000Z",
+      },
+    ],
+    resources: [
+      {
+        id: "res-1",
+        title: "Devre Elemanları Rehberi",
+        description: "Temel devre elemanlarını ve kullanım alanlarını anlatan PDF doküman.",
+        type: "PDF",
+        url: "#",
+      },
+      {
+        id: "res-2",
+        title: "Algoritma Temelleri (Video)",
+        description: "Algoritmik düşünmeye giriş niteliğinde bir eğitim videosu.",
+        type: "VIDEO",
+        url: "#",
+      },
+      {
+        id: "res-3",
+        title: "Online 3B Tasarım Aracı",
+        description: "Tarayıcı üzerinden 3 boyutlu model tasarlayabileceğiniz ücretsiz araç.",
+        type: "LINK",
+        url: "#",
+      },
+    ],
+  };
+
   const [activeTab, setActiveTab] = useState<"announcements" | "assignments" | "resources">("announcements");
-  
-  const [levelData, setLevelData] = useState<LevelData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isRestricted, setIsRestricted] = useState(false);
 
   // Form State for Teachers
   const [formType, setFormType] = useState<"announcement" | "assignment" | "resource">("announcement");
@@ -67,35 +142,8 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
   const [formCredit, setFormCredit] = useState("20");
   const [formStatus, setFormStatus] = useState<{ success?: boolean; message?: string } | null>(null);
 
-  // Load Content
-  const fetchLevelData = async () => {
-    setIsLoading(true);
-    setErrorMsg(null);
-    try {
-      const res = await fetch(`/api/payastem?level=${level}`);
-      const result = await res.json();
-      
-      if (!res.ok) {
-        if (res.status === 403 && result.isRestricted) {
-          setIsRestricted(true);
-        }
-        throw new Error(result.error || "İçerik yüklenemedi");
-      }
-      
-      setLevelData(result.data);
-    } catch (err: any) {
-      setErrorMsg(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLevelData();
-  }, [level]);
-
-  // Form Submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Form Submission (local-only, no network).
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus(null);
 
@@ -104,97 +152,16 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
       return;
     }
 
-    const payload: any = {
-      type: formType,
-      classLevelId: level,
-      title: formTitle,
-    };
-
-    if (formType === "announcement") {
-      payload.content = formContent;
-    } else if (formType === "assignment") {
-      payload.description = formDescription;
-      payload.creditReward = parseInt(formCredit);
-    } else if (formType === "resource") {
-      payload.resourceType = formResourceType;
-      payload.url = formUrl;
-      payload.description = formDescription;
-    }
-
-    try {
-      const res = await fetch("/api/payastem", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.error || "Kayıt işlemi başarısız");
-      }
-
-      setFormStatus({ success: true, message: "İçerik başarıyla yüklendi!" });
-      setFormTitle("");
-      setFormContent("");
-      setFormDescription("");
-      setFormUrl("");
-      
-      // Reload Data
-      fetchLevelData();
-    } catch (err: any) {
-      setFormStatus({ success: false, message: err.message });
-    }
+    // Reset form fields and show a local success message.
+    setFormTitle("");
+    setFormContent("");
+    setFormDescription("");
+    setFormUrl("");
+    setFormStatus({ success: true, message: "İçerik başarıyla kaydedildi!" });
   };
 
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}><ClockIcon size={28} /></div>
-          <p>Yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isRestricted) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.emptyState} style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <div className={styles.emptyStateIcon}><AlertTriangleIcon size={28} /></div>
-          <h2>Erişim Kısıtlandı</h2>
-          <p style={{ color: 'var(--color-text-muted)', margin: '1rem 0 2rem', lineHeight: '1.6' }}>
-            {errorMsg || "Bu eğitim seviyesindeki içerikleri görüntüleme yetkiniz bulunmamaktadır."}
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <Link href="/" className={styles.actionBtn} style={{ background: 'var(--color-border)', color: 'var(--color-text)' }}>
-              Anasayfa
-            </Link>
-            <Link href="/dashboard" className={styles.actionBtn}>
-              Profilime Git
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (errorMsg && !levelData) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}><AlertTriangleIcon size={28} /></div>
-          <h2>Bir Hata Oluştu</h2>
-          <p style={{ margin: '1rem 0 2rem' }}>{errorMsg}</p>
-          <button onClick={fetchLevelData} className={styles.actionBtn}>Tekrar Dene</button>
-        </div>
-      </div>
-    );
-  }
-
   const isTeacher = true;
-  const levelInfo = levelData?.classLevel;
+  const levelInfo = levelData.classLevel;
 
   return (
     <div className={styles.container}>
@@ -309,7 +276,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
           {isTeacher ? (
             <div className={styles.sidebarCard}>
               <h2><WrenchIcon size={20} /> İçerik Ekle (Öğretmen Paneli)</h2>
-              
+
               {formStatus && (
                 <div className={`${styles.notification} ${formStatus.success ? styles.successNotification : styles.errorNotification}`}>
                   {formStatus.message}
@@ -426,8 +393,8 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
             <div className={styles.sidebarCard}>
               <h2><GraduationCapIcon size={20} /> NexSTEM Seviye Bilgisi</h2>
               <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
-                Bulunduğunuz seviyedeki haftalık ödevleri zamanında tamamlayarak XP puanları kazanabilirsiniz. 
-                Kazandığınız puanlar seviyenizi yükseltirken, öğretmenlerin paylaştığı kaynaklar ve PDF'ler 
+                Bulunduğunuz seviyedeki haftalık ödevleri zamanında tamamlayarak XP puanları kazanabilirsiniz.
+                Kazandığınız puanlar seviyenizi yükseltirken, öğretmenlerin paylaştığı kaynaklar ve PDF'ler
                 STEM projelerinizde size yol gösterecektir.
               </p>
             </div>

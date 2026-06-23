@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./serbest-kursu.module.css";
 import Link from "next/link";
 import {
@@ -10,8 +10,6 @@ import {
   TrophyIcon,
   BookIcon,
   CheckCircleIcon,
-  ClockIcon,
-  AlertTriangleIcon,
   FileTextIcon,
   HeartIcon,
   MessageCircleIcon,
@@ -45,10 +43,91 @@ interface Post {
   isLiked: boolean;
 }
 
+const SAMPLE_POSTS: Post[] = [
+  {
+    id: "p-1",
+    title: "Yapay Zeka Çağında Eleştirel Düşünme",
+    content:
+      "Yapay zekanın günlük hayatımıza hızla entegre olduğu bu dönemde, öğrencilerimize doğru bilgiyi yanlıştan ayırt etme becerisini kazandırmak her zamankinden daha önemli. Bu yazıda, sınıf içinde uygulanabilir basit ama etkili eleştirel düşünme egzersizlerini paylaşıyorum.",
+    tags: "Yapay Zeka, Eğitim, Eleştirel Düşünme",
+    createdAt: "2026-05-12",
+    author: {
+      name: "Dr. Ayşe Yılmaz",
+      username: "ayseyilmaz",
+      profile: { avatarUrl: null },
+    },
+    comments: [
+      {
+        id: "c-1",
+        content: "Çok faydalı bir yazı olmuş, özellikle kaynak doğrulama egzersizini sınıfımda denemek istiyorum.",
+        createdAt: "2026-05-13",
+        author: {
+          name: "Mehmet Kaya",
+          username: "mehmetkaya",
+          profile: { avatarUrl: null },
+        },
+      },
+      {
+        id: "c-2",
+        content: "Eleştirel düşünme konusunda kaynak önerebilir misiniz?",
+        createdAt: "2026-05-14",
+        author: {
+          name: "Zeynep Demir",
+          username: "zeynepdemir",
+          profile: { avatarUrl: null },
+        },
+      },
+    ],
+    likeCount: 24,
+    isLiked: false,
+  },
+  {
+    id: "p-2",
+    title: "Yenilenebilir Enerji ve Geleceğin Mühendisleri",
+    content:
+      "Güneş ve rüzgar enerjisi teknolojilerindeki son gelişmeler, mühendislik eğitimini de dönüştürüyor. Öğrencilerin teorik bilgiyi sahadaki uygulamalarla birleştirebilmesi için proje tabanlı öğrenme yaklaşımını öneriyorum. İşte denediğim birkaç örnek proje.",
+    tags: "Enerji, Mühendislik, Sürdürülebilirlik",
+    createdAt: "2026-04-28",
+    author: {
+      name: "Prof. Can Aydın",
+      username: "canaydin",
+      profile: { avatarUrl: null },
+    },
+    comments: [
+      {
+        id: "c-1",
+        content: "Proje tabanlı öğrenme gerçekten fark yaratıyor, teşekkürler hocam.",
+        createdAt: "2026-04-29",
+        author: {
+          name: "Elif Şahin",
+          username: "elifsahin",
+          profile: { avatarUrl: null },
+        },
+      },
+    ],
+    likeCount: 41,
+    isLiked: true,
+  },
+  {
+    id: "p-3",
+    title: "Kuantum Bilgisayarlar: Bir Giriş",
+    content:
+      "Kuantum hesaplama, klasik bilgisayarların çözmekte zorlandığı problemler için yeni kapılar aralıyor. Bu yazıda süperpozisyon ve dolanıklık kavramlarını lise seviyesinde anlaşılır bir dille açıklamaya çalıştım. Tartışmaya katılmaktan çekinmeyin!",
+    tags: "Fizik, Kuantum, Teknoloji",
+    createdAt: "2026-03-15",
+    author: {
+      name: "Dr. Selin Korkmaz",
+      username: "selinkorkmaz",
+      profile: { avatarUrl: null },
+    },
+    comments: [],
+    likeCount: 17,
+    isLiked: false,
+  },
+];
+
 export default function SerbestKursuPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [posts, setPosts] = useState<Post[]>(SAMPLE_POSTS);
 
   // Expanded comments tracker
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
@@ -62,45 +141,19 @@ export default function SerbestKursuPage() {
   const [newTags, setNewTags] = useState("");
   const [editorStatus, setEditorStatus] = useState<{ success?: boolean; message?: string } | null>(null);
 
-  // Fetch Forum Posts
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    setErrorMsg(null);
-    try {
-      const res = await fetch("/api/posts");
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Gönderiler yüklenemedi.");
-      setPosts(result.data);
-    } catch (err: any) {
-      setErrorMsg(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  // Handle Like Toggle
-  const handleLike = async (postId: string) => {
-    try {
-      const res = await fetch(`/api/posts/${postId}`, { method: "PUT" });
-      const result = await res.json();
-
-      if (!res.ok) throw new Error(result.error);
-
-      // Update state
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === postId
-            ? { ...post, isLiked: result.data.liked, likeCount: result.data.likeCount }
-            : post
-        )
-      );
-    } catch (err: any) {
-      console.error("Like error:", err.message);
-    }
+  // Handle Like Toggle (local-only)
+  const handleLike = (postId: string) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likeCount: post.isLiked ? post.likeCount - 1 : post.likeCount + 1,
+            }
+          : post
+      )
+    );
   };
 
   // Toggle Comment Section View
@@ -111,8 +164,8 @@ export default function SerbestKursuPage() {
     }));
   };
 
-  // Handle Comment Submit
-  const handleCommentSubmit = async (e: React.FormEvent, postId: string) => {
+  // Handle Comment Submit (local-only)
+  const handleCommentSubmit = (e: React.FormEvent, postId: string) => {
     e.preventDefault();
     const commentText = commentInputs[postId] || "";
     setCommentErrors((prev) => ({ ...prev, [postId]: "" }));
@@ -122,39 +175,35 @@ export default function SerbestKursuPage() {
       return;
     }
 
-    try {
-      const res = await fetch(`/api/posts/${postId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: commentText }),
-      });
+    // Reset input
+    setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
 
-      const result = await res.json();
-
-      if (!res.ok) throw new Error(result.error);
-
-      // Reset input
-      setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
-
-      // Append new comment to post
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              comments: [...post.comments, result.data],
-            };
-          }
-          return post;
-        })
-      );
-    } catch (err: any) {
-      setCommentErrors((prev) => ({ ...prev, [postId]: err.message }));
-    }
+    // Append new comment to post locally
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === postId) {
+          const newComment: Comment = {
+            id: `c-${post.comments.length + 1}`,
+            content: commentText,
+            createdAt: "2026-01-01",
+            author: {
+              name: "Sen",
+              username: "siz",
+              profile: { avatarUrl: null },
+            },
+          };
+          return {
+            ...post,
+            comments: [...post.comments, newComment],
+          };
+        }
+        return post;
+      })
+    );
   };
 
-  // Handle Post Submit (Teacher Form)
-  const handlePostSubmit = async (e: React.FormEvent) => {
+  // Handle Post Submit (Teacher Form, local-only)
+  const handlePostSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setEditorStatus(null);
 
@@ -163,31 +212,10 @@ export default function SerbestKursuPage() {
       return;
     }
 
-    try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newTitle,
-          content: newContent,
-          tags: newTags,
-        }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) throw new Error(result.error);
-
-      setEditorStatus({ success: true, message: "Yazınız başarıyla paylaşıldı!" });
-      setNewTitle("");
-      setNewContent("");
-      setNewTags("");
-
-      // Reload posts
-      fetchPosts();
-    } catch (err: any) {
-      setEditorStatus({ success: false, message: err.message });
-    }
+    setEditorStatus({ success: true, message: "Yazınız başarıyla paylaşıldı!" });
+    setNewTitle("");
+    setNewContent("");
+    setNewTags("");
   };
 
   const isTeacher = true;
@@ -228,19 +256,7 @@ export default function SerbestKursuPage() {
 
       <div className={styles.layout}>
         <main>
-          {isLoading ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyStateIcon}><ClockIcon size={28} /></div>
-              <p>Gönderiler yükleniyor...</p>
-            </div>
-          ) : errorMsg ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyStateIcon}><AlertTriangleIcon size={28} /></div>
-              <h2>Bir Hata Oluştu</h2>
-              <p>{errorMsg}</p>
-              <button onClick={fetchPosts} className={styles.commentSubmitBtn} style={{ marginTop: '1rem' }}>Tekrar Dene</button>
-            </div>
-          ) : posts.length === 0 ? (
+          {posts.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyStateIcon}><FileTextIcon size={28} /></div>
               <h2>Henüz Paylaşım Yok</h2>

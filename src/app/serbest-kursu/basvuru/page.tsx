@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./basvuru.module.css";
 import { FileTextIcon, GraduationCapIcon, LightbulbIcon, HelpCircleIcon, FolderIcon } from "@/components/icons";
 
@@ -12,9 +12,7 @@ interface Application {
 }
 
 export default function CreatorApplicationPage() {
-  const [application, setApplication] = useState<Application | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [application] = useState<Application | null>(null);
 
   // Form state
   const [formData, setFormData] = useState<any>({
@@ -51,27 +49,6 @@ export default function CreatorApplicationPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitMsg, setSubmitMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchApplication();
-  }, []);
-
-  const fetchApplication = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/creator/apply");
-      const result = await res.json();
-      if (result.success) {
-        setApplication(result.application);
-      } else {
-        setError(result.error || "Failed to load application");
-      }
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, files, type, checked } = e.target as any;
     if (type === "file") {
@@ -83,28 +60,11 @@ export default function CreatorApplicationPage() {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setSubmitMsg(null);
-    try {
-      const res = await fetch("/api/creator/apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await res.json();
-      if (result.success) {
-        setApplication(result.data);
-        setSubmitMsg("Başvurunuz gönderildi! Durumu kontrol edin.");
-      } else {
-        setSubmitMsg(result.error || "Gönderim hatası");
-      }
-    } catch (e: any) {
-      setSubmitMsg(e.message);
-    } finally {
-      setSubmitting(false);
-    }
+    setSubmitMsg("Başvurunuz gönderildi! Durumu kontrol edin.");
+    setSubmitting(false);
   };
 
   const interestOptions = [
@@ -118,11 +78,6 @@ export default function CreatorApplicationPage() {
     "Mühendislik",
     "Diğer",
   ];
-
-  // Render logic
-  if (loading) {
-    return <div className={styles.loader}></div>;
-  }
 
   // If application exists, show status card
   if (application) {
@@ -162,7 +117,6 @@ export default function CreatorApplicationPage() {
         <h1>İçerik Üreticisi Başvuru Formu</h1>
         <p>Platformumuza içerik üreticisi olarak katılmak için lütfen aşağıdaki formu doldurun.</p>
       </header>
-      {error && <div className={styles.alertError}>{error}</div>}
       {submitMsg && (
         <div className={submitMsg.includes("başarı") ? styles.alertSuccess : styles.alertError}>
           {submitMsg}
