@@ -39,8 +39,8 @@ export async function GET(request: Request) {
     });
 
     // Format posts to include like count and check if current user liked it
-    const formattedPosts = posts.map((post) => {
-      const isLiked = userId ? post.likes.some((like) => like.userId === userId) : false;
+    const formattedPosts = posts.map((post: (typeof posts)[number]) => {
+      const isLiked = userId ? post.likes.some((like: (typeof post.likes)[number]) => like.userId === userId) : false;
       return {
         id: post.id,
         title: post.title,
