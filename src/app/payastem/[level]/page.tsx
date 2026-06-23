@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, use } from "react";
-import { useSession } from "next-auth/react";
 import styles from "./payastem.module.css";
 import Link from "next/link";
 import {
   ClockIcon,
-  LockIcon,
   AlertTriangleIcon,
   MegaphoneIcon,
   ClipboardListIcon,
@@ -52,7 +50,6 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
   const resolvedParams = use(params);
   const { level } = resolvedParams;
 
-  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState<"announcements" | "assignments" | "resources">("announcements");
   
   const [levelData, setLevelData] = useState<LevelData | null>(null);
@@ -94,10 +91,8 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
   };
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchLevelData();
-    }
-  }, [level, status]);
+    fetchLevelData();
+  }, [level]);
 
   // Form Submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,27 +147,12 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
     }
   };
 
-  if (status === "loading" || (isLoading && status === "authenticated")) {
+  if (isLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.emptyState}>
           <div className={styles.emptyStateIcon}><ClockIcon size={28} /></div>
           <p>Yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    return (
-      <div className={styles.container}>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon}><LockIcon size={28} /></div>
-          <h2>Giriş Yapılması Gerekiyor</h2>
-          <p style={{ margin: "1rem 0 2rem" }}>PayaSTEM eğitim içeriklerini görebilmek için üye girişi yapmalısınız.</p>
-          <Link href="/login" className={styles.actionBtn}>
-            Giriş Yap
-          </Link>
         </div>
       </div>
     );
@@ -213,7 +193,7 @@ export default function PayaStemLevelPage({ params }: { params: Promise<{ level:
     );
   }
 
-  const isTeacher = session?.user && ((session.user as any).role === "TEACHER" || (session.user as any).role === "ADMIN");
+  const isTeacher = true;
   const levelInfo = levelData?.classLevel;
 
   return (

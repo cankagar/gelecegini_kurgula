@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import styles from "./Navbar.module.css";
-import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDownIcon } from "./icons";
 
 export default function Navbar() {
-  const { data: session } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
@@ -80,26 +78,19 @@ export default function Navbar() {
             <li>
               <Link href="/oyun-merkezi" className={styles.dropdownBtn} onClick={() => setIsMobileOpen(false)}>Oyun Merkezi</Link>
             </li>
-            {session?.user && (session.user as any).role === "ADMIN" && (
-              <li>
-                <Link href="/admin/basvurular" className={styles.dropdownBtn} onClick={() => setIsMobileOpen(false)}>
-                  Yönetim
-                </Link>
-              </li>
-            )}
+            <li>
+              <Link href="/admin/basvurular" className={styles.dropdownBtn} onClick={() => setIsMobileOpen(false)}>
+                Yönetim
+              </Link>
+            </li>
           </ul>
 
           <div className={styles.authContainer}>
-            {session ? (
-              <Link href="/dashboard" className={styles.profileBtn} onClick={() => setIsMobileOpen(false)}>
-                Profilim
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className={styles.loginBtn} onClick={() => setIsMobileOpen(false)}>Giriş</Link>
-                <Link href="/register" className={styles.registerBtn} onClick={() => setIsMobileOpen(false)}>Kayıt Ol</Link>
-              </>
-            )}
+            <Link href="/dashboard" className={styles.profileBtn} onClick={() => setIsMobileOpen(false)}>
+              Profilim
+            </Link>
+            <Link href="/login" className={styles.loginBtn} onClick={() => setIsMobileOpen(false)}>Giriş</Link>
+            <Link href="/register" className={styles.registerBtn} onClick={() => setIsMobileOpen(false)}>Kayıt Ol</Link>
           </div>
         </div>
       </div>

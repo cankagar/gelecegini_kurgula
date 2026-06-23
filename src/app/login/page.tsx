@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import styles from "../auth.module.css";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -20,24 +18,8 @@ function LoginForm() {
     }
   }, [searchParams]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    setMessage("");
-
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: formData.email,
-      password: formData.password,
-    });
-
-    if (result?.error) {
-      setError("E-posta veya şifre hatalı.");
-      setLoading(false);
-    } else {
-      router.push("/dashboard");
-    }
   };
 
   return (

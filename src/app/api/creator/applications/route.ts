@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
-// GET /api/creator/applications - Fetch all creator applications (Admin only)
+// GET /api/creator/applications - Fetch all creator applications
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || (session.user as any).role !== "ADMIN") {
-      return NextResponse.json({ success: false, error: "Yetkisiz erişim. Bu işlem için yönetici yetkisi gereklidir." }, { status: 403 });
-    }
-
     const applications = await prisma.creatorApplication.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -33,14 +26,9 @@ export async function GET() {
   }
 }
 
-// PUT /api/creator/applications - Approve or Reject an application (Admin only)
+// PUT /api/creator/applications - Approve or Reject an application
 export async function PUT(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || (session.user as any).role !== "ADMIN") {
-      return NextResponse.json({ success: false, error: "Yetkisiz erişim. Bu işlem için yönetici yetkisi gereklidir." }, { status: 403 });
-    }
-
     const body = await request.json();
     const { applicationId, status, adminNotes } = body;
 

@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { getAnonymousUserId } from "@/lib/anon-user";
 
 // GET /api/creator/apply - Get status of current user's application
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, error: "Giriş yapmanız gerekmektedir." }, { status: 401 });
-    }
-
-    const userId = (session.user as any).id;
+    const userId = await getAnonymousUserId();
     const application = await prisma.creatorApplication.findUnique({
       where: { userId }
     });
@@ -26,12 +20,7 @@ export async function GET() {
 // POST /api/creator/apply - Submit application
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, error: "Giriş yapmanız gerekmektedir." }, { status: 401 });
-    }
-
-    const userId = (session.user as any).id;
+    const userId = await getAnonymousUserId();
     const body = await request.json();
 
     // Destructure all required fields

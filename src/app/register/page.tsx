@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "../auth.module.css";
 
 export default function Register() {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -16,31 +14,8 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        router.push("/login?registered=true");
-      } else {
-        const data = await res.json();
-        setError(data.message || "Bir hata oluştu.");
-      }
-    } catch (err) {
-      setError("Bağlantı hatası oluştu.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

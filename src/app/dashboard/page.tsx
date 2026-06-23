@@ -1,40 +1,20 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import styles from "./dashboard.module.css";
 import Link from "next/link";
 import { TargetIcon, ClipboardListIcon, WalletIcon } from "@/components/icons";
 
 export default function Dashboard() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
-
-  if (status === "loading") {
-    return <div className={styles.dashboard}>Yükleniyor...</div>;
-  }
-
-  if (!session) {
-    return null;
-  }
-
   return (
     <div className={styles.dashboard}>
       <header className={styles.header}>
         <div className={styles.welcome}>
-          <h1>Merhaba, {session.user?.name || "Kullanıcı"}</h1>
+          <h1>Merhaba, Kullanıcı</h1>
           <p>STEM Eğitim platformuna hoş geldin.</p>
         </div>
-        <button onClick={() => signOut({ callbackUrl: '/' })} className={styles.logoutBtn}>
+        <Link href="/" className={styles.logoutBtn}>
           Çıkış Yap
-        </button>
+        </Link>
       </header>
 
       <div className={styles.grid}>

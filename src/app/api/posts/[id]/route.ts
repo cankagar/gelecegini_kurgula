@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { getAnonymousUserId } from "@/lib/anon-user";
 
 // POST /api/posts/[id] - Add a comment
 // PUT /api/posts/[id] - Toggle like
@@ -10,11 +9,6 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, error: "Giriş yapmanız gerekmektedir." }, { status: 401 });
-    }
-
     const { id } = await params;
     const body = await request.json();
     const { content } = body;
@@ -31,11 +25,12 @@ export async function POST(
       return NextResponse.json({ success: false, error: "Gönderi bulunamadı." }, { status: 404 });
     }
 
+    const authorId = await getAnonymousUserId();
     const comment = await prisma.comment.create({
       data: {
         content,
         postId: id,
-        authorId: (session.user as any).id,
+        authorId,
       },
       include: {
         author: {
@@ -60,13 +55,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, error: "Giriş yapmanız gerekmektedir." }, { status: 401 });
-    }
-
     const { id } = await params;
-    const userId = (session.user as any).id;
+    const userId = await getAnonymousUserId();
 
     // Check if post exists
     const postExists = await prisma.post.findUnique({

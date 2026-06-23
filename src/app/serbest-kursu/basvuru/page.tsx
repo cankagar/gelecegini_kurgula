@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import styles from "./basvuru.module.css";
-import { useSession } from "next-auth/react";
 import { FileTextIcon, GraduationCapIcon, LightbulbIcon, HelpCircleIcon, FolderIcon } from "@/components/icons";
 
 interface Application {
@@ -13,7 +12,6 @@ interface Application {
 }
 
 export default function CreatorApplicationPage() {
-  const { data: session, status } = useSession();
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,12 +52,8 @@ export default function CreatorApplicationPage() {
   const [submitMsg, setSubmitMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchApplication();
-    } else if (status === "unauthenticated") {
-      setLoading(false);
-    }
-  }, [status]);
+    fetchApplication();
+  }, []);
 
   const fetchApplication = async () => {
     setLoading(true);
@@ -126,18 +120,8 @@ export default function CreatorApplicationPage() {
   ];
 
   // Render logic
-  if (status === "loading" || loading) {
+  if (loading) {
     return <div className={styles.loader}></div>;
-  }
-
-  if (status === "unauthenticated") {
-    return (
-      <div className={styles.container}>
-        <h2>Lütfen giriş yapın</h2>
-        <p>Başvuru formunu doldurmak için önce hesabınıza giriş yapmanız gerekiyor.</p>
-        <a href="/login" className={styles.btnPrimary}>Giriş Yap</a>
-      </div>
-    );
   }
 
   // If application exists, show status card

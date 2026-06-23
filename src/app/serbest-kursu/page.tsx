@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import styles from "./serbest-kursu.module.css";
 import Link from "next/link";
 import {
@@ -47,7 +46,6 @@ interface Post {
 }
 
 export default function SerbestKursuPage() {
-  const { data: session, status } = useSession();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -82,15 +80,10 @@ export default function SerbestKursuPage() {
 
   useEffect(() => {
     fetchPosts();
-  }, [status]);
+  }, []);
 
   // Handle Like Toggle
   const handleLike = async (postId: string) => {
-    if (status !== "authenticated") {
-      alert("Gönderileri beğenmek için giriş yapmalısınız.");
-      return;
-    }
-
     try {
       const res = await fetch(`/api/posts/${postId}`, { method: "PUT" });
       const result = await res.json();
@@ -126,11 +119,6 @@ export default function SerbestKursuPage() {
 
     if (!commentText.trim()) {
       setCommentErrors((prev) => ({ ...prev, [postId]: "Yorum boş bırakılamaz." }));
-      return;
-    }
-
-    if (status !== "authenticated") {
-      alert("Yorum yapabilmek için giriş yapmalısınız.");
       return;
     }
 
@@ -202,9 +190,8 @@ export default function SerbestKursuPage() {
     }
   };
 
-  const isTeacher = session?.user && ((session.user as any).role === "TEACHER" || (session.user as any).role === "ADMIN");
-  const role = (session?.user as any)?.role;
-  const isVerifiedCreator = role === "VERIFIED_CONTENT_CREATOR";
+  const isTeacher = true;
+  const isVerifiedCreator = true;
 
   return (
     <div className={styles.container}>
@@ -329,27 +316,20 @@ export default function SerbestKursuPage() {
                           )}
                         </div>
 
-                        {status === "authenticated" ? (
-                          <form onSubmit={(e) => handleCommentSubmit(e, post.id)} className={styles.commentForm}>
-                            <input
-                              type="text"
-                              placeholder="Fikrinizi veya yorumunuzu yazın..."
-                              className={styles.commentInput}
-                              value={commentInputs[post.id] || ""}
-                              onChange={(e) =>
-                                setCommentInputs((prev) => ({ ...prev, [post.id]: e.target.value }))
-                              }
-                            />
-                            <button type="submit" className={styles.commentSubmitBtn}>
-                              Yorum Yap
-                            </button>
-                          </form>
-                        ) : (
-                          <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
-                            Yorum yazmak veya tartışmaya katılmak için lütfen{" "}
-                            <Link href="/login" style={{ color: "var(--color-primary)", fontWeight: "bold" }}>giriş yapın</Link>.
-                          </p>
-                        )}
+                        <form onSubmit={(e) => handleCommentSubmit(e, post.id)} className={styles.commentForm}>
+                          <input
+                            type="text"
+                            placeholder="Fikrinizi veya yorumunuzu yazın..."
+                            className={styles.commentInput}
+                            value={commentInputs[post.id] || ""}
+                            onChange={(e) =>
+                              setCommentInputs((prev) => ({ ...prev, [post.id]: e.target.value }))
+                            }
+                          />
+                          <button type="submit" className={styles.commentSubmitBtn}>
+                            Yorum Yap
+                          </button>
+                        </form>
                         {commentErrors[post.id] && (
                           <p style={{ color: "var(--color-danger)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
                             {commentErrors[post.id]}

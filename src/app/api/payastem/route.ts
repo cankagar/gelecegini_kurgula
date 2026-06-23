@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { getAnonymousUserId } from "@/lib/anon-user";
 
 // GET /api/payastem?level=...
 export async function GET(request: Request) {
@@ -11,30 +10,6 @@ export async function GET(request: Request) {
 
     if (!levelId) {
       return NextResponse.json({ success: false, error: "Level parameter is required" }, { status: 400 });
-    }
-
-    // Auth & Role verification
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, error: "Giriş yapmanız gerekmektedir." }, { status: 401 });
-    }
-
-    const userId = (session.user as any).id;
-    const userRole = (session.user as any).role;
-
-    if (userRole === "STUDENT") {
-      const userProfile = await prisma.profile.findUnique({
-        where: { userId }
-      });
-      
-      const allowed = isStudentAllowedForLevel(userProfile?.schoolLevel, levelId);
-      if (!allowed) {
-        return NextResponse.json({ 
-          success: false, 
-          isRestricted: true,
-          error: `Bu seviyedeki içerikleri görüntüleme yetkiniz bulunmamaktadır. Kendi sınıf seviyeniz: ${userProfile?.schoolLevel || "Belirtilmemiş"}` 
-        }, { status: 403 });
-      }
     }
 
     // Verify if class level exists
@@ -85,18 +60,6 @@ export async function GET(request: Request) {
 // POST /api/payastem
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Check if the user is a teacher or admin
-    const userRole = (session.user as any).role;
-    if (userRole !== "TEACHER" && userRole !== "ADMIN") {
-      return NextResponse.json({ success: false, error: "Forbidden: Only teachers and admins can upload content" }, { status: 403 });
-    }
-
     const body = await request.json();
     const { type, classLevelId, title, content, description, resourceType, url, creditReward } = body;
 
@@ -112,7 +75,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Class level not found" }, { status: 404 });
     }
 
-    const userId = (session.user as any).id;
+    const userId = await getAnonymousUserId();
 
     if (type === "announcement") {
       if (!content) {
@@ -167,18 +130,4 @@ export async function POST(request: Request) {
     console.error("POST PayaSTEM error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
-
-function isStudentAllowedForLevel(studentLevel: string | null | undefined, requestedLevelId: string) {
-  if (!studentLevel) return false;
-  
-  const normStudent = studentLevel.toLowerCase().replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ö/g, 'o').replace(/ü/g, 'u').trim();
-  const normRequested = requestedLevelId.toLowerCase().trim();
-  
-  if (normRequested.includes("junior") && normStudent.includes("junior")) return true;
-  if (normRequested.includes("ilkokul") && normStudent.includes("ilkokul")) return true;
-  if (normRequested.includes("ortaokul") && normStudent.includes("ortaokul")) return true;
-  if (normRequested.includes("lise") && normStudent.includes("lise")) return true;
-  
-  return false;
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -28,13 +27,11 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${inter.className} ${spaceGrotesk.variable}`}>
-        <Providers>
-          <Navbar />
-          <main style={{ minHeight: "calc(100vh - 65px)" }}>
-            {children}
-          </main>
-          <Footer />
-        </Providers>
+        <Navbar />
+        <main style={{ minHeight: "calc(100vh - 65px)" }}>
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
