@@ -3,7 +3,7 @@
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDownIcon } from "./icons";
+import { ChevronDownIcon } from "@/shared/ui/icons";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

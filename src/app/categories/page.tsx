@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styles from "./categories.module.css";
-import { DnaIcon, BotIcon, OrbitIcon, BrainIcon } from "@/components/icons";
+import { DnaIcon, BotIcon, OrbitIcon, BrainIcon } from "@/shared/ui/icons";
 
 export default function Categories() {
   const categories = [

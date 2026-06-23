@@ -2,7 +2,7 @@
 
 import styles from "./dashboard.module.css";
 import Link from "next/link";
-import { TargetIcon, ClipboardListIcon, WalletIcon } from "@/components/icons";
+import { TargetIcon, ClipboardListIcon, WalletIcon } from "@/shared/ui/icons";
 
 export default function Dashboard() {
   return (

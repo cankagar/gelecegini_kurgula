@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styles from "./assignments.module.css";
 import Link from "next/link";
-import { ClipboardListIcon, TrendingUpIcon, LightbulbIcon, CheckCircleIcon } from "@/components/icons";
+import { ClipboardListIcon, TrendingUpIcon, LightbulbIcon, CheckCircleIcon } from "@/shared/ui/icons";
 
 interface Assignment {
   id: string;

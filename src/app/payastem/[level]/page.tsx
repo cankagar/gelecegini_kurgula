@@ -12,7 +12,7 @@ import {
   LinkIcon,
   WrenchIcon,
   GraduationCapIcon,
-} from "@/components/icons";
+} from "@/shared/ui/icons";
 
 interface LevelData {
   classLevel: {

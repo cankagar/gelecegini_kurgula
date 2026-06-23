@@ -2,7 +2,7 @@
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./basvuru.module.css";
-import { FileTextIcon, GraduationCapIcon, LightbulbIcon, HelpCircleIcon, FolderIcon } from "@/components/icons";
+import { FileTextIcon, GraduationCapIcon, LightbulbIcon, HelpCircleIcon, FolderIcon } from "@/shared/ui/icons";
 
 interface Application {
   id: string;

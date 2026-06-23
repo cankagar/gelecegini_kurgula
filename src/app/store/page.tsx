@@ -1,6 +1,6 @@
 import styles from "../dashboard/dashboard.module.css";
 import Link from "next/link";
-import { ShoppingBagIcon } from "@/components/icons";
+import { ShoppingBagIcon } from "@/shared/ui/icons";
 
 export default function Store() {
   return (

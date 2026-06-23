@@ -8,7 +8,7 @@ import {
   GraduationCapIcon,
   UsersIcon,
   ArrowRightIcon,
-} from "@/components/icons";
+} from "@/shared/ui/icons";
 
 export default function Home() {
   return (

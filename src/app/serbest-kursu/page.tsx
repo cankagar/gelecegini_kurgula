@@ -14,7 +14,7 @@ import {
   HeartIcon,
   MessageCircleIcon,
   MegaphoneIcon,
-} from "@/components/icons";
+} from "@/shared/ui/icons";
 
 interface Comment {
   id: string;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import styles from "./oyun-merkezi.module.css";
-import { GamepadIcon } from "@/components/icons";
+import { GamepadIcon } from "@/shared/ui/icons";
 
 export default function OyunMerkeziPage() {
   return (

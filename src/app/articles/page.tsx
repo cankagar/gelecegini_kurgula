@@ -1,6 +1,6 @@
 import styles from "../dashboard/dashboard.module.css";
 import Link from "next/link";
-import { BookIcon } from "@/components/icons";
+import { BookIcon } from "@/shared/ui/icons";
 
 export default function Articles() {
   return (

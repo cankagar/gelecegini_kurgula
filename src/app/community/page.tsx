@@ -1,6 +1,6 @@
 import styles from "../dashboard/dashboard.module.css";
 import Link from "next/link";
-import { RocketIcon } from "@/components/icons";
+import { RocketIcon } from "@/shared/ui/icons";
 
 export default function Community() {
   return (

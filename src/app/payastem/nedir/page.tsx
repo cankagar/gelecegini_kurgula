@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styles from "../[level]/payastem.module.css";
-import { GraduationCapIcon, BookIcon, PuzzleIcon, RocketIcon } from "@/components/icons";
+import { GraduationCapIcon, BookIcon, PuzzleIcon, RocketIcon } from "@/shared/ui/icons";
 
 export default function PayaStemInfo() {
   return (
