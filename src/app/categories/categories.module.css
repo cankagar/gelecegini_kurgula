@@ -73,7 +73,7 @@
   padding: 0.55rem 1.2rem;
   border-radius: var(--radius-sm);
   background: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border: none;
   font-weight: 600;
   transition: background-color 0.2s ease;

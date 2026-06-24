@@ -64,12 +64,13 @@
 .input:focus {
   border-color: var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(221, 153, 22, 0.18);
 }
 
 .button {
+  width: 100%;
   background: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   padding: 0.85rem;
   border: none;
   border-radius: var(--radius-sm);
@@ -78,7 +79,7 @@
   margin-top: 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 20px -4px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 8px 20px -4px rgba(221, 153, 22, 0.4);
 }
 
 .button:hover {

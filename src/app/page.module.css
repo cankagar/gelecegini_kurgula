@@ -4,6 +4,7 @@
 }
 
 .container {
+  position: relative;
   max-width: var(--container-max);
   margin: 0 auto;
   padding: 0 1.5rem;
@@ -11,12 +12,18 @@
 
 /* Hero Section */
 .hero {
-  min-height: 72vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: radial-gradient(circle at 50% 0%, var(--color-ink-soft) 0%, var(--color-ink) 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(221, 153, 22, 0.32) 0%,
+    var(--color-ink) 42%,
+    var(--color-ink) 58%,
+    rgba(0, 200, 255, 0.28) 100%
+  );
   padding: 5rem 1.5rem;
   position: relative;
   overflow: hidden;
@@ -26,8 +33,18 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.25), transparent 45%),
-    radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.2), transparent 40%);
+  background-image: radial-gradient(circle at 18% 25%, rgba(221, 153, 22, 0.32), transparent 70%),
+    radial-gradient(circle at 82% 18%, rgba(0, 200, 255, 0.28), transparent 70%),
+    radial-gradient(circle at 50% 100%, rgba(221, 153, 22, 0.2), transparent 75%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 34vh;
+  background: linear-gradient(to bottom, transparent, var(--color-surface));
   pointer-events: none;
 }
 
@@ -40,9 +57,9 @@
   display: inline-block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #bfdbfe;
-  background: rgba(37, 99, 235, 0.18);
-  border: 1px solid rgba(96, 165, 250, 0.35);
+  color: var(--color-primary);
+  background: rgba(221, 153, 22, 0.12);
+  border: 1px solid rgba(221, 153, 22, 0.35);
   padding: 0.4rem 1rem;
   border-radius: 999px;
   margin-bottom: 1.5rem;
@@ -57,7 +74,7 @@
 }
 
 .highlight {
-  color: #60a5fa;
+  color: var(--color-primary);
 }
 
 .subtitle {
@@ -82,12 +99,12 @@
   align-items: center;
   gap: 0.5rem;
   background-color: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   padding: 0.85rem 1.75rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 1.05rem;
-  box-shadow: 0 8px 24px -4px rgba(249, 115, 22, 0.45);
+  box-shadow: 0 8px 24px -4px rgba(221, 153, 22, 0.45);
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
@@ -114,8 +131,28 @@
 
 /* Features Section */
 .features {
+  position: relative;
+  overflow: hidden;
   padding: 5.5rem 0;
   background-color: var(--color-surface);
+}
+
+.features::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 88% 0%, rgba(0, 200, 255, 0.09), transparent 55%),
+    radial-gradient(circle at 8% 100%, rgba(221, 153, 22, 0.08), transparent 55%);
+  pointer-events: none;
+}
+
+.features::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 6rem;
+  background: linear-gradient(to bottom, transparent, var(--color-surface-alt));
+  pointer-events: none;
 }
 
 .sectionHead {
@@ -144,15 +181,8 @@
 .featureCard {
   background-color: var(--color-surface);
   padding: 2rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.featureCard:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-border-strong);
+  border-radius: calc(var(--radius-lg) - 3px);
+  height: 100%;
 }
 
 .featureIcon {
@@ -162,7 +192,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(221, 153, 22, 0.12);
   color: var(--color-primary);
   margin-bottom: 1.5rem;
 }
@@ -182,9 +212,28 @@
 
 /* Stats Section */
 .statsSection {
+  position: relative;
+  overflow: hidden;
   padding: 5.5rem 0;
   background-color: var(--color-surface-alt);
-  border-top: 1px solid var(--color-border);
+}
+
+.statsSection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 12% 100%, rgba(221, 153, 22, 0.08), transparent 55%),
+    radial-gradient(circle at 92% 0%, rgba(0, 200, 255, 0.08), transparent 55%);
+  pointer-events: none;
+}
+
+.statsSection::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 6rem;
+  background: linear-gradient(to bottom, transparent, var(--color-ink));
+  pointer-events: none;
 }
 
 .statsTitle {
@@ -204,45 +253,14 @@
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
-.statCard {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 2rem 1.5rem;
-  text-align: center;
-}
-
-.statIcon {
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(79, 70, 229, 0.1);
-  color: var(--color-secondary);
-}
-
-.statNumber {
-  font-family: var(--font-heading);
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.statLabel {
-  font-weight: 600;
-  color: var(--color-text);
-  margin-top: 0.25rem;
-}
-
-.statDescription {
-  color: var(--color-text-soft);
-  font-size: 0.88rem;
-  margin-top: 0.4rem;
+@media (max-width: 560px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
 }

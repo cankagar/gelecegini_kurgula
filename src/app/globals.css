@@ -1,29 +1,31 @@
 :root {
-  /* Brand */
-  --color-primary: #2563eb;        /* Blue 600 - brand */
-  --color-primary-dark: #1d4ed8;   /* Blue 700 */
-  --color-secondary: #4f46e5;      /* Indigo 600 */
-  --color-accent: #0ea5e9;         /* Sky 500 */
-  --color-ink: #0b1220;            /* Near-black navy for dark sections */
-  --color-ink-soft: #111a2e;
+  /* Brand — PayaSTEM gold / black / cyan */
+  --color-primary: #dd9916;        /* Primary Gold */
+  --color-primary-dark: #b67a0d;   /* Secondary Gold */
+  --color-secondary: #00c8ff;      /* Technology Accent (cyan) */
+  --color-accent: #00c8ff;         /* Technology Accent (cyan) */
+  --color-bronze: #352309;         /* Dark Bronze */
+  --color-ink: #080808;            /* Main Background */
+  --color-ink-soft: #121212;       /* Secondary Background */
 
   /* Action */
-  --color-cta: #f97316;            /* Orange 500 - primary action contrast */
-  --color-cta-dark: #ea580c;       /* Orange 600 */
-  --color-success: #10b981;
-  --color-success-bg: rgba(16, 185, 129, 0.1);
-  --color-danger: #ef4444;
-  --color-danger-bg: rgba(239, 68, 68, 0.1);
+  --color-cta: #dd9916;            /* Primary Gold - primary action */
+  --color-cta-dark: #b67a0d;       /* Secondary Gold */
+  --color-cta-text: #1a1004;       /* Dark text for gold buttons */
+  --color-success: #2dd4af;
+  --color-success-bg: rgba(45, 212, 175, 0.12);
+  --color-danger: #f87171;
+  --color-danger-bg: rgba(248, 113, 113, 0.12);
 
   /* Background & Text */
-  --color-bg: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-alt: #f8fafc;    /* Slate 50 */
-  --color-text: #0f172a;           /* Slate 900 */
-  --color-text-muted: #475569;     /* Slate 600 */
-  --color-text-soft: #64748b;      /* Slate 500 */
-  --color-border: #e2e8f0;         /* Slate 200 */
-  --color-border-strong: #cbd5e1;  /* Slate 300 */
+  --color-bg: #080808;             /* Main Background */
+  --color-surface: #171717;        /* Card Background */
+  --color-surface-alt: #121212;    /* Secondary Background */
+  --color-text: #f5f5f5;           /* Primary Text */
+  --color-text-muted: #b5b5b5;     /* Secondary Text */
+  --color-text-soft: #8a8a8a;
+  --color-border: rgba(245, 245, 245, 0.1);
+  --color-border-strong: rgba(245, 245, 245, 0.18);
 
   /* Typography */
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -36,9 +38,10 @@
   --container-max: 1200px;
 
   /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
-  --shadow-lg: 0 24px 48px -16px rgba(15, 23, 42, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 32px -6px rgba(221, 153, 22, 0.35);
 }
 
 * {

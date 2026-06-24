@@ -1,0 +1,224 @@
+.border-glow-card {
+  --edge-proximity: 0;
+  --cursor-angle: 45deg;
+  --edge-sensitivity: 30;
+  --color-sensitivity: calc(var(--edge-sensitivity) + 20);
+  --border-radius: 28px;
+  --glow-padding: 40px;
+  --cone-spread: 25;
+
+  position: relative;
+  border-radius: var(--border-radius);
+  isolation: isolate;
+  transform: translate3d(0, 0, 0.01px);
+  display: grid;
+  border: 1px solid rgb(255 255 255 / 12%);
+  background: var(--card-bg, #171717);
+  overflow: visible;
+  box-shadow:
+    rgba(0, 0, 0, 0.25) 0px 1px 2px,
+    rgba(0, 0, 0, 0.22) 0px 2px 4px,
+    rgba(0, 0, 0, 0.2) 0px 4px 8px,
+    rgba(0, 0, 0, 0.18) 0px 8px 16px,
+    rgba(0, 0, 0, 0.16) 0px 16px 32px,
+    rgba(0, 0, 0, 0.14) 0px 32px 64px;
+}
+
+.border-glow-card.bgw-frame {
+  display: inline-grid;
+  width: max-content;
+  padding: 4px;
+}
+
+.border-glow-card.bgw-card-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+}
+
+/* Frame-only variants: no growing outer halo, no scale — just a tinted hairline. */
+.border-glow-card.bgw-frame,
+.border-glow-card.bgw-card-frame {
+  box-shadow:
+    rgba(0, 0, 0, 0.3) 0px 1px 2px,
+    rgba(0, 0, 0, 0.22) 0px 4px 10px;
+}
+
+.border-glow-card::before,
+.border-glow-card::after,
+.border-glow-card > .edge-light {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: opacity 0.25s ease-out;
+  z-index: -1;
+}
+
+.border-glow-card:not(:hover):not(.sweep-active)::before,
+.border-glow-card:not(:hover):not(.sweep-active)::after,
+.border-glow-card:not(:hover):not(.sweep-active) > .edge-light {
+  opacity: 0;
+  transition: opacity 0.75s ease-in-out;
+}
+
+/* colored mesh-gradient border */
+.border-glow-card::before {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-bg, #171717) 0 100%) padding-box,
+    linear-gradient(rgb(255 255 255 / 0%) 0% 100%) border-box,
+    var(--gradient-one, radial-gradient(at 80% 55%, hsla(38, 90%, 55%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-two, radial-gradient(at 69% 34%, hsla(28, 80%, 40%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-three, radial-gradient(at 8% 6%, hsla(195, 100%, 50%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-four, radial-gradient(at 41% 38%, hsla(38, 90%, 55%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-five, radial-gradient(at 86% 85%, hsla(28, 80%, 40%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-six, radial-gradient(at 82% 18%, hsla(195, 100%, 50%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-seven, radial-gradient(at 51% 4%, hsla(28, 80%, 40%, 1) 0px, transparent 50%)) border-box,
+    var(--gradient-base, linear-gradient(#dd9916 0 100%)) border-box;
+
+  opacity: calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+
+  mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center,
+      black calc(var(--cone-spread) * 1%),
+      transparent calc((var(--cone-spread) + 15) * 1%),
+      transparent calc((100 - var(--cone-spread) - 15) * 1%),
+      black calc((100 - var(--cone-spread)) * 1%)
+    );
+}
+
+/* colored mesh-gradient background fill near edges */
+.border-glow-card::after {
+  border: 1px solid transparent;
+  background:
+    var(--gradient-one, radial-gradient(at 80% 55%, hsla(38, 90%, 55%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-two, radial-gradient(at 69% 34%, hsla(28, 80%, 40%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-three, radial-gradient(at 8% 6%, hsla(195, 100%, 50%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-four, radial-gradient(at 41% 38%, hsla(38, 90%, 55%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-five, radial-gradient(at 86% 85%, hsla(28, 80%, 40%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-six, radial-gradient(at 82% 18%, hsla(195, 100%, 50%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-seven, radial-gradient(at 51% 4%, hsla(28, 80%, 40%, 1) 0px, transparent 50%)) padding-box,
+    var(--gradient-base, linear-gradient(#dd9916 0 100%)) padding-box;
+
+  mask-image:
+    linear-gradient(to bottom, black, black),
+    radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%),
+    radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%),
+    radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%),
+    conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+
+  mask-composite: subtract, add, add, add, add, add;
+  opacity: calc(var(--fill-opacity, 0.5) * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+  mix-blend-mode: soft-light;
+}
+
+/* outer glow layer */
+.border-glow-card > .edge-light {
+  inset: calc(var(--glow-padding) * -1);
+  pointer-events: none;
+  z-index: 1;
+
+  mask-image:
+    conic-gradient(
+      from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
+    );
+
+  opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+  mix-blend-mode: plus-lighter;
+}
+
+.border-glow-card > .edge-light::before {
+  content: "";
+  position: absolute;
+  inset: var(--glow-padding);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px var(--glow-color, hsl(38deg 85% 58% / 100%)),
+    inset 0 0 1px 0 var(--glow-color-60, hsl(38deg 85% 58% / 60%)),
+    inset 0 0 3px 0 var(--glow-color-50, hsl(38deg 85% 58% / 50%)),
+    inset 0 0 6px 0 var(--glow-color-40, hsl(38deg 85% 58% / 40%)),
+    inset 0 0 15px 0 var(--glow-color-30, hsl(38deg 85% 58% / 30%)),
+    inset 0 0 25px 2px var(--glow-color-20, hsl(38deg 85% 58% / 20%)),
+    inset 0 0 50px 2px var(--glow-color-10, hsl(38deg 85% 58% / 10%)),
+    0 0 1px 0 var(--glow-color-60, hsl(38deg 85% 58% / 60%)),
+    0 0 3px 0 var(--glow-color-50, hsl(38deg 85% 58% / 50%)),
+    0 0 6px 0 var(--glow-color-40, hsl(38deg 85% 58% / 40%)),
+    0 0 15px 0 var(--glow-color-30, hsl(38deg 85% 58% / 30%)),
+    0 0 25px 2px var(--glow-color-20, hsl(38deg 85% 58% / 20%)),
+    0 0 50px 2px var(--glow-color-10, hsl(38deg 85% 58% / 10%));
+}
+
+/* Frame-only variants: keep every layer flush with the card edge — no bleed past the border. */
+.bgw-frame > .edge-light,
+.bgw-card-frame > .edge-light {
+  inset: 0;
+}
+
+.bgw-frame > .edge-light::before,
+.bgw-card-frame > .edge-light::before {
+  inset: 0;
+  box-shadow:
+    inset 0 0 0 1.5px var(--glow-color, hsl(38deg 85% 58% / 100%)),
+    inset 0 0 4px 0 var(--glow-color-60, hsl(38deg 85% 58% / 60%)),
+    inset 0 0 10px 0 var(--glow-color-40, hsl(38deg 85% 58% / 40%)),
+    inset 0 0 18px 1px var(--glow-color-20, hsl(38deg 85% 58% / 20%));
+}
+
+/*
+ * Spotlight reveal: mask every layer with a fixed-radius circle centered on the
+ * actual pointer position (--spot-x/--spot-y, set in px on pointermove). This
+ * replaces the cursor-angle conic mask, which warped with each card's own
+ * aspect ratio and made the glow read as thicker on wider/shorter cards. A
+ * fixed-radius circle looks identical on every card regardless of position or
+ * shape, while still fading out from the cursor for the "closer = brighter" feel.
+ */
+.bgw-frame,
+.bgw-card-frame {
+  --spot-x: 50%;
+  --spot-y: 50%;
+  --spot-radius: 130px;
+}
+
+.bgw-frame::after,
+.bgw-card-frame::after {
+  display: none;
+}
+
+.bgw-frame::before,
+.bgw-card-frame::before {
+  opacity: 1;
+  mask-image: radial-gradient(circle var(--spot-radius) at var(--spot-x) var(--spot-y), black 0%, transparent 100%);
+}
+
+.bgw-frame:not(:hover):not(.sweep-active)::before,
+.bgw-card-frame:not(:hover):not(.sweep-active)::before {
+  opacity: 0;
+}
+
+.bgw-frame > .edge-light,
+.bgw-card-frame > .edge-light {
+  opacity: 1;
+  mask-image: radial-gradient(circle var(--spot-radius) at var(--spot-x) var(--spot-y), black 0%, transparent 100%);
+}
+
+.bgw-frame:not(:hover):not(.sweep-active) > .edge-light,
+.bgw-card-frame:not(:hover):not(.sweep-active) > .edge-light {
+  opacity: 0;
+}
+
+.border-glow-inner {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: auto;
+  z-index: 1;
+}
+
+.bgw-frame > .border-glow-inner {
+  overflow: visible;
+}

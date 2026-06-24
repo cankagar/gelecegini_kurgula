@@ -1,7 +1,7 @@
 .navbar {
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(8, 8, 8, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
@@ -144,11 +144,11 @@
 .profileBtn {
   font-weight: 600;
   font-size: 0.95rem;
-  color: white;
+  color: var(--color-cta-text);
   background-color: var(--color-cta);
   padding: 0.55rem 1.2rem;
   border-radius: var(--radius-sm);
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+  box-shadow: 0 4px 12px rgba(221, 153, 22, 0.3);
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 

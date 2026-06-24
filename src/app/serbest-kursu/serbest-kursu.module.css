@@ -70,7 +70,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(221, 153, 22, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,7 +123,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-secondary);
-  background-color: rgba(79, 70, 229, 0.08);
+  background-color: rgba(0, 200, 255, 0.1);
   padding: 0.25rem 0.7rem;
   border-radius: 999px;
 }
@@ -231,7 +231,7 @@
 
 .commentSubmitBtn {
   background-color: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border: none;
   padding: 0.65rem 1.2rem;
   border-radius: var(--radius-sm);
@@ -306,7 +306,7 @@
   width: 100%;
   padding: 0.8rem;
   background-color: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -354,18 +354,18 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(221, 153, 22, 0.12);
   color: var(--color-primary);
 }
 
 /* Promotional Card */
 .promoCard {
-  background: linear-gradient(135deg, var(--color-ink) 0%, var(--color-ink-soft) 100%);
+  background: linear-gradient(135deg, var(--color-bronze) 0%, var(--color-ink-soft) 100%);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 1.75rem;
   margin-bottom: 1.75rem;
-  color: #e2e8f0;
+  color: var(--color-text-muted);
 }
 
 .promoTitle {
@@ -374,17 +374,17 @@
   gap: 0.5rem;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text);
   margin-bottom: 0.75rem;
 }
 
 .promoTitle svg {
-  color: #fbbf24;
+  color: var(--color-primary);
 }
 
 .promoText {
   font-size: 0.95rem;
-  color: #cbd5e1;
+  color: var(--color-text-muted);
   margin-bottom: 0.5rem;
 }
 
@@ -402,7 +402,7 @@
   align-items: center;
   gap: 0.6rem;
   font-size: 0.92rem;
-  color: #e2e8f0;
+  color: var(--color-text-muted);
 }
 
 .promoList li svg {
@@ -412,7 +412,7 @@
 
 .promoButton {
   background-color: var(--color-cta);
-  color: #fff;
+  color: var(--color-cta-text);
   border: none;
   padding: 0.7rem 1.2rem;
   border-radius: var(--radius-sm);

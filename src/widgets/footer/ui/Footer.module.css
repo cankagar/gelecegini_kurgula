@@ -1,6 +1,7 @@
 .footer {
   background-color: var(--color-ink);
-  color: #cbd5e1;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
 }
 
 .top {
@@ -28,28 +29,28 @@
   font-family: var(--font-heading);
   font-size: 1.4rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text);
   letter-spacing: -0.02em;
 }
 
 .brandAccent {
-  color: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .tagline {
   margin-top: 0.75rem;
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: var(--color-text-soft);
   max-width: 280px;
   line-height: 1.6;
 }
 
 .colTitle {
-  color: #fff;
-  font-size: 0.85rem;
+  color: var(--color-primary);
+  font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   margin-bottom: 1.1rem;
 }
 
@@ -61,18 +62,18 @@
 
 .links a {
   font-size: 0.95rem;
-  color: #cbd5e1;
+  color: var(--color-text-muted);
   transition: color 0.2s ease;
 }
 
 .links a:hover {
-  color: #fff;
+  color: var(--color-accent);
 }
 
 .bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--color-border);
   padding: 1.5rem;
   text-align: center;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--color-text-soft);
 }

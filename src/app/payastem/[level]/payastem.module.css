@@ -139,14 +139,14 @@
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-primary);
-  background-color: rgba(37, 99, 235, 0.08);
+  background-color: rgba(221, 153, 22, 0.1);
   padding: 0.25rem 0.7rem;
   border-radius: 999px;
 }
 
 .actionBtn {
   background-color: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: var(--radius-sm);
@@ -177,7 +177,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-sm);
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(221, 153, 22, 0.12);
   color: var(--color-primary);
 }
 
@@ -225,7 +225,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(221, 153, 22, 0.12);
   color: var(--color-primary);
 }
 
@@ -292,7 +292,7 @@
   width: 100%;
   padding: 0.8rem;
   background-color: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -385,7 +385,7 @@
   display: inline-block;
   padding: 0.8rem 1.75rem;
   background: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border-radius: var(--radius-sm);
   font-weight: 600;
   transition: background-color 0.2s ease;

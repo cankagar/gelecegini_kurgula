@@ -100,7 +100,7 @@
 .points {
   font-weight: 700;
   color: var(--color-secondary);
-  background-color: rgba(79, 70, 229, 0.08);
+  background-color: rgba(0, 200, 255, 0.1);
   padding: 0.3rem 0.8rem;
   border-radius: 999px;
   font-size: 0.85rem;
@@ -108,7 +108,7 @@
 
 .actionBtn {
   background: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border: none;
   padding: 0.55rem 1.1rem;
   border-radius: var(--radius-sm);

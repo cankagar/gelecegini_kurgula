@@ -7,29 +7,29 @@ const categoriesData: Record<string, { title: string, description: string, Icon:
     title: "Junior STEM",
     description: "Okul öncesi ve ilkokul için eğlenceli bilim etkinlikleri.",
     Icon: DnaIcon,
-    color: "rgba(37, 99, 235, 0.1)",
+    color: "rgba(221, 153, 22, 0.12)",
     iconColor: "var(--color-primary)"
   },
   "robotics": {
     title: "Robotik ve Kodlama",
     description: "Algoritma mantığı ve temel robotik sistemleri.",
     Icon: BotIcon,
-    color: "rgba(79, 70, 229, 0.1)",
-    iconColor: "var(--color-secondary)"
+    color: "rgba(182, 122, 13, 0.18)",
+    iconColor: "var(--color-cta-dark)"
   },
   "space": {
     title: "Uzay ve Astronomi",
     description: "Gezegenler, yıldızlar ve evrenin sırları.",
     Icon: OrbitIcon,
-    color: "rgba(168, 85, 247, 0.1)",
-    iconColor: "#a855f7"
+    color: "rgba(0, 200, 255, 0.1)",
+    iconColor: "var(--color-secondary)"
   },
   "ai": {
     title: "Yapay Zeka",
     description: "Geleceğin teknolojisi yapay zekaya giriş.",
     Icon: BrainIcon,
-    color: "rgba(244, 63, 94, 0.1)",
-    iconColor: "#f43f5e"
+    color: "rgba(0, 200, 255, 0.18)",
+    iconColor: "#33d2ff"
   }
 };
 

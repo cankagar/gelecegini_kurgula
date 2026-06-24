@@ -98,7 +98,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba(221, 153, 22, 0.12);
   color: var(--color-primary);
 }
 
@@ -117,7 +117,7 @@
   display: inline-block;
   padding: 0.75rem 2rem;
   background: var(--color-cta);
-  color: white;
+  color: var(--color-cta-text);
   border-radius: var(--radius-sm);
   font-weight: 600;
   transition: background-color 0.2s ease;
