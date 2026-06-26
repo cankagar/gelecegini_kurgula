@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteChrome } from "@/widgets/site-chrome/SiteChrome";
 import { ClickSpark } from "@/shared/ui/click-spark";
 
-const inter = Inter({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-heading",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-space-grotesk",
+  weight: ["400", "500", "600"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
-  title: "NexSTEM | Geleceğini Kurgula",
+  title: "PayaSTEM | Geleceğini Kurgula",
   description: "Gençler için bilim, teknoloji, mühendislik ve matematik odaklı eğitim ve topluluk platformu.",
 };
 
@@ -26,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body className={`${inter.className} ${spaceGrotesk.variable}`}>
+      <body className={`${dmSans.variable} ${bricolage.variable} font-sans`}>
         <ClickSpark />
         <SiteChrome>{children}</SiteChrome>
       </body>

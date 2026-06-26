@@ -9,7 +9,6 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import "./Dock.css";
 
 type DockSpringOptions = {
   mass?: number;
@@ -56,7 +55,11 @@ function DockItem({
     return val - x - baseItemSize / 2;
   });
 
-  const targetSize = useTransform(mouseDistance, [-distance, 0, distance], [baseItemSize, magnification, baseItemSize]);
+  const targetSize = useTransform(
+    mouseDistance,
+    [-distance, 0, distance],
+    [baseItemSize, magnification, baseItemSize]
+  );
   const size = useSpring(targetSize, spring);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -75,20 +78,25 @@ function DockItem({
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={onClick}
-      className={`dock-item ${className}`}
       tabIndex={0}
       role="button"
-      aria-haspopup="true"
       aria-label={label}
       onKeyDown={handleKeyDown}
+      className={`relative inline-flex items-center justify-center rounded-xl bg-surface border border-border text-text-muted cursor-pointer outline-none hover:bg-text hover:border-text hover:text-white transition-colors duration-200 ${className}`}
     >
-      <DockIcon>{children}</DockIcon>
+      <div className="flex items-center justify-center">{children}</div>
       <DockLabel isHovered={isHovered}>{label}</DockLabel>
     </motion.div>
   );
 }
 
-function DockLabel({ children, isHovered }: { children: ReactNode; isHovered: MotionValue<number> }) {
+function DockLabel({
+  children,
+  isHovered,
+}: {
+  children: ReactNode;
+  isHovered: MotionValue<number>;
+}) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -105,20 +113,16 @@ function DockLabel({ children, isHovered }: { children: ReactNode; isHovered: Mo
           initial={{ opacity: 0, y: 0 }}
           animate={{ opacity: 1, y: -10 }}
           exit={{ opacity: 0, y: 0 }}
-          transition={{ duration: 0.2 }}
-          className="dock-label"
+          transition={{ duration: 0.15 }}
           role="tooltip"
           style={{ x: "-50%" }}
+          className="absolute top-[-1.75rem] left-1/2 whitespace-pre rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-text shadow-sm pointer-events-none"
         >
           {children}
         </motion.div>
       )}
     </AnimatePresence>
   );
-}
-
-function DockIcon({ children }: { children: ReactNode }) {
-  return <div className="dock-icon">{children}</div>;
 }
 
 type DockProps = {
@@ -153,7 +157,10 @@ export default function Dock({
   const height = useSpring(heightRow, spring);
 
   return (
-    <motion.div style={{ height, scrollbarWidth: "none" }} className="dock-outer">
+    <motion.div
+      style={{ height, scrollbarWidth: "none" }}
+      className="fixed inset-x-0 bottom-0 z-50 mx-2 flex max-w-full items-center justify-center pointer-events-none hidden md:flex"
+    >
       <motion.div
         onMouseMove={(e) => {
           isHovered.set(1);
@@ -163,10 +170,10 @@ export default function Dock({
           isHovered.set(0);
           mouseX.set(Infinity);
         }}
-        className={`dock-panel ${className}`}
         style={{ height: panelHeight }}
         role="toolbar"
         aria-label="Hızlı erişim"
+        className={`absolute bottom-3 left-1/2 -translate-x-1/2 flex w-fit items-end gap-2.5 rounded-[1.1rem] border border-border bg-surface px-2 pb-2 shadow-lg pointer-events-auto ${className}`}
       >
         {items.map((item, index) => (
           <DockItem
