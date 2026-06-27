@@ -1,4 +1,4 @@
-import styles from "../dashboard/dashboard.module.css";
+import styles from "./articles.module.css";
 import Link from "next/link";
 import { BookIcon } from "@/shared/ui/icons";
 

@@ -1,4 +1,4 @@
-import styles from "../dashboard/dashboard.module.css";
+import styles from "./community.module.css";
 import Link from "next/link";
 import { RocketIcon } from "@/shared/ui/icons";
 
