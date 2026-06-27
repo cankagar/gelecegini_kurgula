@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   BookIcon,
@@ -9,288 +10,288 @@ import {
   ShoppingBagIcon,
 } from '@/shared/ui/icons';
 
-const FEATURES = [
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 14 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-40px' },
+  transition: { duration: 0.65, ease, delay },
+});
+
+const STATS = [
+  { value: '2.400', label: 'Öğrenci' },
+  { value: '150+', label: 'Öğretmen' },
+  { value: '48', label: 'Modül' },
+];
+
+type Feature = {
+  icon: React.ReactNode;
+  tag: string;
+  tagClass: string;
+  title: string;
+  desc: string;
+  href: string;
+  large: boolean;
+  col: string;
+};
+
+const FEATURES: Feature[] = [
   {
-    icon: <BookIcon />,
+    icon: <BookIcon size={18} />,
     tag: 'Eğitim',
+    tagClass: 'bg-[#E1F3FE] text-[#1F6C9F]',
     title: 'PayaSTEM',
     desc: 'Junior STEM, İlkokul, Ortaokul ve Lise seviyelerine özel öğretmen içerikleri, haftalık görevler ve eğitim kaynakları.',
     href: '/payastem',
-    wide: true,
+    large: true,
+    col: 'md:col-span-7',
   },
   {
-    icon: <RocketIcon />,
+    icon: <RocketIcon size={18} />,
     tag: 'Topluluk',
+    tagClass: 'bg-[#EDF3EC] text-[#346538]',
     title: 'Serbest Kürsü',
     desc: 'Bilimsel tartışmalar, makaleler ve bilgi paylaşımı. Bilim insanlarının buluştuğu platform.',
     href: '/serbest-kursu',
-    wide: false,
+    large: true,
+    col: 'md:col-span-5',
   },
   {
-    icon: <PuzzleIcon />,
+    icon: <PuzzleIcon size={18} />,
     tag: 'Eğlence',
+    tagClass: 'bg-[#FBF3DB] text-[#956400]',
     title: 'Oyun Merkezi',
     desc: 'Bilgi yarışmaları, mini oyunlar ve liderlik tabloları.',
     href: '/oyun-merkezi',
-    wide: false,
+    large: false,
+    col: 'md:col-span-4',
   },
   {
-    icon: <ShoppingBagIcon />,
+    icon: <ShoppingBagIcon size={18} />,
     tag: 'Mağaza',
+    tagClass: 'bg-[#FDEBEC] text-[#9F2F2D]',
     title: 'STEM Mağazası',
     desc: 'Robotik kitler, deney setleri ve 3D baskı ürünleri.',
     href: '/store',
-    wide: false,
+    large: false,
+    col: 'md:col-span-4',
   },
 ];
 
+function ArrowUpRight() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 17L17 7M7 7h10v10" />
+    </svg>
+  );
+}
 
 export default function Home() {
-  useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            const el = e.target as HTMLElement;
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-            io.unobserve(el);
-          }
-        });
-      },
-      { threshold: 0.07 }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-
   return (
     <main className="flex flex-col bg-bg">
 
       {/* ─── HERO ─── */}
-      <section className="min-h-[100dvh] flex flex-col items-center justify-center text-center px-6 py-32 border-b border-border">
+      <section className="relative min-h-[100dvh] flex items-center border-b border-border overflow-hidden">
 
-        {/* Badge */}
-        {/* Heading */}
-        <div
-          data-reveal
-          style={{ opacity: 0, transform: 'translateY(28px)', transition: 'opacity 0.85s cubic-bezier(0.32,0.72,0,1) 0.07s, transform 0.85s cubic-bezier(0.32,0.72,0,1) 0.07s' }}
-          className="mb-6"
-        >
-          <h1 className="text-[clamp(2.8rem,7vw,5.25rem)] font-black leading-[1.08] tracking-[-0.03em] text-text max-w-[820px] mx-auto">
+        {/* Background */}
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <Image
+            src="/background.jpg"
+            alt=""
+            fill
+            priority
+            className="object-cover object-center opacity-[0.07]"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(ellipse 70% 60% at 65% 45%, rgba(215,154,43,0.08) 0%, transparent 65%)',
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 w-full max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16 py-32">
+
+          {/* Eyebrow */}
+          <motion.p
+            {...fadeUp(0)}
+            className="text-[10px] uppercase tracking-[0.3em] font-semibold text-text-muted mb-8"
+          >
+            Türkiye&rsquo;nin STEM Platformu
+          </motion.p>
+
+          {/* Headline */}
+          <motion.h1
+            {...fadeUp(0.07)}
+            className="font-heading text-[clamp(3.4rem,7vw,6.5rem)] font-black leading-[1.02] tracking-[-0.035em] text-text mb-8 max-w-[820px]"
+          >
             Bilimle{' '}
-            <span className="text-primary">Geleceğini</span>{' '}
+            <em
+              className="not-italic text-primary"
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontStyle: 'italic',
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Geleceğini
+            </em>
+            <br />
             Kurgula
-          </h1>
-        </div>
+          </motion.h1>
 
-        {/* Subtitle */}
-        <div
-          data-reveal
-          style={{ opacity: 0, transform: 'translateY(20px)', transition: 'opacity 0.8s cubic-bezier(0.32,0.72,0,1) 0.15s, transform 0.8s cubic-bezier(0.32,0.72,0,1) 0.15s' }}
-          className="mb-10"
-        >
-          <p className="text-lg text-text-muted leading-relaxed max-w-[520px] mx-auto">
-            Öğrenciler, öğretmenler ve bilim tutkunları için Türkiye'nin en kapsamlı STEM eğitim ve topluluk platformu.
-          </p>
-        </div>
-
-        {/* CTAs */}
-        <div
-          data-reveal
-          style={{ opacity: 0, transform: 'translateY(16px)', transition: 'opacity 0.75s cubic-bezier(0.32,0.72,0,1) 0.22s, transform 0.75s cubic-bezier(0.32,0.72,0,1) 0.22s' }}
-          className="flex gap-3 flex-wrap justify-center"
-        >
-          <Link
-            href="/categories"
-            className="group inline-flex items-center gap-3 rounded-full bg-primary hover:bg-primary-hover pl-6 pr-2 py-2 text-sm font-semibold text-white transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
+          <motion.p
+            {...fadeUp(0.13)}
+            className="text-[1.05rem] text-text-muted leading-[1.65] max-w-[460px] mb-12"
           >
-            Hemen Başla
-            <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0 group-hover:translate-x-0.5 group-hover:-translate-y-px transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </Link>
-          <Link
-            href="/categories"
-            className="inline-flex items-center rounded-full border border-border bg-surface text-text-muted px-6 py-3 text-sm font-semibold hover:border-primary-border hover:text-primary transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
-          >
-            Sınıfları Keşfet
-          </Link>
-        </div>
+            Öğrenciler, öğretmenler ve bilim tutkunları için Türkiye&rsquo;nin en kapsamlı STEM eğitim ve topluluk platformu.
+          </motion.p>
 
-        {/* Divider hint */}
-        <div
-          data-reveal
-          style={{ opacity: 0, transform: 'translateY(12px)', transition: 'opacity 0.9s cubic-bezier(0.32,0.72,0,1) 0.45s, transform 0.9s cubic-bezier(0.32,0.72,0,1) 0.45s' }}
-          className="mt-20 flex items-center gap-4"
-        >
-          <div className="h-px w-14 bg-border" />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted font-medium">Keşfet</span>
-          <div className="h-px w-14 bg-border" />
+          {/* CTAs */}
+          <motion.div {...fadeUp(0.18)} className="flex gap-3 flex-wrap mb-20">
+            <Link
+              href="/categories"
+              className="inline-flex items-center gap-2 rounded-[5px] bg-primary hover:bg-primary-hover px-6 py-[11px] text-sm font-semibold text-white transition-colors duration-150 active:scale-[0.98]"
+            >
+              Hemen Başla
+            </Link>
+            <Link
+              href="/categories"
+              className="inline-flex items-center gap-2 rounded-[5px] border border-border bg-surface hover:border-primary-border px-6 py-[11px] text-sm font-semibold text-text transition-colors duration-150 active:scale-[0.98]"
+            >
+              Sınıfları Keşfet
+            </Link>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            {...fadeUp(0.24)}
+            className="flex flex-wrap gap-x-12 gap-y-4 pt-8 border-t border-border"
+          >
+            {STATS.map((s) => (
+              <div key={s.label} className="flex items-baseline gap-2.5">
+                <span className="font-heading text-[1.65rem] font-black tracking-[-0.03em] text-text">
+                  {s.value}
+                </span>
+                <span className="text-xs text-text-muted font-medium">{s.label}</span>
+              </div>
+            ))}
+          </motion.div>
+
         </div>
       </section>
 
       {/* ─── FEATURES ─── */}
       <section className="py-28 bg-bg-alt border-b border-border">
-        <div className="max-w-[1200px] mx-auto px-6">
+        <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
-          {/* Header */}
-          <div
-            data-reveal
-            style={{ opacity: 0, transform: 'translateY(20px)', transition: 'opacity 0.75s cubic-bezier(0.32,0.72,0,1), transform 0.75s cubic-bezier(0.32,0.72,0,1)' }}
-            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10"
+          {/* Section header */}
+          <motion.div
+            {...fadeUp(0)}
+            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12"
           >
             <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-primary mb-3">Platform</p>
-              <h2 className="text-[clamp(1.75rem,3.5vw,2.75rem)] font-bold tracking-[-0.025em] text-text">
+              <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">
+                Platform
+              </p>
+              <h2 className="font-heading text-[clamp(1.7rem,3vw,2.5rem)] font-bold tracking-[-0.025em] text-text">
                 Platformda Seni Bekleyenler
               </h2>
             </div>
-            <p className="text-text-muted text-sm max-w-[260px] text-left sm:text-right leading-relaxed">
+            <p className="text-text-muted text-sm max-w-[230px] sm:text-right leading-[1.65]">
               Öğrenmenin, üretmenin ve paylaşmanın tek adresi.
             </p>
-          </div>
+          </motion.div>
 
           {/* Bento grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
 
-            {/* Wide card — col 7 */}
-            {(() => {
-              const f = FEATURES[0];
-              return (
-                <div
-                  key={f.title}
-                  data-reveal
-                  style={{ opacity: 0, transform: 'translateY(28px)', transition: 'opacity 0.85s cubic-bezier(0.32,0.72,0,1) 0.05s, transform 0.85s cubic-bezier(0.32,0.72,0,1) 0.05s' }}
-                  className="md:col-span-7"
-                >
-                  <div className="p-1.5 rounded-[1.75rem] bg-bg border border-border h-full">
-                    <div className="bg-surface rounded-[calc(1.75rem-6px)] p-8 h-full min-h-[300px] flex flex-col group hover:shadow-md transition-shadow duration-300">
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="w-11 h-11 rounded-xl bg-primary-tint border border-primary-border flex items-center justify-center text-primary shrink-0">
-                          {f.icon}
-                        </div>
-                        <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-text-muted border border-border rounded-full px-2.5 py-1">
-                          {f.tag}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-text mb-3">{f.title}</h3>
-                      <p className="text-text-muted text-sm leading-relaxed flex-1">{f.desc}</p>
-                      <div className="mt-8 pt-5 border-t border-border flex items-center justify-between">
-                        <Link href={f.href} className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors duration-200">
-                          Keşfet →
-                        </Link>
-                        <div className="w-7 h-7 rounded-full border border-border flex items-center justify-center text-text-muted group-hover:border-primary group-hover:text-primary transition-all duration-300">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Narrow card — col 5 */}
-            {(() => {
-              const f = FEATURES[1];
-              return (
-                <div
-                  key={f.title}
-                  data-reveal
-                  style={{ opacity: 0, transform: 'translateY(28px)', transition: 'opacity 0.85s cubic-bezier(0.32,0.72,0,1) 0.1s, transform 0.85s cubic-bezier(0.32,0.72,0,1) 0.1s' }}
-                  className="md:col-span-5"
-                >
-                  <div className="p-1.5 rounded-[1.75rem] bg-bg border border-border h-full">
-                    <div className="bg-surface rounded-[calc(1.75rem-6px)] p-8 h-full min-h-[300px] flex flex-col group hover:shadow-md transition-shadow duration-300">
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="w-11 h-11 rounded-xl bg-primary-tint border border-primary-border flex items-center justify-center text-primary shrink-0">
-                          {f.icon}
-                        </div>
-                        <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-text-muted border border-border rounded-full px-2.5 py-1">
-                          {f.tag}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-text mb-3">{f.title}</h3>
-                      <p className="text-text-muted text-sm leading-relaxed flex-1">{f.desc}</p>
-                      <div className="mt-8 pt-5 border-t border-border flex items-center justify-between">
-                        <Link href={f.href} className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors duration-200">
-                          Keşfet →
-                        </Link>
-                        <div className="w-7 h-7 rounded-full border border-border flex items-center justify-center text-text-muted group-hover:border-primary group-hover:text-primary transition-all duration-300">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Bottom 3 cards */}
-            {FEATURES.slice(2).map((f, i) => (
-              <div
-                key={f.title}
-                data-reveal
-                style={{ opacity: 0, transform: 'translateY(28px)', transition: `opacity 0.85s cubic-bezier(0.32,0.72,0,1) ${0.15 + i * 0.06}s, transform 0.85s cubic-bezier(0.32,0.72,0,1) ${0.15 + i * 0.06}s` }}
-                className="md:col-span-4"
-              >
-                <div className="p-1.5 rounded-[1.75rem] bg-bg border border-border h-full">
-                  <div className="bg-surface rounded-[calc(1.75rem-6px)] p-7 h-full flex flex-col group hover:shadow-md transition-shadow duration-300">
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="w-10 h-10 rounded-xl bg-primary-tint border border-primary-border flex items-center justify-center text-primary shrink-0">
-                        {f.icon}
-                      </div>
-                      <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-text-muted border border-border rounded-full px-2.5 py-1">
-                        {f.tag}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-bold text-text mb-2">{f.title}</h3>
-                    <p className="text-text-muted text-sm leading-relaxed flex-1">{f.desc}</p>
-                  </div>
-                </div>
-              </div>
+            {/* Row 1 — large cards */}
+            {FEATURES.slice(0, 2).map((f, i) => (
+              <motion.div key={f.title} {...fadeUp(0.06 + i * 0.07)} className={f.col}>
+                <FeatureCard f={f} />
+              </motion.div>
             ))}
 
-            {/* Gold CTA card */}
-            <div
-              data-reveal
-              style={{ opacity: 0, transform: 'translateY(28px)', transition: 'opacity 0.85s cubic-bezier(0.32,0.72,0,1) 0.28s, transform 0.85s cubic-bezier(0.32,0.72,0,1) 0.28s' }}
-              className="md:col-span-4"
-            >
-              <div className="p-1.5 rounded-[1.75rem] bg-primary-border h-full">
-                <div className="bg-primary rounded-[calc(1.75rem-6px)] p-7 h-full flex flex-col justify-between min-h-[200px]">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-white/60 mb-3">Başla</p>
-                    <h3 className="text-xl font-bold text-white mb-2">Ücretsiz Katıl</h3>
-                    <p className="text-white/65 text-sm leading-relaxed">Topluluğa hemen katıl, öğrenmeye başla.</p>
-                  </div>
-                  <Link
-                    href="/register"
-                    className="group mt-6 self-start inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 pl-4 pr-1.5 py-1.5 text-white text-xs font-semibold hover:bg-white/25 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
-                  >
-                    Kayıt Ol
-                    <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition-transform duration-200">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                      </svg>
-                    </span>
-                  </Link>
+            {/* Row 2 — small cards */}
+            {FEATURES.slice(2).map((f, i) => (
+              <motion.div key={f.title} {...fadeUp(0.2 + i * 0.07)} className={f.col}>
+                <FeatureCard f={f} />
+              </motion.div>
+            ))}
+
+            {/* Join CTA */}
+            <motion.div {...fadeUp(0.34)} className="md:col-span-4">
+              <div className="bg-primary rounded-[12px] p-8 h-full flex flex-col justify-between min-h-[220px]">
+                <div>
+                  <p className="text-[9px] uppercase tracking-[0.28em] font-semibold text-white/50 mb-5">
+                    Başla
+                  </p>
+                  <h3 className="font-heading text-[1.2rem] font-bold text-white mb-2">
+                    Ücretsiz Katıl
+                  </h3>
+                  <p className="text-white/65 text-sm leading-[1.65]">
+                    Topluluğa hemen katıl, öğrenmeye başla.
+                  </p>
                 </div>
+                <Link
+                  href="/register"
+                  className="mt-8 self-start inline-flex items-center gap-2 rounded-[4px] border border-white/25 bg-white/15 hover:bg-white/25 px-4 py-2 text-white text-xs font-semibold transition-colors duration-150"
+                >
+                  Kayıt Ol
+                  <ArrowUpRight />
+                </Link>
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </div>
       </section>
 
-
     </main>
+  );
+}
+
+function FeatureCard({ f }: { f: Feature }) {
+  return (
+    <div
+      className={`bg-surface border border-border rounded-[12px] ${
+        f.large ? 'p-9 min-h-[280px]' : 'p-7 min-h-[220px]'
+      } h-full flex flex-col transition-shadow duration-200 hover:shadow-[0_2px_16px_rgba(0,0,0,0.05)]`}
+    >
+      {/* Top row */}
+      <div className="flex items-start justify-between">
+        <div className={`w-9 h-9 rounded-[8px] flex items-center justify-center shrink-0 ${f.tagClass}`}>
+          {f.icon}
+        </div>
+        <span className={`text-[9px] uppercase tracking-[0.14em] font-semibold rounded-full px-2.5 py-1 ${f.tagClass}`}>
+          {f.tag}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="mt-6 flex-1">
+        <h3 className={`font-heading ${f.large ? 'text-[1.2rem]' : 'text-[1.05rem]'} font-bold text-text mb-2`}>
+          {f.title}
+        </h3>
+        <p className="text-text-muted text-sm leading-[1.65]">{f.desc}</p>
+      </div>
+
+      {/* Footer — large cards only */}
+      {f.large && (
+        <div className="mt-8 pt-5 border-t border-border">
+          <Link
+            href={f.href}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-text hover:text-primary transition-colors duration-150"
+          >
+            Keşfet
+            <ArrowUpRight />
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }

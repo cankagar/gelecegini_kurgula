@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import { SiteChrome } from "@/widgets/site-chrome/SiteChrome";
 import { ClickSpark } from "@/shared/ui/click-spark";
 
-const bricolage = Bricolage_Grotesque({
+const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700", "800", "900"],
   variable: "--font-heading",
 });
 
-const dmSans = DM_Sans({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["italic"],
+  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body className={`${dmSans.variable} ${bricolage.variable} font-sans`}>
+      <body className={`${jakarta.variable} ${outfit.variable} ${newsreader.variable} font-sans`}>
         <ClickSpark />
         <SiteChrome>{children}</SiteChrome>
       </body>
