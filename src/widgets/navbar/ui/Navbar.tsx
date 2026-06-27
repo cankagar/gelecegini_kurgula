@@ -2,37 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
-import { ChevronDownIcon } from "@/shared/ui/icons";
-
-const PAYASTEM_LINKS = [
-  { href: "/payastem/junior-stem", label: "Junior STEM" },
-  { href: "/payastem/ilkokul-stem", label: "İlkokul STEM" },
-  { href: "/payastem/ortaokul-stem", label: "Ortaokul STEM" },
-  { href: "/payastem/lise-stem", label: "Lise STEM" },
-  { href: "/payastem/nedir", label: "PayaSTEM Nedir?" },
-];
+import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
   { href: "/serbest-kursu", label: "Serbest Kürsü" },
   { href: "/oyun-merkezi", label: "Oyun Merkezi" },
-  { href: "/admin/basvurular", label: "Yönetim" },
 ];
 
 export default function Navbar() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     function handleResize() {
@@ -56,37 +34,6 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-0 flex-1">
-          <li className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1 px-3.5 py-2 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] transition-colors duration-150 cursor-pointer"
-            >
-              PayaSTEM
-              <ChevronDownIcon
-                size={13}
-                className={`text-[#787774] transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {isDropdownOpen && (
-              <div
-                className="absolute top-full left-0 mt-2 w-48 bg-white border border-[#EAEAEA] rounded-lg p-1 z-50"
-                style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}
-              >
-                {PAYASTEM_LINKS.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsDropdownOpen(false)}
-                    className="block px-3 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] rounded-md transition-all duration-100"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </li>
-
           {NAV_LINKS.map((item) => (
             <li key={item.href}>
               <Link
@@ -137,33 +84,6 @@ export default function Navbar() {
       {isMobileOpen && (
         <div className="md:hidden border-t border-[#EAEAEA] bg-[#FBFBFA] px-4 pb-5 pt-2">
           <ul className="flex flex-col">
-            <li>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="w-full flex items-center justify-between px-3 py-2.5 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] transition-colors"
-              >
-                PayaSTEM
-                <ChevronDownIcon
-                  size={13}
-                  className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-              {isDropdownOpen && (
-                <div className="mt-0.5 ml-3 pl-3 border-l border-[#EAEAEA] flex flex-col">
-                  {PAYASTEM_LINKS.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => { setIsDropdownOpen(false); setIsMobileOpen(false); }}
-                      className="block px-2 py-2 text-[0.8rem] text-[#787774] hover:text-[#111111] transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </li>
-
             {NAV_LINKS.map((item) => (
               <li key={item.href}>
                 <Link

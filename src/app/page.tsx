@@ -4,10 +4,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  BookIcon,
   RocketIcon,
   PuzzleIcon,
-  ShoppingBagIcon,
 } from '@/shared/ui/icons';
 import { useCountUpColor } from '@/widgets/stat-counter/useCountUpColor';
 
@@ -57,44 +55,24 @@ type Feature = {
 
 const FEATURES: Feature[] = [
   {
-    icon: <BookIcon size={18} />,
-    tag: 'Eğitim',
-    tagClass: 'bg-[#E1F3FE] text-[#1F6C9F]',
-    title: 'PayaSTEM',
-    desc: 'Junior STEM, İlkokul, Ortaokul ve Lise seviyelerine özel öğretmen içerikleri, haftalık görevler ve eğitim kaynakları.',
-    href: '/payastem',
-    large: true,
-    col: 'md:col-span-7',
-  },
-  {
     icon: <RocketIcon size={18} />,
     tag: 'Topluluk',
-    tagClass: 'bg-[#EDF3EC] text-[#346538]',
+    tagClass: 'bg-[#E8F3ED] text-[#4F8A6D]',
     title: 'Serbest Kürsü',
     desc: 'Bilimsel tartışmalar, makaleler ve bilgi paylaşımı. Bilim insanlarının buluştuğu platform.',
     href: '/serbest-kursu',
     large: true,
-    col: 'md:col-span-5',
+    col: 'md:col-span-8',
   },
   {
     icon: <PuzzleIcon size={18} />,
     tag: 'Eğlence',
-    tagClass: 'bg-[#FBF3DB] text-[#956400]',
+    tagClass: 'bg-[#FBF3E0] text-[#A67A10]',
     title: 'Oyun Merkezi',
     desc: 'Bilgi yarışmaları, mini oyunlar ve liderlik tabloları.',
     href: '/oyun-merkezi',
     large: false,
-    col: 'md:col-span-4',
-  },
-  {
-    icon: <ShoppingBagIcon size={18} />,
-    tag: 'Mağaza',
-    tagClass: 'bg-[#FDEBEC] text-[#9F2F2D]',
-    title: 'STEM Mağazası',
-    desc: 'Robotik kitler, deney setleri ve 3D baskı ürünleri.',
-    href: '/store',
-    large: false,
-    col: 'md:col-span-4',
+    col: 'md:col-span-8',
   },
 ];
 
@@ -126,7 +104,7 @@ export default function Home() {
             className="absolute inset-0"
             style={{
               background:
-                'radial-gradient(ellipse 70% 60% at 65% 45%, rgba(215,154,43,0.08) 0%, transparent 65%)',
+                'radial-gradient(ellipse 70% 60% at 65% 45%, rgba(81,107,140,0.07) 0%, transparent 65%)',
             }}
           />
         </div>
@@ -172,13 +150,13 @@ export default function Home() {
           {/* CTAs */}
           <motion.div {...fadeUp(0.18)} className="flex gap-3 flex-wrap mb-20">
             <Link
-              href="/categories"
+              href="/serbest-kursu"
               className="inline-flex items-center gap-2 rounded-[5px] bg-primary hover:bg-primary-hover px-6 py-[11px] text-sm font-semibold text-white transition-colors duration-150 active:scale-[0.98]"
             >
               Hemen Başla
             </Link>
             <Link
-              href="/categories"
+              href="/serbest-kursu"
               className="inline-flex items-center gap-2 rounded-[5px] border border-border bg-surface hover:border-primary-border px-6 py-[11px] text-sm font-semibold text-text transition-colors duration-150 active:scale-[0.98]"
             >
               Sınıfları Keşfet
@@ -223,16 +201,8 @@ export default function Home() {
           {/* Bento grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
 
-            {/* Row 1 — large cards */}
-            {FEATURES.slice(0, 2).map((f, i) => (
+            {FEATURES.map((f, i) => (
               <motion.div key={f.title} {...fadeUp(0.06 + i * 0.07)} className={f.col}>
-                <FeatureCard f={f} />
-              </motion.div>
-            ))}
-
-            {/* Row 2 — small cards */}
-            {FEATURES.slice(2).map((f, i) => (
-              <motion.div key={f.title} {...fadeUp(0.2 + i * 0.07)} className={f.col}>
                 <FeatureCard f={f} />
               </motion.div>
             ))}

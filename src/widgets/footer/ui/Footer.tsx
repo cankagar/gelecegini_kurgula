@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-text border-t border-text/20 text-text-muted">
-      <div className="max-w-[1200px] mx-auto px-6 py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10">
+      <div className="max-w-[1200px] mx-auto px-6 py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr] gap-10">
 
         <div>
           <span className="text-xl font-bold tracking-tight text-white">
@@ -18,26 +18,8 @@ export default function Footer() {
           <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-4">Platform</p>
           <nav className="flex flex-col gap-2.5">
             {[
-              { href: "/payastem/nedir", label: "PayaSTEM Nedir?" },
-              { href: "/serbest-kursu",  label: "Serbest Kürsü"  },
-              { href: "/oyun-merkezi",   label: "Oyun Merkezi"   },
-              { href: "/store",          label: "STEM Mağazası"  },
-            ].map((l) => (
-              <Link key={l.href} href={l.href} className="text-sm text-white/50 hover:text-primary transition-colors duration-200">
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-4">Topluluk</p>
-          <nav className="flex flex-col gap-2.5">
-            {[
-              { href: "/categories",              label: "Sınıfları Keşfet"        },
-              { href: "/community",               label: "Bilim Topluluğu"         },
-              { href: "/articles",                label: "Makaleler"               },
-              { href: "/icerik-uretici-basvuru",  label: "İçerik Üretici Başvurusu"},
+              { href: "/serbest-kursu", label: "Serbest Kürsü" },
+              { href: "/oyun-merkezi",  label: "Oyun Merkezi"  },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="text-sm text-white/50 hover:text-primary transition-colors duration-200">
                 {l.label}
