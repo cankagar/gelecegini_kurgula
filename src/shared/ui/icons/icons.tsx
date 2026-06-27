@@ -11,6 +11,22 @@ const base = {
   strokeLinejoin: "round" as const,
 };
 
+export function VerifiedBadgeIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M12 2.5 14.4 4l2.8-.6 1 2.7 2.7 1-.6 2.8 1.5 2.4-1.5 2.4.6 2.8-2.7 1-1 2.7-2.8-.6L12 21.5l-2.4-1.5-2.8.6-1-2.7-2.7-1 .6-2.8L2.2 12l1.5-2.4-.6-2.8 2.7-1 1-2.7 2.8.6L12 2.5Z" />
+      <path
+        d="M8.5 12.3 10.9 14.7 15.5 9.3"
+        stroke="var(--color-bg)"
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
 export function HomeIcon({ className, size = 24 }: IconProps) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
