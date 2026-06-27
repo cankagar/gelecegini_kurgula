@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDownIcon } from "@/shared/ui/icons";
 
@@ -32,10 +33,8 @@ export default function Navbar() {
       <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="text-xl font-bold tracking-tight text-text">
-            Paya<span className="text-primary">STEM</span>
-          </span>
+        <Link href="/" className="flex items-center shrink-0">
+          <Image src="/logo-stem.png" alt="PayaSTEM" width={120} height={48} className="h-12 w-auto" />
         </Link>
 
         {/* Desktop nav */}

@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { PsCloseIcon } from "./icons";
 
 const LINKS = [
@@ -40,11 +41,8 @@ export function Nav() {
               : "border-white/5 bg-ps-bg/30"
           }`}
         >
-          <a href="#hero" className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.18em] text-ps-text">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-ps-gold/40 text-[10px] font-bold text-ps-gold">
-              PS
-            </span>
-            PayaSTEM
+          <a href="#hero" className="flex items-center shrink-0">
+            <Image src="/logo-stem.png" alt="PayaSTEM" width={100} height={40} className="h-10 w-auto" />
           </a>
 
           <ul className="hidden items-center gap-6 text-[12.5px] font-medium text-ps-text-soft lg:flex">
