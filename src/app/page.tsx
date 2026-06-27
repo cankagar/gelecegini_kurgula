@@ -9,6 +9,7 @@ import {
   PuzzleIcon,
   ShoppingBagIcon,
 } from '@/shared/ui/icons';
+import { useCountUpColor } from '@/widgets/stat-counter/useCountUpColor';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -20,10 +21,28 @@ const fadeUp = (delay = 0) => ({
 });
 
 const STATS = [
-  { value: '2.400', label: 'Öğrenci' },
-  { value: '150+', label: 'Öğretmen' },
-  { value: '48', label: 'Modül' },
+  { value: 2400, suffix: '', label: 'Öğrenci' },
+  { value: 150, suffix: '+', label: 'Öğretmen' },
+  { value: 48, suffix: '', label: 'Modül' },
 ];
+
+function HeroStat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+  const { ref, display, color, transition } = useCountUpColor<HTMLSpanElement>(value);
+
+  return (
+    <div className="flex items-baseline gap-2.5">
+      <span
+        ref={ref}
+        className="font-heading text-[1.65rem] font-black tracking-[-0.03em]"
+        style={{ color, transition }}
+      >
+        {display}
+        {suffix}
+      </span>
+      <span className="text-xs text-text-muted font-medium">{label}</span>
+    </div>
+  );
+}
 
 type Feature = {
   icon: React.ReactNode;
@@ -172,12 +191,7 @@ export default function Home() {
             className="flex flex-wrap gap-x-12 gap-y-4 pt-8 border-t border-border"
           >
             {STATS.map((s) => (
-              <div key={s.label} className="flex items-baseline gap-2.5">
-                <span className="font-heading text-[1.65rem] font-black tracking-[-0.03em] text-text">
-                  {s.value}
-                </span>
-                <span className="text-xs text-text-muted font-medium">{s.label}</span>
-              </div>
+              <HeroStat key={s.label} value={s.value} suffix={s.suffix} label={s.label} />
             ))}
           </motion.div>
 
