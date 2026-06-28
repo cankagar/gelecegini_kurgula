@@ -42,19 +42,6 @@ function ArrowIcon({ size = 11 }: { size?: number }) {
   );
 }
 
-// ── Stat ticker (hero bottom bar) ─────────────────────────────────────────────
-function StatTicker({ value, suffix, label }: { value: number; suffix: string; label: string }) {
-  const { ref, display, color, transition } = useCountUpColor<HTMLSpanElement>(value);
-  return (
-    <div className="flex items-baseline gap-2">
-      <span ref={ref} className="font-heading text-[1.55rem] font-black tracking-[-0.04em]" style={{ color, transition }}>
-        {display}{suffix}
-      </span>
-      <span className="text-xs text-text-muted font-medium">{label}</span>
-    </div>
-  );
-}
-
 // ── Floating stat card (hero right column) ────────────────────────────────────
 function StatCard({ value, suffix, label, sub, delay }: {
   value: number; suffix: string; label: string; sub: string; delay: number;
@@ -265,16 +252,6 @@ export default function Home() {
                 <p className="text-[12px] text-text-muted leading-tight">
                   <span className="font-semibold text-text">2.400+</span> öğrenci zaten platformda
                 </p>
-              </motion.div>
-
-              {/* Stats ticker */}
-              <motion.div
-                {...fadeUp(0.32)}
-                className="flex flex-wrap gap-x-10 gap-y-3 pt-7 border-t border-border"
-              >
-                {STATS.map((s) => (
-                  <StatTicker key={s.label} value={s.value} suffix={s.suffix} label={s.label} />
-                ))}
               </motion.div>
             </div>
 

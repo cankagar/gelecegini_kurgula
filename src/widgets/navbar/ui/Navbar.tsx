@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 const NAV_LINKS = [
   { href: "/serbest-kursu", label: "Serbest Kürsü" },
   { href: "/oyun-merkezi", label: "Oyun Merkezi" },
+  { href: "/payastem/nedir", label: "PayaSTEM" },
 ];
 
 export default function Navbar() {
