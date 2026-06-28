@@ -1,27 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg:             #F5F8FC;
-  --color-bg-alt:         #EDF3F9;
-  --color-surface:        #FFFFFF;
+  /* Base */
 
-  --color-border:         #D8E1EB;
+  --color-bg:             #FCFCF9;
+  --color-bg-alt:         #F7F7F2;
+  --color-surface:        #F0EFE9;
 
-  --color-text:           #263238;
-  --color-text-muted:     #667788;
+  --color-border:         #E4E3DC;
 
-  --color-primary:        #D79A2B;
-  --color-primary-hover:  #BF841B;
-  --color-primary-tint:   #FDF4DC;
-  --color-primary-border: #E8C472;
+  /* Typography */
+
+  --color-text:           #1F1F1B;
+  --color-text-muted:     #69665F;
+
+  /* Primary */
+
+  --color-primary:        #CFA24D;
+  --color-primary-hover:  #B88C39;
+  --color-primary-tint:   #FAF3E4;
+  --color-primary-border: #E3C68B;
+
+  /* CTA */
 
   --color-cta-text:       #FFFFFF;
-  --color-accent:         #D6A64A;
 
-  --color-success:        #5F8A6B;
-  --color-success-bg:     #EAF2ED;
-  --color-danger:         #b94040;
-  --color-danger-bg:      #faeaea;
-  --color-warning:        #D6A64A;
-  --color-warning-bg:     #FBF3E2;
+  /* Accent */
+
+  --color-accent:         #B87342;
+
+  /* Status */
+
+  --color-success:        #6A866D;
+  --color-success-bg:     #EEF4EF;
+
+  --color-danger:         #B64F4F;
+  --color-danger-bg:      #F8ECEB;
+
+  --color-warning:        #CFA24D;
+  --color-warning-bg:     #FAF3E4;
 }
