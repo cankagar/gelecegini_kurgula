@@ -21,7 +21,7 @@ export function useCountUpColor<T extends HTMLElement = HTMLElement>(value: numb
   const spring = useSpring(motionVal, { duration: 1800, bounce: 0 });
   const [display, setDisplay] = useState("0");
   const [color, setColor] = useState(lerpColor(0));
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(false); 
 
   useEffect(() => {
     if (inView) motionVal.set(value);
