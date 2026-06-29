@@ -376,3 +376,42 @@ export function ArrowRightIcon({ className, size = 24 }: IconProps) {
     </svg>
   );
 }
+
+export function FlaskIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="M9 2h6" />
+      <path d="M10 2v7L4.7 18.4A2 2 0 0 0 6.5 21.5h11a2 2 0 0 0 1.8-3.1L14 9V2" />
+      <path d="M7.5 15h9" />
+    </svg>
+  );
+}
+
+export function CpuIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+      <rect x="10" y="10" width="4" height="4" />
+      <path d="M9 1v3M12 1v3M15 1v3M9 20v3M12 20v3M15 20v3M1 9h3M1 12h3M1 15h3M20 9h3M20 12h3M20 15h3" />
+    </svg>
+  );
+}
+
+export function CompassIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="m15.5 8.5-2.3 5.3-5.2 2.2 2.3-5.3 5.2-2.2Z" />
+    </svg>
+  );
+}
+
+export function CalculatorIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M8 6.5h8" />
+      <path d="M8 11h1.5M8 15h1.5M8 19h1.5M12.25 11h1.5M12.25 15h1.5M12.25 19h1.5M16.5 11v8" />
+    </svg>
+  );
+}

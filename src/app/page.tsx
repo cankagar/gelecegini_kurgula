@@ -1,9 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { RocketIcon, PuzzleIcon } from '@/shared/ui/icons';
+import { RocketIcon, PuzzleIcon, FlaskIcon, CpuIcon, CompassIcon, CalculatorIcon } from '@/shared/ui/icons';
 import { useCountUpColor } from '@/widgets/stat-counter/useCountUpColor';
 
 const SPRING = [0.16, 1, 0.3, 1] as const;
@@ -14,6 +15,112 @@ const fadeUp = (delay = 0) => ({
   viewport: { once: true, margin: '-30px' },
   transition: { duration: 0.85, ease: SPRING, delay },
 });
+
+function useCountUp(value: number) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { duration: 1800, bounce: 0 });
+  const [display, setDisplay] = useState('0');
+
+  useEffect(() => {
+    if (inView) motionVal.set(value);
+  }, [inView, motionVal, value]);
+
+  useEffect(() => {
+    const unsubscribe = spring.on('change', (v) => setDisplay(Math.round(v).toLocaleString('tr-TR')));
+    return unsubscribe;
+  }, [spring, value]);
+
+  return { ref, display };
+}
+
+const BIG_STATS = [
+  { value: 10000, suffix: '+', label: 'Öğrenci',      color: '#6A866D' },
+  { value: 500,   suffix: '+', label: 'Eğitmen',      color: '#B87342' },
+  { value: 50,    suffix: '+', label: 'Aktif Eğitim', color: '#CFA24D' },
+  { value: 20,    suffix: '+', label: 'Partner Okul', color: '#5B7C99' },
+];
+
+const DISCIPLINES = [
+  {
+    icon: FlaskIcon,
+    color: '#6A866D',
+    tagTr: 'BİLİM',
+    title: 'Science',
+    desc: 'Fiziksel dünyanın sırlarını çözün. Kuantum mekaniğinden biyoteknolojiye uzanan geniş bir yelpaze.',
+  },
+  {
+    icon: CpuIcon,
+    color: '#B87342',
+    tagTr: 'TEKNOLOJİ',
+    title: 'Technology',
+    desc: 'Yazılım, yapay zeka ve sistem entegrasyonu ile fikirleri gerçeğe dönüştüren dijital araçlar.',
+  },
+  {
+    icon: CompassIcon,
+    color: '#CFA24D',
+    tagTr: 'MÜHENDİSLİK',
+    title: 'Engineering',
+    desc: 'Sistemli tasarım, prototipleme ve optimizasyon. Çözüm odaklı mimari yapılar inşa etme süreci.',
+  },
+  {
+    icon: CalculatorIcon,
+    color: '#5B7C99',
+    tagTr: 'MATEMATİK',
+    title: 'Mathematics',
+    desc: 'Evrenin dili. Algoritmalar, veri analizi ve modellerin temelindeki mantıksal çerçeve.',
+  },
+];
+
+function BigStatCard({ value, suffix, label, color, delay }: {
+  value: number; suffix: string; label: string; color: string; delay: number;
+}) {
+  const { ref, display } = useCountUp(value);
+  return (
+    <motion.div
+      {...fadeUp(delay)}
+      className="rounded-2xl border-2 px-4 py-8 text-center overflow-hidden"
+      style={{ borderColor: color, background: `${color}0D` }}
+    >
+      <span
+        ref={ref}
+        className="block font-heading font-black tracking-[-0.03em] tabular-nums leading-none"
+        style={{ color, fontSize: 'clamp(1.35rem, 4.2vw, 2.1rem)' }}
+      >
+        {display}{suffix}
+      </span>
+      <span className="block mt-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color }}>
+        {label}
+      </span>
+    </motion.div>
+  );
+}
+
+function DisciplineColumn({ d, delay }: {
+  d: { icon: React.ComponentType<{ size?: number; className?: string }>; color: string; tagTr: string; title: string; desc: string };
+  delay: number;
+}) {
+  const Icon = d.icon;
+  return (
+    <motion.div {...fadeUp(delay)} className="relative">
+      <div
+        className="absolute -top-6 -right-4 w-32 h-32 rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, ${d.color}33, transparent 70%)`, filter: 'blur(8px)' }}
+      />
+      <div className="relative z-10">
+        <div className="w-11 h-11 rounded-[12px] bg-text flex items-center justify-center mb-5" style={{ color: d.color }}>
+          <Icon size={20} />
+        </div>
+        <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: d.color }}>
+          {d.tagTr}
+        </span>
+        <h3 className="font-heading text-[1.5rem] font-bold text-text tracking-[-0.02em] mb-3">{d.title}</h3>
+        <p className="text-sm text-text-muted leading-[1.7]">{d.desc}</p>
+      </div>
+    </motion.div>
+  );
+}
 
 const STATS = [
   { value: 2400, suffix: '',  label: 'Öğrenci',  sub: 'aktif kullanıcı'  },
@@ -278,6 +385,37 @@ export default function Home() {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ STEM STATS & DİSİPLİNLER ═══════════════ */}
+      <section className="py-28 bg-bg border-b border-border">
+        <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
+
+          {/* Stat row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-28">
+            {BIG_STATS.map((s, i) => (
+              <BigStatCard key={s.label} {...s} delay={i * 0.08} />
+            ))}
+          </div>
+
+          {/* Heading */}
+          <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-16">
+            <h2 className="font-heading text-[clamp(2rem,4vw,2.8rem)] font-bold tracking-[-0.03em] text-text mb-4">
+              STEM Disiplinleri
+            </h2>
+            <p className="text-text-muted text-[0.95rem] leading-[1.7]">
+              Temel yapı taşlarını keşfedin. Her disiplin, yenilikçi çözümler üretmek için birbiriyle entegre çalışır.
+            </p>
+          </motion.div>
+
+          {/* Disciplines grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14">
+            {DISCIPLINES.map((d, i) => (
+              <DisciplineColumn key={d.title} d={d} delay={0.1 + i * 0.08} />
+            ))}
+          </div>
+
         </div>
       </section>
 
