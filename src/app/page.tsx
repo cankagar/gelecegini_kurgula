@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useMotionValue, useSpring } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -186,6 +186,7 @@ const DISCIPLINES = [
     tagTr: 'BİLİM',
     title: 'Science',
     desc: 'Fiziksel dünyanın sırlarını çözün. Kuantum mekaniğinden biyoteknolojiye uzanan geniş bir yelpaze.',
+    photos: ['/payastem/photos/bilim-1.jpg', '/payastem/photos/bilim-2.jpg', '/payastem/photos/bilim-3.jpg'],
   },
   {
     icon: CpuIcon,
@@ -194,6 +195,7 @@ const DISCIPLINES = [
     tagTr: 'TEKNOLOJİ',
     title: 'Technology',
     desc: 'Yazılım, yapay zeka ve sistem entegrasyonu ile fikirleri gerçeğe dönüştüren dijital araçlar.',
+    photos: ['/payastem/photos/teknoloji-1.jpg', '/payastem/photos/teknoloji-2.jpg', '/payastem/photos/teknoloji-3.jpg'],
   },
   {
     icon: CompassIcon,
@@ -202,6 +204,7 @@ const DISCIPLINES = [
     tagTr: 'MÜHENDİSLİK',
     title: 'Engineering',
     desc: 'Sistemli tasarım, prototipleme ve optimizasyon. Çözüm odaklı mimari yapılar inşa etme süreci.',
+    photos: ['/payastem/photos/muhendislik-1.jpg', '/payastem/photos/muhendislik-2.jpg', '/payastem/photos/muhendislik-3.jpg'],
   },
   {
     icon: CalculatorIcon,
@@ -210,6 +213,7 @@ const DISCIPLINES = [
     tagTr: 'MATEMATİK',
     title: 'Mathematics',
     desc: 'Evrenin dili. Algoritmalar, veri analizi ve modellerin temelindeki mantıksal çerçeve.',
+    photos: ['/payastem/photos/matematik-1.jpg', '/payastem/photos/matematik-2.jpg', '/payastem/photos/matematik-3.jpg'],
   },
 ];
 
@@ -237,11 +241,64 @@ function BigStatCard({ value, suffix, label, color, delay }: {
   );
 }
 
+function PhotoSlider({ images, color, delay }: { images: string[]; color: string; delay: number }) {
+  const [index, setIndex] = useState(0);
+  const [errored, setErrored] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex((i) => (i + 1) % images.length), 3800);
+    return () => clearInterval(id);
+  }, [images.length]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 24 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.7, ease: SPRING, delay }}
+      className="relative z-10 w-[170px] sm:w-[220px] lg:w-[250px] aspect-[16/10] rounded-xl overflow-hidden border border-border bg-bg shadow-sm shrink-0 mx-auto sm:mx-0 sm:ml-auto"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, x: 36 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -36 }}
+          transition={{ duration: 0.6, ease: SPRING }}
+          className="absolute inset-0"
+        >
+          {!errored[index] ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={images[index]}
+              alt=""
+              className="w-full h-full object-cover"
+              onError={() => setErrored((e) => ({ ...e, [index]: true }))}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-1.5" style={{ background: `${color}0D` }}>
+              <span className="text-[10px] uppercase tracking-[0.14em] font-semibold" style={{ color }}>
+                Görsel {index + 1}/{images.length}
+              </span>
+              <span className="text-[9px] text-text-muted">Fotoğraf eklenecek</span>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        {images.map((_, i) => (
+          <span key={i} className="w-1.5 h-1.5 rounded-full transition-colors" style={{ background: i === index ? color : `${color}33` }} />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 function DisciplineRow({ d, delay }: {
   d: {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     ghost: React.ComponentType;
-    color: string; tagTr: string; title: string; desc: string;
+    color: string; tagTr: string; title: string; desc: string; photos: string[];
   };
   delay: number;
 }) {
@@ -260,15 +317,18 @@ function DisciplineRow({ d, delay }: {
       >
         <Ghost />
       </div>
-      <div className="relative z-10 p-8 sm:p-10 max-w-[440px]">
-        <div className="w-12 h-12 rounded-full flex items-center justify-center mb-5" style={{ background: `${d.color}14`, color: d.color }}>
-          <Icon size={20} />
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-6 p-8 sm:p-10">
+        <div className="flex-1 max-w-[440px]">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center mb-5" style={{ background: `${d.color}14`, color: d.color }}>
+            <Icon size={20} />
+          </div>
+          <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-1.5" style={{ color: d.color }}>
+            {d.tagTr}
+          </span>
+          <h3 className="font-heading text-[1.6rem] font-bold text-text tracking-[-0.02em] mb-2.5">{d.title}</h3>
+          <p className="text-sm text-text-muted leading-[1.7]">{d.desc}</p>
         </div>
-        <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-1.5" style={{ color: d.color }}>
-          {d.tagTr}
-        </span>
-        <h3 className="font-heading text-[1.6rem] font-bold text-text tracking-[-0.02em] mb-2.5">{d.title}</h3>
-        <p className="text-sm text-text-muted leading-[1.7]">{d.desc}</p>
+        <PhotoSlider images={d.photos} color={d.color} delay={delay + 0.1} />
       </div>
     </motion.div>
   );
