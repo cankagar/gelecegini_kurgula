@@ -172,10 +172,10 @@ function MathGhost() {
 }
 
 const BIG_STATS = [
-  { value: 10000, suffix: '+', label: 'Öğrenci',      color: '#6A866D' },
-  { value: 500,   suffix: '+', label: 'Eğitmen',      color: '#B87342' },
-  { value: 50,    suffix: '+', label: 'Aktif Eğitim', color: '#CFA24D' },
-  { value: 20,    suffix: '+', label: 'Partner Okul', color: '#5B7C99' },
+  { value: 10000, suffix: '+', label: 'Yetiştirilen Öğrenci', sub: 'Kuruluşumuzdan mezun',       color: '#6A866D' },
+  { value: 500,   suffix: '+', label: 'Proje',                sub: 'Tamamlanan STEM çalışması',  color: '#B87342' },
+  { value: 50,    suffix: '+', label: 'Yarışma Başarısı',     sub: 'Ulusal & Uluslararası',      color: '#CFA24D' },
+  { value: 20,    suffix: '+', label: 'Kurumsal Partner',     sub: 'Okul ve iş birlikleri',       color: '#5B7C99' },
 ];
 
 const DISCIPLINES = [
@@ -213,8 +213,8 @@ const DISCIPLINES = [
   },
 ];
 
-function BigStatCard({ value, suffix, label, color, delay }: {
-  value: number; suffix: string; label: string; color: string; delay: number;
+function BigStatCard({ value, suffix, label, sub, color, delay }: {
+  value: number; suffix: string; label: string; sub: string; color: string; delay: number;
 }) {
   const { ref, display } = useCountUp(value);
   return (
@@ -232,6 +232,9 @@ function BigStatCard({ value, suffix, label, color, delay }: {
       </span>
       <span className="block mt-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color }}>
         {label}
+      </span>
+      <span className="block mt-1 text-[10px] sm:text-[11px] text-text-muted">
+        {sub}
       </span>
     </motion.div>
   );
@@ -275,9 +278,9 @@ function DisciplineRow({ d, delay }: {
 }
 
 const STATS = [
-  { value: 2400, suffix: '',  label: 'Öğrenci',  sub: 'aktif kullanıcı'  },
-  { value: 150,  suffix: '+', label: 'Öğretmen', sub: 'içerik üreticisi' },
-  { value: 48,   suffix: '',  label: 'Modül',    sub: 'eğitim içeriği'   },
+  { value: 2400, suffix: '',  label: 'Aktif Öğrenci',   sub: 'Platformda çevrim içi' },
+  { value: 150,  suffix: '+', label: 'İçerik Üreticisi', sub: 'Eğitim geliştiren'      },
+  { value: 48,   suffix: '',  label: 'Yayındaki Modül', sub: 'Aktif eğitim içeriği'    },
 ];
 
 const FEATURE_TAGS = [
@@ -315,7 +318,7 @@ function StatCard({ value, suffix, label, sub, delay }: {
             {display}{suffix}
           </span>
           <div className="min-w-0">
-            <p className="text-[0.8rem] font-semibold text-text leading-tight">{label}</p>
+            <p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-text leading-tight">{label}</p>
             <p className="text-[0.7rem] text-text-muted mt-0.5">{sub}</p>
           </div>
         </div>
