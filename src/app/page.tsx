@@ -35,6 +35,142 @@ function useCountUp(value: number) {
   return { ref, display };
 }
 
+function ScienceGhost() {
+  return (
+    <svg viewBox="0 0 800 280" fill="none" className="h-[150%] w-auto" preserveAspectRatio="xMaxYMid meet">
+      {/* atom */}
+      <g transform="translate(130,150)" stroke="currentColor" strokeWidth="3">
+        <ellipse cx="0" cy="0" rx="88" ry="32" transform="rotate(18)" />
+        <ellipse cx="0" cy="0" rx="88" ry="32" transform="rotate(-18)" />
+        <ellipse cx="0" cy="0" rx="32" ry="88" />
+        <circle cx="0" cy="0" r="12" fill="currentColor" stroke="none" />
+      </g>
+      {/* H2O molecule */}
+      <g transform="translate(330,90)" stroke="currentColor" strokeWidth="3">
+        <circle cx="0" cy="0" r="20" />
+        <circle cx="-40" cy="32" r="13" />
+        <circle cx="40" cy="32" r="13" />
+        <line x1="0" y1="0" x2="-40" y2="32" />
+        <line x1="0" y1="0" x2="40" y2="32" />
+      </g>
+      <text x="288" y="190" fontSize="38" fontFamily="ui-monospace, monospace" fontWeight="700" fill="currentColor">H₂O</text>
+      {/* microscope */}
+      <g transform="translate(470,30) scale(2.1)" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 86h26l-3-8H19l-3 8Z" />
+        <path d="M29 78V46" />
+        <path d="M29 46c0-8 6-14 14-14" />
+        <circle cx="43" cy="20" r="6" />
+        <path d="M18 56h16" />
+      </g>
+      {/* DNA */}
+      <g transform="translate(660,30)" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none">
+        <path d="M0,0 Q26,20 0,40 Q-26,60 0,80 Q26,100 0,120 Q-26,140 0,160 Q26,180 0,200 Q-26,220 0,240" />
+        <path d="M0,0 Q-26,20 0,40 Q26,60 0,80 Q-26,100 0,120 Q26,140 0,160 Q-26,180 0,200 Q26,220 0,240" opacity="0.55" />
+      </g>
+    </svg>
+  );
+}
+
+function TechnologyGhost() {
+  return (
+    <svg viewBox="0 0 800 280" fill="none" className="h-[150%] w-auto" preserveAspectRatio="xMaxYMid meet">
+      {/* circuit */}
+      <g transform="translate(60,140)" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+        <rect x="0" y="-20" width="40" height="40" rx="4" />
+        <path d="M20 -20V-40M20 20V40M-20 0H0M40 0H60M60 0H60l20-20M60 0l20 20" />
+        <circle cx="20" cy="-40" r="3" fill="currentColor" />
+        <circle cx="80" cy="-20" r="3" fill="currentColor" />
+        <circle cx="80" cy="20" r="3" fill="currentColor" />
+      </g>
+      {/* brain */}
+      <g transform="translate(270,80)" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none">
+        <path d="M30 10c-22 0-34 16-34 34 0 12 6 18 6 30 0 14 10 22 24 22h8c14 0 24-8 24-22 0-12 6-18 6-30 0-18-12-34-34-34Z" />
+        <path d="M30 10v86M14 34c6 4 6 12 0 18M46 34c-6 4-6 12 0 18M14 70c6-4 10 0 10 6M46 70c-6-4-10 0-10 6" />
+      </g>
+      {/* AI tag */}
+      <g transform="translate(470,30)">
+        <rect x="0" y="0" width="76" height="50" rx="8" stroke="currentColor" strokeWidth="3" />
+        <text x="38" y="34" fontSize="30" fontWeight="700" textAnchor="middle" fontFamily="ui-monospace, monospace" fill="currentColor">AI</text>
+      </g>
+      {/* code monitor */}
+      <g transform="translate(470,110)" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <rect x="0" y="0" width="92" height="62" rx="6" />
+        <path d="M30 78h32M46 62v16" />
+        <path d="M18 22l-10 10 10 10M40 18l-8 28" />
+      </g>
+      {/* network */}
+      <g transform="translate(660,60)" stroke="currentColor" strokeWidth="3" fill="none">
+        <circle cx="0" cy="0" r="6" fill="currentColor" stroke="none" />
+        <circle cx="70" cy="40" r="6" fill="currentColor" stroke="none" />
+        <circle cx="10" cy="100" r="6" fill="currentColor" stroke="none" />
+        <circle cx="80" cy="120" r="6" fill="currentColor" stroke="none" />
+        <path d="M0 0 70 40M70 40 10 100M10 100 80 120M0 0 10 100" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
+}
+
+function EngineeringGhost() {
+  const teeth = [0, 45, 90, 135, 180, 225, 270, 315];
+  return (
+    <svg viewBox="0 0 800 280" fill="none" className="h-[150%] w-auto" preserveAspectRatio="xMaxYMid meet">
+      {/* gear */}
+      <g transform="translate(110,150)" stroke="currentColor" strokeWidth="3">
+        <circle cx="0" cy="0" r="46" />
+        <circle cx="0" cy="0" r="18" />
+        {teeth.map((angle) => (
+          <rect key={angle} x="-7" y="-62" width="14" height="18" transform={`rotate(${angle})`} />
+        ))}
+      </g>
+      {/* blueprint square */}
+      <g transform="translate(250,90)" stroke="currentColor" strokeWidth="3">
+        <rect x="0" y="0" width="100" height="100" />
+        <path d="M0 0 100 100M100 0 0 100" strokeWidth="2" />
+        <path d="M0 50H100M50 0V100" strokeWidth="1.6" opacity="0.6" />
+      </g>
+      {/* bridge */}
+      <g transform="translate(420,160)" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none">
+        <path d="M0 40H200" />
+        <path d="M30 40V-30M170 40V-30" />
+        <path d="M30 -30 100 10 170 -30M30 0 100 10 170 0" strokeWidth="2" />
+        <path d="M0 40V60M200 40V60" />
+      </g>
+      {/* building */}
+      <g transform="translate(650,40)" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" fill="none">
+        <path d="M0 200V100h30V60h30V20h30v180Z" />
+        <path d="M10 120h10M10 150h10M40 80h10M40 110h10M70 40h10M70 70h10" />
+      </g>
+    </svg>
+  );
+}
+
+function MathGhost() {
+  return (
+    <svg viewBox="0 0 800 280" fill="none" className="h-[150%] w-auto" preserveAspectRatio="xMaxYMid meet">
+      {/* function graph */}
+      <g transform="translate(40,40)" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none">
+        <path d="M0 180V0M0 180H190" />
+        <path d="M10 160C50 160 60 30 110 30S170 70 185 70" strokeWidth="3.4" />
+      </g>
+      <text x="40" y="50" fontSize="26" fontStyle="italic" fontFamily="ui-monospace, monospace" fill="currentColor">f(x)</text>
+      {/* circle + protractor */}
+      <g transform="translate(330,150)" stroke="currentColor" strokeWidth="3" fill="none">
+        <circle cx="0" cy="0" r="58" />
+        <path d="M0 0H58M0 0 41 -41" />
+        <path d="M22 0a22 22 0 0 0 16 -16" strokeWidth="2.4" />
+      </g>
+      <text x="470" y="170" fontSize="84" fontFamily="ui-serif, serif" fill="currentColor">π</text>
+      <text x="430" y="230" fontSize="26" fontFamily="ui-monospace, monospace" fill="currentColor">ax²+bx+c=0</text>
+      {/* cone */}
+      <g transform="translate(690,140)" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" fill="none">
+        <path d="M0 -70 40 70" />
+        <path d="M0 -70 -40 70" />
+        <ellipse cx="0" cy="70" rx="40" ry="14" />
+      </g>
+    </svg>
+  );
+}
+
 const BIG_STATS = [
   { value: 10000, suffix: '+', label: 'Öğrenci',      color: '#6A866D' },
   { value: 500,   suffix: '+', label: 'Eğitmen',      color: '#B87342' },
@@ -45,6 +181,7 @@ const BIG_STATS = [
 const DISCIPLINES = [
   {
     icon: FlaskIcon,
+    ghost: ScienceGhost,
     color: '#6A866D',
     tagTr: 'BİLİM',
     title: 'Science',
@@ -52,6 +189,7 @@ const DISCIPLINES = [
   },
   {
     icon: CpuIcon,
+    ghost: TechnologyGhost,
     color: '#B87342',
     tagTr: 'TEKNOLOJİ',
     title: 'Technology',
@@ -59,6 +197,7 @@ const DISCIPLINES = [
   },
   {
     icon: CompassIcon,
+    ghost: EngineeringGhost,
     color: '#CFA24D',
     tagTr: 'MÜHENDİSLİK',
     title: 'Engineering',
@@ -66,6 +205,7 @@ const DISCIPLINES = [
   },
   {
     icon: CalculatorIcon,
+    ghost: MathGhost,
     color: '#5B7C99',
     tagTr: 'MATEMATİK',
     title: 'Mathematics',
@@ -98,28 +238,38 @@ function BigStatCard({ value, suffix, label, color, delay }: {
 }
 
 function DisciplineRow({ d, delay }: {
-  d: { icon: React.ComponentType<{ size?: number; className?: string }>; color: string; tagTr: string; title: string; desc: string };
+  d: {
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    ghost: React.ComponentType;
+    color: string; tagTr: string; title: string; desc: string;
+  };
   delay: number;
 }) {
   const Icon = d.icon;
+  const Ghost = d.ghost;
   return (
-    <motion.div {...fadeUp(delay)} className="relative py-10 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-10">
+    <motion.div
+      {...fadeUp(delay)}
+      className="relative rounded-2xl border overflow-hidden"
+      style={{ borderColor: `${d.color}26`, background: `linear-gradient(135deg, ${d.color}0A, transparent 55%)` }}
+    >
+      <div className="absolute left-0 top-0 bottom-0 w-1" style={{ background: d.color }} />
       <div
-        className="absolute top-1/2 -translate-y-1/2 right-0 w-48 h-48 rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, ${d.color}26, transparent 70%)`, filter: 'blur(10px)' }}
-      />
-      <div className="relative z-10 flex items-center gap-4 sm:w-[280px] shrink-0">
-        <div className="w-12 h-12 rounded-[12px] bg-text flex items-center justify-center shrink-0" style={{ color: d.color }}>
-          <Icon size={22} />
-        </div>
-        <div>
-          <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: d.color }}>
-            {d.tagTr}
-          </span>
-          <h3 className="font-heading text-[1.4rem] font-bold text-text tracking-[-0.02em]">{d.title}</h3>
-        </div>
+        className="absolute inset-0 flex items-center justify-end overflow-hidden pointer-events-none select-none"
+        style={{ color: d.color, opacity: 0.1 }}
+      >
+        <Ghost />
       </div>
-      <p className="relative z-10 flex-1 text-sm text-text-muted leading-[1.7] sm:max-w-[560px]">{d.desc}</p>
+      <div className="relative z-10 p-8 sm:p-10 max-w-[440px]">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center mb-5" style={{ background: `${d.color}14`, color: d.color }}>
+          <Icon size={20} />
+        </div>
+        <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-1.5" style={{ color: d.color }}>
+          {d.tagTr}
+        </span>
+        <h3 className="font-heading text-[1.6rem] font-bold text-text tracking-[-0.02em] mb-2.5">{d.title}</h3>
+        <p className="text-sm text-text-muted leading-[1.7]">{d.desc}</p>
+      </div>
     </motion.div>
   );
 }
@@ -412,7 +562,7 @@ export default function Home() {
           </motion.div>
 
           {/* Disciplines rows */}
-          <div className="flex flex-col divide-y divide-border">
+          <div className="flex flex-col gap-5">
             {DISCIPLINES.map((d, i) => (
               <DisciplineRow key={d.title} d={d} delay={0.1 + i * 0.08} />
             ))}
