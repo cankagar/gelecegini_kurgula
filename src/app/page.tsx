@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useInView, useMotionValue, useSpring } from 'f
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { RocketIcon, PuzzleIcon, FlaskIcon, CpuIcon, CompassIcon, CalculatorIcon } from '@/shared/ui/icons';
+import { RocketIcon, PuzzleIcon, FlaskIcon, CpuIcon, CompassIcon, CalculatorIcon, GraduationCapIcon, UsersIcon, TargetIcon, BookIcon, TrophyIcon } from '@/shared/ui/icons';
 import { useCountUpColor } from '@/widgets/stat-counter/useCountUpColor';
 
 const SPRING = [0.16, 1, 0.3, 1] as const;
@@ -403,21 +403,30 @@ const FEATURES: Feature[] = [
     tag: 'Topluluk',
     tagClass: 'bg-success-bg text-success',
     title: 'Serbest Kürsü',
-    desc: 'Bilimsel tartışmalar, makaleler ve bilgi paylaşımı. Bilim insanlarının buluştuğu platform.',
+    desc: 'Bilimsel makaleler, topluluk tartışmaları ve bilgi paylaşımı.',
     href: '/serbest-kursu',
     btnLabel: 'Keşfet',
-    col: 'md:col-span-8',
+    col: 'md:col-span-4',
   },
   {
     icon: <PuzzleIcon size={17} />,
     tag: 'Eğlence',
     tagClass: 'bg-warning-bg text-warning',
     title: 'Oyun Merkezi',
-    desc: 'Bilgi yarışmaları, mini oyunlar ve liderlik tabloları. Bilimle eğlenceyi birleştir.',
+    desc: 'Etkileşimli STEM oyunları, bilgi yarışmaları ve eğitici meydan okumalar.',
     href: '/oyun-merkezi',
     btnLabel: 'Oyna',
-    col: 'md:col-span-12',
-    horizontal: true,
+    col: 'md:col-span-4',
+  },
+  {
+    icon: <GraduationCapIcon size={17} />,
+    tag: 'Kurum',
+    tagClass: 'bg-primary-tint text-primary',
+    title: 'PayaSTEM',
+    desc: 'Eğitim programları, projeler, yarışmalar ve geleceğin teknolojileri.',
+    href: '/payastem',
+    btnLabel: 'İncele',
+    col: 'md:col-span-4',
   },
 ];
 
@@ -476,6 +485,85 @@ function FeatureCard({ f, delay }: { f: Feature; delay: number }) {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+// ── Placeholder section (sections not designed yet) ────────────────────────────
+function PlaceholderSection({ eyebrow, title, desc, bg, cta, comingSoon, children }: {
+  eyebrow: string; title: string; desc: string; bg: 'bg-bg' | 'bg-bg-alt';
+  cta?: { href: string; label: string }; comingSoon?: boolean; children?: React.ReactNode;
+}) {
+  return (
+    <section className={`py-28 ${bg} border-b border-border`}>
+      <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
+        <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto">
+          <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">{eyebrow}</p>
+          <h2 className="font-heading text-[clamp(2rem,4vw,2.8rem)] font-bold tracking-[-0.03em] text-text mb-4">
+            {title}
+          </h2>
+          <p className="text-text-muted text-[0.95rem] leading-[1.7]">{desc}</p>
+          {cta && (
+            <Link
+              href={cta.href}
+              className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-primary hover:bg-primary-hover px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
+            >
+              {cta.label}
+              <span className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center">
+                <ArrowIcon />
+              </span>
+            </Link>
+          )}
+          {comingSoon && (
+            <span className="mt-7 inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3.5 py-1.5 text-[11px] font-medium text-text-muted">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              Yakında
+            </span>
+          )}
+        </motion.div>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+// ── Partner logo marquee ────────────────────────────────────────────────────────
+const PARTNERS = [
+  { icon: GraduationCapIcon, label: 'Üniversite' },
+  { icon: UsersIcon, label: 'Kamu Kurumu' },
+  { icon: CpuIcon, label: 'Teknoloji Şirketi' },
+  { icon: TargetIcon, label: 'STK' },
+  { icon: BookIcon, label: 'Eğitim Kurumu' },
+  { icon: FlaskIcon, label: 'Ar-Ge Merkezi' },
+  { icon: TrophyIcon, label: 'Sanayi Kuruluşu' },
+  { icon: CompassIcon, label: 'Kalkınma Ajansı' },
+];
+
+function PartnerLogoMarquee() {
+  const items = [...PARTNERS, ...PARTNERS];
+  return (
+    <div
+      className="relative overflow-hidden mt-14"
+      style={{
+        maskImage: 'linear-gradient(90deg, transparent, black 8%, black 92%, transparent)',
+        WebkitMaskImage: 'linear-gradient(90deg, transparent, black 8%, black 92%, transparent)',
+      }}
+    >
+      <motion.div
+        className="flex items-center gap-4 w-max"
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 30, ease: 'linear', repeat: Infinity }}
+      >
+        {items.map(({ icon: Icon, label }, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2.5 rounded-full border border-border bg-surface px-5 py-3 shrink-0"
+          >
+            <Icon size={16} className="text-text-muted" />
+            <span className="text-xs font-medium text-text-muted whitespace-nowrap">{label}</span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
   );
 }
 
@@ -600,7 +688,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ STEM STATS & DİSİPLİNLER ═══════════════ */}
+      {/* ═══════════════ RAKAMLARLA PAYASTEM ═══════════════ */}
       <section className="py-28 bg-bg border-b border-border">
         <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
@@ -616,11 +704,49 @@ export default function Home() {
           </motion.div>
 
           {/* Stat row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-28">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {BIG_STATS.map((s, i) => (
               <BigStatCard key={s.label} {...s} delay={i * 0.08} />
             ))}
           </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════ PAYASTEM EKOSİSTEMİ ═══════════════ */}
+      <section className="py-32 bg-bg-alt border-b border-border">
+        <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
+
+          <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-14">
+            <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">Ürün</p>
+            <h2 className="font-heading text-[clamp(1.8rem,3.5vw,2.6rem)] font-bold tracking-[-0.03em] text-text mb-4">
+              PayaSTEM Ekosistemi
+            </h2>
+            <p className="text-text-muted text-[0.95rem] leading-[1.7]">
+              Bilim, teknoloji ve öğrenmeyi tek bir platformda buluşturan dijital ekosistemi keşfedin.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <FeatureCard f={FEATURES[0]} delay={0.08} />
+            <FeatureCard f={FEATURES[1]} delay={0.16} />
+            <FeatureCard f={FEATURES[2]} delay={0.24} />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ PAYASTEM PREVIEW ═══════════════ */}
+      <PlaceholderSection
+        bg="bg-bg"
+        eyebrow="Biz Kimiz"
+        title="PayaSTEM"
+        desc="Bilim, teknoloji ve inovasyon ekosistemi olarak STEM eğitimiyle geleceğin nesillerini geliştiriyoruz."
+        cta={{ href: '/payastem', label: 'Daha Fazlasını Keşfet' }}
+      />
+
+      {/* ═══════════════ STEM DİSİPLİNLERİ ═══════════════ */}
+      <section className="py-28 bg-bg-alt border-b border-border">
+        <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
           {/* Heading */}
           <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-16">
@@ -642,68 +768,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ PLATFORM ═══════════════ */}
-      <section className="py-32 bg-bg-alt border-b border-border">
-        <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
+      {/* ═══════════════ GÜÇLÜ İŞ BİRLİKLERİMİZ ═══════════════ */}
+      <PlaceholderSection
+        bg="bg-bg"
+        eyebrow="Kurumsal Güven"
+        title="Güçlü İş Birliklerimiz"
+        desc="Bilim, teknoloji ve inovasyonu daha fazla kişiye ulaştırmak için kamu kurumları, üniversiteler ve özel sektörle birlikte çalışıyoruz."
+      >
+        <PartnerLogoMarquee />
+      </PlaceholderSection>
 
-          <motion.div
-            {...fadeUp(0)}
-            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14"
-          >
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">Platform</p>
-              <h2 className="font-heading text-[clamp(1.8rem,3.5vw,2.6rem)] font-bold tracking-[-0.03em] text-text">
-                Seni Bekleyenler
-              </h2>
-            </div>
-            <p className="text-text-muted text-sm max-w-[210px] sm:text-right leading-[1.65]">
-              Öğrenmenin ve paylaşmanın tek adresi.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-
-            {/* Serbest Kürsü — col-span-8 */}
-            <FeatureCard f={FEATURES[0]} delay={0.08} />
-
-            {/* Join CTA — col-span-4 */}
-            <motion.div {...fadeUp(0.16)} className="md:col-span-4 h-full">
-              <div className="p-[2px] rounded-[22px] bg-primary/30 ring-1 ring-primary/20 h-full">
-                <div
-                  className="bg-primary rounded-[20px] p-9 h-full flex flex-col justify-between min-h-[280px] relative overflow-hidden"
-                >
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{ background: 'radial-gradient(ellipse 80% 55% at 110% 110%, rgba(255,255,255,0.1) 0%, transparent 60%)' }}
-                  />
-                  <div className="relative z-10">
-                    <p className="text-[9px] uppercase tracking-[0.28em] font-semibold text-white/50 mb-5">Başla</p>
-                    <h3 className="font-heading text-[1.25rem] font-bold text-white mb-2.5 tracking-[-0.02em]">
-                      Ücretsiz Katıl
-                    </h3>
-                    <p className="text-white/65 text-sm leading-[1.68]">
-                      Topluluğa hemen katıl, öğrenmeye başla.
-                    </p>
-                  </div>
-                  <Link
-                    href="/register"
-                    className="relative z-10 mt-8 self-start group/btn inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/15 hover:bg-white/25 px-5 py-2.5 text-white text-xs font-semibold transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
-                  >
-                    Kayıt Ol
-                    <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-px group-hover/btn:scale-105">
-                      <ArrowIcon />
-                    </span>
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Oyun Merkezi — col-span-12 horizontal */}
-            <FeatureCard f={FEATURES[1]} delay={0.24} />
-
-          </div>
-        </div>
-      </section>
+      {/* ═══════════════ HABERLER ═══════════════ */}
+      <PlaceholderSection
+        bg="bg-bg-alt"
+        eyebrow="Güncellik"
+        title="Haberler"
+        desc="Topluluğumuzdan en son haberler, etkinlik duyuruları ve başarı hikayeleri."
+        comingSoon
+      />
 
     </main>
   );

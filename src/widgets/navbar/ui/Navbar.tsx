@@ -8,7 +8,7 @@ import { useScrolledPast, NAV_HIDE_THRESHOLD } from "@/shared/lib";
 const NAV_LINKS = [
   { href: "/serbest-kursu", label: "Serbest Kürsü" },
   { href: "/oyun-merkezi", label: "Oyun Merkezi" },
-  { href: "/payastem/nedir", label: "PayaSTEM" },
+  { href: "/payastem", label: "PayaSTEM" },
 ];
 
 export default function Navbar() {
