@@ -97,27 +97,29 @@ function BigStatCard({ value, suffix, label, color, delay }: {
   );
 }
 
-function DisciplineColumn({ d, delay }: {
+function DisciplineRow({ d, delay }: {
   d: { icon: React.ComponentType<{ size?: number; className?: string }>; color: string; tagTr: string; title: string; desc: string };
   delay: number;
 }) {
   const Icon = d.icon;
   return (
-    <motion.div {...fadeUp(delay)} className="relative">
+    <motion.div {...fadeUp(delay)} className="relative py-10 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-10">
       <div
-        className="absolute -top-6 -right-4 w-32 h-32 rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, ${d.color}33, transparent 70%)`, filter: 'blur(8px)' }}
+        className="absolute top-1/2 -translate-y-1/2 right-0 w-48 h-48 rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, ${d.color}26, transparent 70%)`, filter: 'blur(10px)' }}
       />
-      <div className="relative z-10">
-        <div className="w-11 h-11 rounded-[12px] bg-text flex items-center justify-center mb-5" style={{ color: d.color }}>
-          <Icon size={20} />
+      <div className="relative z-10 flex items-center gap-4 sm:w-[280px] shrink-0">
+        <div className="w-12 h-12 rounded-[12px] bg-text flex items-center justify-center shrink-0" style={{ color: d.color }}>
+          <Icon size={22} />
         </div>
-        <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: d.color }}>
-          {d.tagTr}
-        </span>
-        <h3 className="font-heading text-[1.5rem] font-bold text-text tracking-[-0.02em] mb-3">{d.title}</h3>
-        <p className="text-sm text-text-muted leading-[1.7]">{d.desc}</p>
+        <div>
+          <span className="block text-[10px] font-bold uppercase tracking-[0.18em] mb-1" style={{ color: d.color }}>
+            {d.tagTr}
+          </span>
+          <h3 className="font-heading text-[1.4rem] font-bold text-text tracking-[-0.02em]">{d.title}</h3>
+        </div>
       </div>
+      <p className="relative z-10 flex-1 text-sm text-text-muted leading-[1.7] sm:max-w-[560px]">{d.desc}</p>
     </motion.div>
   );
 }
@@ -409,10 +411,10 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Disciplines grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14">
+          {/* Disciplines rows */}
+          <div className="flex flex-col divide-y divide-border">
             {DISCIPLINES.map((d, i) => (
-              <DisciplineColumn key={d.title} d={d} delay={0.1 + i * 0.08} />
+              <DisciplineRow key={d.title} d={d} delay={0.1 + i * 0.08} />
             ))}
           </div>
 
