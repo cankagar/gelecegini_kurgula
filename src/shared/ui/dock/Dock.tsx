@@ -33,6 +33,7 @@ type DockItemProps = {
   magnification: number;
   baseItemSize: number;
   label: string;
+  tintColor?: string;
 };
 
 function DockItem({
@@ -45,6 +46,7 @@ function DockItem({
   magnification,
   baseItemSize,
   label,
+  tintColor,
 }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
@@ -72,7 +74,12 @@ function DockItem({
   return (
     <motion.div
       ref={ref}
-      style={{ width: size, height: size }}
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: tintColor ? `color-mix(in srgb, ${tintColor}, black 7%)` : undefined,
+        transition: 'background-color 0.6s ease, border-color 0.2s ease, color 0.2s ease',
+      }}
       onHoverStart={() => isHovered.set(1)}
       onHoverEnd={() => isHovered.set(0)}
       onFocus={() => isHovered.set(1)}
@@ -82,7 +89,7 @@ function DockItem({
       role="button"
       aria-label={label}
       onKeyDown={handleKeyDown}
-      className={`relative inline-flex items-center justify-center rounded-xl bg-surface border border-border text-text-muted cursor-pointer outline-none hover:bg-text hover:border-text hover:text-white transition-colors duration-200 ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-xl ${tintColor ? '' : 'bg-surface'} border border-border text-text-muted cursor-pointer outline-none hover:bg-text hover:border-text hover:text-white ${className}`}
     >
       <div className="flex items-center justify-center">{children}</div>
       <DockLabel isHovered={isHovered}>{label}</DockLabel>
@@ -138,6 +145,8 @@ type DockProps = {
   visible?: boolean;
   /** Delay (ms) before the dock animates back in once `visible` becomes true. */
   showDelayMs?: number;
+  /** When set, tints the panel to this color instead of the default surface color. */
+  tintColor?: string;
 };
 
 export default function Dock({
@@ -151,6 +160,7 @@ export default function Dock({
   baseItemSize = 50,
   visible = true,
   showDelayMs = 0,
+  tintColor,
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
@@ -178,10 +188,14 @@ export default function Dock({
           isHovered.set(0);
           mouseX.set(Infinity);
         }}
-        style={{ height: panelHeight }}
+        style={{
+          height: panelHeight,
+          backgroundColor: tintColor,
+          transition: 'background-color 0.6s ease',
+        }}
         role="toolbar"
         aria-label="Hızlı erişim"
-        className={`absolute bottom-3 left-1/2 -translate-x-1/2 flex w-fit items-end gap-2.5 rounded-[1.1rem] border border-border bg-surface px-2 pb-2 shadow-lg ${visible ? "pointer-events-auto" : "pointer-events-none"} ${className}`}
+        className={`absolute bottom-3 left-1/2 -translate-x-1/2 flex w-fit items-end gap-2.5 rounded-[1.1rem] border border-border ${tintColor ? '' : 'bg-surface'} px-2 pb-2 shadow-lg ${visible ? "pointer-events-auto" : "pointer-events-none"} ${className}`}
       >
         {items.map((item, index) => (
           <DockItem
@@ -194,6 +208,7 @@ export default function Dock({
             magnification={magnification}
             baseItemSize={baseItemSize}
             label={item.label}
+            tintColor={tintColor}
           >
             {item.icon}
           </DockItem>

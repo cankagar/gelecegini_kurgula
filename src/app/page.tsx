@@ -6,8 +6,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { RocketIcon, PuzzleIcon, FlaskIcon, CpuIcon, CompassIcon, CalculatorIcon, GraduationCapIcon, UsersIcon, TargetIcon, BookIcon, TrophyIcon } from '@/shared/ui/icons';
 import { useCountUpColor } from '@/widgets/stat-counter/useCountUpColor';
+import { SECTION_FLOW_STOPS, buildLinearGradient } from '@/shared/lib';
 
 const SPRING = [0.16, 1, 0.3, 1] as const;
+
+// One continuous backdrop spanning every body section — each section gets its own
+// soft tint, blending smoothly into the next instead of a hard color switch.
+// Starts exactly on --color-bg so it picks up seamlessly where the Hero's
+// background (also --color-bg) ends, then eases into the cool tech tones.
+// Stops live in shared/lib so the site dock can sample the same colors while scrolling.
+const SECTION_FLOW_GRADIENT = buildLinearGradient(SECTION_FLOW_STOPS);
+
+// Card/chip surfaces that used to be a flat cream (bg-surface) now pick up a
+// richer shade of whichever section of the flow they sit in, instead of
+// standing out as the same beige regardless of position.
+const SURFACE_TINTS = {
+  ekosistem: '#E2F1EA',
+  disiplinler: '#DCEAFB',
+  isbirlikleri: '#E5E7F6',
+  haberler: '#DFF1EE',
+} as const;
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 22 },
@@ -22,6 +40,26 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
       <span className="w-7 h-px bg-primary/50" />
       <span className="text-[13px] uppercase tracking-[0.2em] font-bold text-primary">{children}</span>
       <span className="w-7 h-px bg-primary/50" />
+    </div>
+  );
+}
+
+// Thin ornamental rule between sections — fades at both ends so it reads as a
+// soft accent rather than a hard line cutting across the color-flow backdrop.
+function SectionDivider() {
+  return (
+    <div className="flex items-center justify-center" aria-hidden="true">
+      <div className="flex items-center gap-3 w-full max-w-[340px]">
+        <span
+          className="h-px flex-1"
+          style={{ background: 'linear-gradient(to right, transparent, rgba(207,162,77,0.6))' }}
+        />
+        <span className="w-9 h-[2px] rounded-full bg-primary/80 shrink-0" />
+        <span
+          className="h-px flex-1"
+          style={{ background: 'linear-gradient(to left, transparent, rgba(207,162,77,0.6))' }}
+        />
+      </div>
     </div>
   );
 }
@@ -266,7 +304,8 @@ function PhotoSlider({ images, color, delay }: { images: string[]; color: string
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.7, ease: SPRING, delay }}
-      className="relative z-10 w-[170px] sm:w-[220px] lg:w-[250px] aspect-[16/10] rounded-xl overflow-hidden border border-border bg-bg shadow-sm shrink-0 mx-auto sm:mx-0 sm:ml-auto"
+      className="relative z-10 w-[170px] sm:w-[220px] lg:w-[250px] aspect-[16/10] rounded-xl overflow-hidden border border-border shadow-sm shrink-0 mx-auto sm:mx-0 sm:ml-auto"
+      style={{ background: SURFACE_TINTS.disiplinler }}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
@@ -445,8 +484,8 @@ function FeatureCard({ f, delay }: { f: Feature; delay: number }) {
     <motion.div {...fadeUp(delay)} className={`${f.col} h-full`}>
       <div className="group p-[2px] rounded-[22px] bg-border ring-1 ring-border/50 h-full transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-primary-border/60">
         <div
-          className={`bg-surface rounded-[20px] h-full relative overflow-hidden flex ${f.horizontal ? 'flex-col sm:flex-row items-start sm:items-center gap-8 p-8' : 'flex-col p-9 min-h-[280px]'}`}
-          style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)' }}
+          className={`rounded-[20px] h-full relative overflow-hidden flex ${f.horizontal ? 'flex-col sm:flex-row items-start sm:items-center gap-8 p-8' : 'flex-col p-9 min-h-[280px]'}`}
+          style={{ background: SURFACE_TINTS.ekosistem, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)' }}
         >
           {/* Hover ambient */}
           <div
@@ -499,12 +538,12 @@ function FeatureCard({ f, delay }: { f: Feature; delay: number }) {
 }
 
 // ── Placeholder section (sections not designed yet) ────────────────────────────
-function PlaceholderSection({ eyebrow, title, desc, bg, cta, comingSoon, children }: {
-  eyebrow: string; title: string; desc: string; bg: 'bg-bg' | 'bg-bg-alt';
-  cta?: { href: string; label: string }; comingSoon?: boolean; children?: React.ReactNode;
+function PlaceholderSection({ eyebrow, title, desc, cta, comingSoon, surfaceTint, children }: {
+  eyebrow: string; title: string; desc: string;
+  cta?: { href: string; label: string }; comingSoon?: boolean; surfaceTint?: string; children?: React.ReactNode;
 }) {
   return (
-    <section className={`py-28 ${bg} border-b border-border`}>
+    <section className="py-28">
       <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
         <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto">
           <SectionEyebrow>{eyebrow}</SectionEyebrow>
@@ -524,7 +563,10 @@ function PlaceholderSection({ eyebrow, title, desc, bg, cta, comingSoon, childre
             </Link>
           )}
           {comingSoon && (
-            <span className="mt-7 inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3.5 py-1.5 text-[11px] font-medium text-text-muted">
+            <span
+              className="mt-7 inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-[11px] font-medium text-text-muted"
+              style={{ background: surfaceTint }}
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               Yakında
             </span>
@@ -548,7 +590,7 @@ const PARTNERS = [
   { icon: CompassIcon, label: 'Kalkınma Ajansı' },
 ];
 
-function PartnerLogoMarquee() {
+function PartnerLogoMarquee({ tint }: { tint?: string }) {
   const items = [...PARTNERS, ...PARTNERS];
   return (
     <div
@@ -566,7 +608,8 @@ function PartnerLogoMarquee() {
         {items.map(({ icon: Icon, label }, i) => (
           <div
             key={i}
-            className="flex items-center gap-2.5 rounded-full border border-border bg-surface px-5 py-3 shrink-0"
+            className="flex items-center gap-2.5 rounded-full border border-border px-5 py-3 shrink-0"
+            style={{ background: tint }}
           >
             <Icon size={16} className="text-text-muted" />
             <span className="text-xs font-medium text-text-muted whitespace-nowrap">{label}</span>
@@ -583,9 +626,15 @@ export default function Home() {
     <main className="flex flex-col bg-bg">
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center border-b border-border overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center overflow-hidden">
 
-        <div className="absolute inset-0 pointer-events-none select-none">
+        <div
+          className="absolute inset-0 pointer-events-none select-none"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%)',
+          }}
+        >
           <Image src="/background.jpg" alt="" fill priority className="object-cover object-center opacity-[0.04]" />
           <div
             className="absolute inset-0"
@@ -593,7 +642,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="relative z-10 w-full max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16 py-28">
+        <div className="relative z-10 w-full max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16 py-14 lg:py-16">
           <div className="flex flex-col md:flex-row md:items-center md:gap-16 lg:gap-20">
 
             {/* ─ Left ─ */}
@@ -602,7 +651,7 @@ export default function Home() {
               {/* Headline */}
               <motion.h1
                 {...fadeUp(0.06)}
-                className="font-heading text-[clamp(3rem,6.5vw,6rem)] font-black leading-[1.0] tracking-[-0.038em] text-text mb-6"
+                className="font-heading text-[clamp(2.6rem,6vw,5.5rem)] font-black leading-[1.0] tracking-[-0.038em] text-text mb-5"
               >
                 Bilimle{' '}
                 <em
@@ -615,7 +664,7 @@ export default function Home() {
               </motion.h1>
 
               {/* Feature tags */}
-              <motion.div {...fadeUp(0.12)} className="flex flex-wrap gap-2 mb-7">
+              <motion.div {...fadeUp(0.12)} className="flex flex-wrap gap-2 mb-5">
                 {FEATURE_TAGS.map((t) => (
                   <span
                     key={t.label}
@@ -630,13 +679,13 @@ export default function Home() {
               {/* Body */}
               <motion.p
                 {...fadeUp(0.17)}
-                className="text-[1rem] text-text-muted leading-[1.72] max-w-[400px] mb-10"
+                className="text-[1rem] text-text-muted leading-[1.72] max-w-[400px] mb-7"
               >
                 Öğrenciler, öğretmenler ve bilim tutkunları için Türkiye&rsquo;nin en kapsamlı STEM eğitim ve topluluk platformu.
               </motion.p>
 
               {/* CTAs */}
-              <motion.div {...fadeUp(0.22)} className="flex gap-3 flex-wrap mb-8">
+              <motion.div {...fadeUp(0.22)} className="flex gap-3 flex-wrap mb-6">
                 <Link
                   href="/serbest-kursu"
                   className="group inline-flex items-center gap-3 rounded-full bg-primary hover:bg-primary-hover px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
@@ -655,7 +704,7 @@ export default function Home() {
               </motion.div>
 
               {/* Social proof */}
-              <motion.div {...fadeUp(0.27)} className="flex items-center gap-3 mb-10">
+              <motion.div {...fadeUp(0.27)} className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {AVATARS.map((a) => (
                     <div
@@ -697,8 +746,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══════════════ BODY SECTIONS (shared color-flow backdrop) ═══════════════ */}
+      <div id="color-flow" style={{ background: SECTION_FLOW_GRADIENT }}>
+
       {/* ═══════════════ RAKAMLARLA PAYASTEM ═══════════════ */}
-      <section className="py-28 bg-bg border-b border-border">
+      <section className="py-28">
         <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
           {/* Stat heading */}
@@ -722,8 +774,10 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ═══════════════ PAYASTEM EKOSİSTEMİ ═══════════════ */}
-      <section className="py-32 bg-bg-alt border-b border-border">
+      <section className="py-32">
         <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
           <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-14">
@@ -744,17 +798,20 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ═══════════════ PAYASTEM PREVIEW ═══════════════ */}
       <PlaceholderSection
-        bg="bg-bg"
         eyebrow="Kurumsal Kimlik"
         title="PayaSTEM"
         desc="Bilim, teknoloji ve inovasyon ekosistemi olarak STEM eğitimiyle geleceğin nesillerini geliştiriyoruz."
         cta={{ href: '/payastem', label: 'Daha Fazlasını Keşfet' }}
       />
 
+      <SectionDivider />
+
       {/* ═══════════════ STEM DİSİPLİNLERİ ═══════════════ */}
-      <section className="py-28 bg-bg-alt border-b border-border">
+      <section className="py-28">
         <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
           {/* Heading */}
@@ -778,24 +835,30 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* ═══════════════ GÜÇLÜ İŞ BİRLİKLERİMİZ ═══════════════ */}
       <PlaceholderSection
-        bg="bg-bg"
         eyebrow="Kurumsal Güven"
         title="Güçlü İş Birliklerimiz"
         desc="Bilim, teknoloji ve inovasyonu daha fazla kişiye ulaştırmak için kamu kurumları, üniversiteler ve özel sektörle birlikte çalışıyoruz."
+        surfaceTint={SURFACE_TINTS.isbirlikleri}
       >
-        <PartnerLogoMarquee />
+        <PartnerLogoMarquee tint={SURFACE_TINTS.isbirlikleri} />
       </PlaceholderSection>
+
+      <SectionDivider />
 
       {/* ═══════════════ HABERLER ═══════════════ */}
       <PlaceholderSection
-        bg="bg-bg-alt"
         eyebrow="Güncel Gelişmeler"
         title="Haberler"
         desc="Topluluğumuzdan en son haberler, etkinlik duyuruları ve başarı hikayeleri."
+        surfaceTint={SURFACE_TINTS.haberler}
         comingSoon
       />
+
+      </div>
 
     </main>
   );

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Dock, type DockItemData } from "@/shared/ui/dock";
 import { HomeIcon, RocketIcon, GamepadIcon } from "@/shared/ui/icons";
-import { useScrolledPast, NAV_HIDE_THRESHOLD, NAV_HIDE_DURATION_MS } from "@/shared/lib";
+import { useScrolledPast, NAV_HIDE_THRESHOLD, NAV_HIDE_DURATION_MS, useScrollFlowColor } from "@/shared/lib";
 
 const SHORTCUTS: { icon: React.ReactNode; label: string; href: string }[] = [
   { icon: <HomeIcon size={19} />, label: "Anasayfa", href: "/" },
@@ -14,6 +14,7 @@ const SHORTCUTS: { icon: React.ReactNode; label: string; href: string }[] = [
 export function SiteDock() {
   const router = useRouter();
   const scrolled = useScrolledPast(NAV_HIDE_THRESHOLD);
+  const tintColor = useScrollFlowColor("color-flow", "#F0EFE9");
 
   const items: DockItemData[] = SHORTCUTS.map((shortcut) => ({
     icon: shortcut.icon,
@@ -30,6 +31,7 @@ export function SiteDock() {
       distance={140}
       visible={scrolled}
       showDelayMs={NAV_HIDE_DURATION_MS - 50}
+      tintColor={tintColor}
     />
   );
 }
