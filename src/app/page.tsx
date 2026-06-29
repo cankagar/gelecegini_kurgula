@@ -172,10 +172,10 @@ function MathGhost() {
 }
 
 const BIG_STATS = [
-  { value: 10000, suffix: '+', label: 'Yetiştirilen Öğrenci', sub: 'Kuruluşumuzdan mezun',       color: '#6A866D' },
-  { value: 500,   suffix: '+', label: 'Proje',                sub: 'Tamamlanan STEM çalışması',  color: '#B87342' },
-  { value: 50,    suffix: '+', label: 'Yarışma Başarısı',     sub: 'Ulusal & Uluslararası',      color: '#CFA24D' },
-  { value: 20,    suffix: '+', label: 'Kurumsal Partner',     sub: 'Okul ve iş birlikleri',       color: '#5B7C99' },
+  { value: 10000, suffix: '+', label: 'Dokunulan Hayat',              color: '#6A866D' },
+  { value: 500,   suffix: '+', label: 'Tamamlanan Proje',             color: '#B87342' },
+  { value: 150,   suffix: '+', label: 'Bilim ve Teknoloji Etkinliği', color: '#CFA24D' },
+  { value: 35,    suffix: '+', label: 'Stratejik İş Ortağı',         color: '#5B7C99' },
 ];
 
 const DISCIPLINES = [
@@ -213,8 +213,8 @@ const DISCIPLINES = [
   },
 ];
 
-function BigStatCard({ value, suffix, label, sub, color, delay }: {
-  value: number; suffix: string; label: string; sub: string; color: string; delay: number;
+function BigStatCard({ value, suffix, label, color, delay }: {
+  value: number; suffix: string; label: string; color: string; delay: number;
 }) {
   const { ref, display } = useCountUp(value);
   return (
@@ -232,9 +232,6 @@ function BigStatCard({ value, suffix, label, sub, color, delay }: {
       </span>
       <span className="block mt-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color }}>
         {label}
-      </span>
-      <span className="block mt-1 text-[10px] sm:text-[11px] text-text-muted">
-        {sub}
       </span>
     </motion.div>
   );
@@ -546,6 +543,17 @@ export default function Home() {
       {/* ═══════════════ STEM STATS & DİSİPLİNLER ═══════════════ */}
       <section className="py-28 bg-bg border-b border-border">
         <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
+
+          {/* Stat heading */}
+          <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-12">
+            <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">İstatistikler</p>
+            <h2 className="font-heading text-[clamp(2rem,4vw,2.8rem)] font-bold tracking-[-0.03em] text-text mb-4">
+              Rakamlarla PayaSTEM
+            </h2>
+            <p className="text-text-muted text-[0.95rem] leading-[1.7]">
+              Bilim, teknoloji ve inovasyon yolculuğumuzun etkisini rakamlarla keşfedin.
+            </p>
+          </motion.div>
 
           {/* Stat row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-28">
