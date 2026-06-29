@@ -16,6 +16,16 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.85, ease: SPRING, delay },
 });
 
+function SectionEyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-center gap-2.5 mb-4">
+      <span className="w-7 h-px bg-primary/50" />
+      <span className="text-[13px] uppercase tracking-[0.2em] font-bold text-primary">{children}</span>
+      <span className="w-7 h-px bg-primary/50" />
+    </div>
+  );
+}
+
 function useCountUp(value: number) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -497,7 +507,7 @@ function PlaceholderSection({ eyebrow, title, desc, bg, cta, comingSoon, childre
     <section className={`py-28 ${bg} border-b border-border`}>
       <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
         <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">{eyebrow}</p>
+          <SectionEyebrow>{eyebrow}</SectionEyebrow>
           <h2 className="font-heading text-[clamp(2rem,4vw,2.8rem)] font-bold tracking-[-0.03em] text-text mb-4">
             {title}
           </h2>
@@ -667,14 +677,13 @@ export default function Home() {
               <motion.div {...fadeUp(0.18)}>
                 <div className="p-[2px] rounded-[16px] bg-border ring-1 ring-border/50">
                   <div
-                    className="bg-bg rounded-[14px] px-5 py-3.5 flex items-center justify-between"
+                    className="bg-bg rounded-[14px] px-5 py-3.5 flex items-center"
                     style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                       <span className="text-[11px] font-semibold text-text-muted tracking-wide">Canlı Veriler</span>
                     </div>
-                    <span className="text-[10px] text-text-muted/60 font-medium">Bugün</span>
                   </div>
                 </div>
               </motion.div>
@@ -694,7 +703,7 @@ export default function Home() {
 
           {/* Stat heading */}
           <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-12">
-            <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">İstatistikler</p>
+            <SectionEyebrow>Etki Rakamları</SectionEyebrow>
             <h2 className="font-heading text-[clamp(2rem,4vw,2.8rem)] font-bold tracking-[-0.03em] text-text mb-4">
               Rakamlarla PayaSTEM
             </h2>
@@ -718,7 +727,7 @@ export default function Home() {
         <div className="max-w-[1160px] mx-auto px-6 md:px-10 xl:px-16">
 
           <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-14">
-            <p className="text-[10px] uppercase tracking-[0.28em] font-semibold text-primary mb-3">Ürün</p>
+            <SectionEyebrow>Dijital Ekosistem</SectionEyebrow>
             <h2 className="font-heading text-[clamp(1.8rem,3.5vw,2.6rem)] font-bold tracking-[-0.03em] text-text mb-4">
               PayaSTEM Ekosistemi
             </h2>
@@ -738,7 +747,7 @@ export default function Home() {
       {/* ═══════════════ PAYASTEM PREVIEW ═══════════════ */}
       <PlaceholderSection
         bg="bg-bg"
-        eyebrow="Biz Kimiz"
+        eyebrow="Kurumsal Kimlik"
         title="PayaSTEM"
         desc="Bilim, teknoloji ve inovasyon ekosistemi olarak STEM eğitimiyle geleceğin nesillerini geliştiriyoruz."
         cta={{ href: '/payastem', label: 'Daha Fazlasını Keşfet' }}
@@ -750,6 +759,7 @@ export default function Home() {
 
           {/* Heading */}
           <motion.div {...fadeUp(0)} className="text-center max-w-[640px] mx-auto mb-16">
+            <SectionEyebrow>Eğitim Vizyonumuz</SectionEyebrow>
             <h2 className="font-heading text-[clamp(2rem,4vw,2.8rem)] font-bold tracking-[-0.03em] text-text mb-4">
               STEM Disiplinleri
             </h2>
@@ -781,7 +791,7 @@ export default function Home() {
       {/* ═══════════════ HABERLER ═══════════════ */}
       <PlaceholderSection
         bg="bg-bg-alt"
-        eyebrow="Güncellik"
+        eyebrow="Güncel Gelişmeler"
         title="Haberler"
         desc="Topluluğumuzdan en son haberler, etkinlik duyuruları ve başarı hikayeleri."
         comingSoon
