@@ -134,6 +134,10 @@ type DockProps = {
   panelHeight?: number;
   dockHeight?: number;
   baseItemSize?: number;
+  /** When false, the dock fades/slides out of view. Defaults to always visible. */
+  visible?: boolean;
+  /** Delay (ms) before the dock animates back in once `visible` becomes true. */
+  showDelayMs?: number;
 };
 
 export default function Dock({
@@ -145,6 +149,8 @@ export default function Dock({
   panelHeight = 68,
   dockHeight = 256,
   baseItemSize = 50,
+  visible = true,
+  showDelayMs = 0,
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
@@ -159,6 +165,8 @@ export default function Dock({
   return (
     <motion.div
       style={{ height, scrollbarWidth: "none" }}
+      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 28 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: visible ? showDelayMs / 1000 : 0 }}
       className="fixed inset-x-0 bottom-0 z-50 mx-2 flex max-w-full items-center justify-center pointer-events-none hidden md:flex"
     >
       <motion.div
@@ -173,7 +181,7 @@ export default function Dock({
         style={{ height: panelHeight }}
         role="toolbar"
         aria-label="Hızlı erişim"
-        className={`absolute bottom-3 left-1/2 -translate-x-1/2 flex w-fit items-end gap-2.5 rounded-[1.1rem] border border-border bg-surface px-2 pb-2 shadow-lg pointer-events-auto ${className}`}
+        className={`absolute bottom-3 left-1/2 -translate-x-1/2 flex w-fit items-end gap-2.5 rounded-[1.1rem] border border-border bg-surface px-2 pb-2 shadow-lg ${visible ? "pointer-events-auto" : "pointer-events-none"} ${className}`}
       >
         {items.map((item, index) => (
           <DockItem

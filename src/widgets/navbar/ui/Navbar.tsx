@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useScrolledPast, NAV_HIDE_THRESHOLD } from "@/shared/lib";
 
 const NAV_LINKS = [
   { href: "/serbest-kursu", label: "Serbest Kürsü" },
@@ -12,6 +13,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const scrolled = useScrolledPast(NAV_HIDE_THRESHOLD);
 
   useEffect(() => {
     function handleResize() {
@@ -23,7 +25,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className="sticky top-0 z-50 border-b border-[#EAEAEA]"
+      className={`sticky top-0 z-50 border-b border-[#EAEAEA] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "-translate-y-full" : "translate-y-0"}`}
       style={{ background: "rgba(251,251,250,0.92)", backdropFilter: "blur(12px)" }}
     >
       <div className="max-w-5xl mx-auto px-6 h-[65px] flex items-center justify-between gap-8">
