@@ -417,15 +417,15 @@ function StatCard({ value, suffix, label, sub, delay }: {
   const { ref, display, color, transition } = useCountUpColor<HTMLSpanElement>(value);
   return (
     <motion.div {...fadeUp(delay)}>
-      <div className="p-[2px] rounded-[18px] bg-border ring-1 ring-border/50">
-        <div className="bg-bg rounded-[16px] px-6 py-5 flex items-center gap-5"
-          style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}>
+      <div className="p-[2px] rounded-[18px] bg-white/10 ring-1 ring-white/10">
+        <div className="rounded-[16px] px-6 py-5 flex items-center gap-5"
+          style={{ background: 'rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)' }}>
           <span ref={ref} className="font-heading text-[2.1rem] font-black tracking-[-0.04em] shrink-0 tabular-nums" style={{ color, transition }}>
             {display}{suffix}
           </span>
           <div className="min-w-0">
-            <p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-text leading-tight">{label}</p>
-            <p className="text-[0.7rem] text-text-muted mt-0.5">{sub}</p>
+            <p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-white leading-tight">{label}</p>
+            <p className="text-[0.7rem] text-white/50 mt-0.5">{sub}</p>
           </div>
         </div>
       </div>
@@ -626,7 +626,7 @@ export default function Home() {
     <main className="flex flex-col bg-bg">
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center overflow-hidden" style={{ background: '#1C2B3A' }}>
 
         <div
           className="absolute inset-0 pointer-events-none select-none"
@@ -635,10 +635,10 @@ export default function Home() {
             WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%)',
           }}
         >
-          <Image src="/background.jpg" alt="" fill priority className="object-cover object-center opacity-[0.04]" />
+          <Image src="/background.jpg" alt="" fill priority className="object-cover object-center opacity-[0.06]" />
           <div
             className="absolute inset-0"
-            style={{ background: 'radial-gradient(ellipse 55% 65% at 72% 48%, rgba(207,162,77,0.09) 0%, transparent 65%)' }}
+            style={{ background: 'radial-gradient(ellipse 55% 65% at 72% 48%, rgba(207,162,77,0.12) 0%, transparent 65%)' }}
           />
         </div>
 
@@ -651,7 +651,7 @@ export default function Home() {
               {/* Headline */}
               <motion.h1
                 {...fadeUp(0.06)}
-                className="font-heading text-[clamp(2.6rem,6vw,5.5rem)] font-black leading-[1.0] tracking-[-0.038em] text-text mb-5"
+                className="font-heading text-[clamp(2.6rem,6vw,5.5rem)] font-black leading-[1.0] tracking-[-0.038em] text-white mb-5"
               >
                 Bilimle{' '}
                 <em
@@ -668,7 +668,7 @@ export default function Home() {
                 {FEATURE_TAGS.map((t) => (
                   <span
                     key={t.label}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] font-medium text-text-muted"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-white/[.07] border border-white/[.12] px-3 py-1.5 text-[11px] font-medium text-white/60"
                   >
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.dotClass}`} />
                     {t.label}
@@ -679,7 +679,7 @@ export default function Home() {
               {/* Body */}
               <motion.p
                 {...fadeUp(0.17)}
-                className="text-[1rem] text-text-muted leading-[1.72] max-w-[400px] mb-7"
+                className="text-[1rem] text-white/55 leading-[1.72] max-w-[400px] mb-7"
               >
                 Öğrenciler, öğretmenler ve bilim tutkunları için Türkiye&rsquo;nin en kapsamlı STEM eğitim ve topluluk platformu.
               </motion.p>
@@ -697,7 +697,7 @@ export default function Home() {
                 </Link>
                 <Link
                   href="/register"
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-surface hover:border-primary-border hover:bg-primary-tint px-6 py-3 text-sm font-semibold text-text transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[.07] hover:bg-white/[.13] px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
                 >
                   Ücretsiz Kayıt Ol
                 </Link>
@@ -709,14 +709,14 @@ export default function Home() {
                   {AVATARS.map((a) => (
                     <div
                       key={a.initials}
-                      className={`w-8 h-8 rounded-full ${a.bg} ${a.text} flex items-center justify-center text-[10px] font-bold ring-2 ring-bg shrink-0`}
+                      className={`w-8 h-8 rounded-full ${a.bg} ${a.text} flex items-center justify-center text-[10px] font-bold ring-2 ring-[#1C2B3A] shrink-0`}
                     >
                       {a.initials}
                     </div>
                   ))}
                 </div>
-                <p className="text-[12px] text-text-muted leading-tight">
-                  <span className="font-semibold text-text">2.400+</span> öğrenci zaten platformda
+                <p className="text-[12px] text-white/50 leading-tight">
+                  <span className="font-semibold text-white">2.400+</span> öğrenci zaten platformda
                 </p>
               </motion.div>
             </div>
@@ -724,14 +724,14 @@ export default function Home() {
             {/* ─ Right: Dashboard widget ─ */}
             <div className="hidden md:flex flex-col gap-2.5 w-[290px] shrink-0">
               <motion.div {...fadeUp(0.18)}>
-                <div className="p-[2px] rounded-[16px] bg-border ring-1 ring-border/50">
+                <div className="p-[2px] rounded-[16px] bg-white/10 ring-1 ring-white/10">
                   <div
-                    className="bg-bg rounded-[14px] px-5 py-3.5 flex items-center"
-                    style={{ boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' }}
+                    className="rounded-[14px] px-5 py-3.5 flex items-center"
+                    style={{ background: 'rgba(255,255,255,0.06)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)' }}
                   >
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                      <span className="text-[11px] font-semibold text-text-muted tracking-wide">Canlı Veriler</span>
+                      <span className="text-[11px] font-semibold text-white/55 tracking-wide">Canlı Veriler</span>
                     </div>
                   </div>
                 </div>
