@@ -10,11 +10,6 @@ import { SECTION_FLOW_STOPS, buildLinearGradient } from '@/shared/lib';
 
 const SPRING = [0.16, 1, 0.3, 1] as const;
 
-// One continuous backdrop spanning every body section — each section gets its own
-// soft tint, blending smoothly into the next instead of a hard color switch.
-// Starts exactly on --color-bg so it picks up seamlessly where the Hero's
-// background (also --color-bg) ends, then eases into the cool tech tones.
-// Stops live in shared/lib so the site dock can sample the same colors while scrolling.
 const SECTION_FLOW_GRADIENT = buildLinearGradient(SECTION_FLOW_STOPS);
 
 // Card/chip surfaces that used to be a flat cream (bg-surface) now pick up a

@@ -8,24 +8,42 @@ export type ColorStop = { offset: number; color: string };
 // between the page background (CSS gradient) and anything that needs to
 // sample the current color at a given scroll position (e.g. the site dock).
 export const SECTION_FLOW_STOPS: ColorStop[] = [
-  { offset: 0, color: "#FCFCF9" },
+  { offset: 0,    color: "#FCFCF9" },
   { offset: 0.16, color: "#EAF5F6" },
   { offset: 0.22, color: "#EAF5F6" },
-  { offset: 0.3, color: "#E9F6F0" },
+  { offset: 0.3,  color: "#E9F6F0" },
   { offset: 0.38, color: "#E9F6F0" },
-  { offset: 0.46, color: "#F0EEFA" },
-  { offset: 0.54, color: "#F0EEFA" },
-  { offset: 0.6, color: "#E9F1FB" },
-  { offset: 0.68, color: "#E9F1FB" },
-  { offset: 0.74, color: "#EEEFFB" },
-  { offset: 0.84, color: "#EEEFFB" },
-  { offset: 0.9, color: "#E8F6F5" },
-  { offset: 1, color: "#FCFCF9" },
+  { offset: 0.46, color: "#EAF2F8" },
+  { offset: 0.54, color: "#EAF2F8" },
+  { offset: 0.6,  color: "#E5EFF6" },
+  { offset: 0.68, color: "#E5EFF6" },
+  { offset: 0.74, color: "#E8EFF5" },
+  { offset: 0.84, color: "#E8EFF5" },
+  { offset: 0.9,  color: "#E8F6F5" },
+  { offset: 1,    color: "#FCFCF9" },
 ];
 
 export function buildLinearGradient(stops: ColorStop[]): string {
   const stopStrings = stops.map((s) => `${s.color} ${s.offset * 100}%`);
   return `linear-gradient(to bottom, ${stopStrings.join(", ")})`;
+}
+
+// Doubles the stops so the gradient loops seamlessly via background-position animation.
+// Use with background-size: 100% 200% and animate background-position-y 0%→100%.
+export function buildLoopingGradient(stops: ColorStop[]): string {
+  const doubled: ColorStop[] = [
+    ...stops.map((s) => ({ offset: s.offset * 0.5, color: s.color })),
+    ...stops.map((s) => ({ offset: 0.5 + s.offset * 0.5, color: s.color })),
+  ];
+  return buildLinearGradient(doubled);
+}
+
+// 135° diagonal gradient for ambient background animation.
+// Use with background-size: 300% 300% and the colorFlow keyframe that
+// sweeps background-position around the four corners in a loop.
+export function buildDiagonalGradient(stops: ColorStop[]): string {
+  const colorList = stops.map((s) => s.color).join(", ");
+  return `linear-gradient(135deg, ${colorList})`;
 }
 
 function hexToRgb(hex: string): [number, number, number] {

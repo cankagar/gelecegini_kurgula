@@ -3,9 +3,9 @@
 import { useMotionValue, useSpring, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-const FROM_COLOR = [224, 49, 49];
-const TO_COLOR = [45, 212, 175];
-const DONE_COLOR = "#000000";
+const FROM_COLOR = [100, 150, 210]; // steel blue — matches hero bg
+const TO_COLOR = [207, 162, 77];    // --color-primary #CFA24D (warm gold)
+const DONE_COLOR = "#FFFFFF";       // white — hero sits on dark bg
 
 function lerpColor(progress: number) {
   const r = Math.round(FROM_COLOR[0] + (TO_COLOR[0] - FROM_COLOR[0]) * progress);
