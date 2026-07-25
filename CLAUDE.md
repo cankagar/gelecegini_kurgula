@@ -1,1 +1,3 @@
 @AGENTS.md
+
+Asla over engineering yapma, senden istenilen yapıyı en profesyonel çalışan şekile getir, üzerine kullanıcı talep etmedikçe eklemeler yapma. Yazdığın bu yapıları da clean code ile yaz. Ölçeklenebilri bir proje yapıyoruz burada. WEb projesinin temel bilgileri zaten @AGENTS.md dosyasında yazıyor(/gelecegini_kurgula/AGENTS.md) buradaki FSD mimarisine sadık kal ve react component yapısına uygun şekilde yapılarımı da yönet. ortak bir standart yapıda ilerlemeliyiz

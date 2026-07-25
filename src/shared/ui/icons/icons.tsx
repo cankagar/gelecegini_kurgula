@@ -406,6 +406,52 @@ export function CompassIcon({ className, size = 24 }: IconProps) {
   );
 }
 
+export function MailIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <rect x="3" y="5" width="18" height="14" rx="2.2" />
+      <path d="m4 6.5 8 6 8-6" />
+    </svg>
+  );
+}
+
+export function EyeIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export function EyeOffIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 6.1A10.6 10.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a15.6 15.6 0 0 1-3.2 4M6.5 7.7C4 9.6 2.5 12 2.5 12s3.5 6.5 9.5 6.5a10 10 0 0 0 4-.8" />
+      <path d="M9.5 9.7a3 3 0 0 0 4.2 4.2" />
+    </svg>
+  );
+}
+
+export function UserIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <circle cx="12" cy="8" r="3.6" />
+      <path d="M4.5 20c0-3.6 3.4-6.5 7.5-6.5s7.5 2.9 7.5 6.5" />
+    </svg>
+  );
+}
+
+export function SpinnerIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.2" opacity="0.2" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function CalculatorIcon({ className, size = 24 }: IconProps) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>

@@ -148,7 +148,7 @@ export default function PayaStemNedir() {
               </p>
             </div>
             <Link
-              href="/register"
+              href="/auth/register"
               className="inline-flex items-center gap-2.5 rounded-full bg-primary hover:bg-primary-hover px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
             >
               Topluluğa Katıl

@@ -1,3 +1,3 @@
 // Public API for the `config` segment (env, constants).
-// Re-export environment config and app-wide constants from here.
-export {};
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:8000/api";

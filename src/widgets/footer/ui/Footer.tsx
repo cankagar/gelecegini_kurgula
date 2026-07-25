@@ -32,8 +32,8 @@ export default function Footer() {
           <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-4">Hesap</p>
           <nav className="flex flex-col gap-2.5">
             {[
-              { href: "/login",     label: "Giriş Yap" },
-              { href: "/register",  label: "Kayıt Ol"  },
+              { href: "/auth/login",     label: "Giriş Yap" },
+              { href: "/auth/register",  label: "Kayıt Ol"  },
               { href: "/dashboard", label: "Panelim"   },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="text-sm text-white/50 hover:text-primary transition-colors duration-200">
