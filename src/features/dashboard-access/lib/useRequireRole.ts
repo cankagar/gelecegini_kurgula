@@ -1,23 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getMe } from "@/entities/user/api/userApi";
-import { useUserStore } from "@/entities/user/model/store";
-import type { User, UserRole } from "@/entities/user/model/types";
+import { getMe, useUserStore } from "@/entities/user";
+import type { DashboardRole } from "@/entities/dashboard";
 
 // Fetches the current user client-side and redirects if unauthenticated or
 // if the role doesn't match. Writes the resolved user into the shared store
 // so sibling components (navbar, etc.) can read it without re-fetching.
-// Returns null while loading/redirecting.
-export function useRequireRole(role: UserRole) {
+// Returns null while loading/redirecting — derived straight from the store
+// (not separate local state) so it reacts immediately when the store is
+// cleared (e.g. on logout), instead of leaving children rendered with a
+// stale "resolved" user while the global store already went null.
+export function useRequireRole(role: DashboardRole) {
   const router = useRouter();
+  const user = useUserStore((s) => s.user);
   const setUser = useUserStore((s) => s.setUser);
-  const [resolvedUser, setResolvedUser] = useState<User | null>(null);
 
   useEffect(() => {
     let active = true;
-    setResolvedUser(null);
 
     getMe()
       .then((fetchedUser) => {
@@ -27,7 +28,6 @@ export function useRequireRole(role: UserRole) {
           return;
         }
         setUser(fetchedUser);
-        setResolvedUser(fetchedUser);
       })
       .catch(() => {
         if (active) router.replace("/auth/login");
@@ -38,5 +38,5 @@ export function useRequireRole(role: UserRole) {
     };
   }, [role, router, setUser]);
 
-  return resolvedUser;
+  return user && user.role === role ? user : null;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRedirectToRoleHome } from "@/entities/user";
+import { useRedirectToRoleHome } from "@/features/dashboard-access";
 
 export default function DashboardPage() {
   useRedirectToRoleHome();

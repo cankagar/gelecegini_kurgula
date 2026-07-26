@@ -1,4 +1,4 @@
-export { refreshSession } from "./api/authApi";
+export { refreshSession, logout } from "./api/authApi";
 export { LoginForm } from "./ui/LoginForm";
 export { RegisterForm } from "./ui/RegisterForm";
 export { ForgotPasswordForm } from "./ui/ForgotPasswordForm";
