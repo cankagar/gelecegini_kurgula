@@ -8,3 +8,10 @@ export type User = {
   full_name: string | null;
   role: UserRole;
 };
+
+// Full shape returned by the admin-only `/v1/users` endpoints.
+export type AdminUser = User & {
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
