@@ -1,7 +1,9 @@
-import { requireUser } from "@/entities/user/server";
+"use client";
+
+import { useCurrentUser } from "@/entities/user";
 import { DashboardTeacherView } from "@/views/dashboard-teacher";
 
-export default async function TeacherDashboardPage() {
-  const user = await requireUser();
+export default function TeacherDashboardPage() {
+  const user = useCurrentUser();
   return <DashboardTeacherView user={user} />;
 }

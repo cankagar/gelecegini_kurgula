@@ -1,7 +1,14 @@
-import type { ReactNode } from "react";
-import { requireRole } from "@/entities/user/server";
+"use client";
 
-export default async function AdminDashboardLayout({ children }: { children: ReactNode }) {
-  await requireRole("admin");
+import type { ReactNode } from "react";
+import { useRequireRole } from "@/entities/user";
+
+export default function AdminDashboardLayout({ children }: { children: ReactNode }) {
+  const user = useRequireRole("admin");
+
+  if (!user) {
+    return null;
+  }
+
   return <>{children}</>;
 }

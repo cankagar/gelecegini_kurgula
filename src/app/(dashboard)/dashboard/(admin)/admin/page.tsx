@@ -1,7 +1,9 @@
-import { requireUser } from "@/entities/user/server";
+"use client";
+
+import { useCurrentUser } from "@/entities/user";
 import { DashboardAdminView } from "@/views/dashboard-admin";
 
-export default async function AdminDashboardPage() {
-  const user = await requireUser();
+export default function AdminDashboardPage() {
+  const user = useCurrentUser();
   return <DashboardAdminView user={user} />;
 }

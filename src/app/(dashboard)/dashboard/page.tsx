@@ -1,7 +1,8 @@
-import { redirect } from "next/navigation";
-import { requireUser } from "@/entities/user/server";
+"use client";
 
-export default async function DashboardPage() {
-  const user = await requireUser();
-  redirect(`/dashboard/${user.role}`);
+import { useRedirectToRoleHome } from "@/entities/user";
+
+export default function DashboardPage() {
+  useRedirectToRoleHome();
+  return null;
 }
