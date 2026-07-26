@@ -1,4 +1,3 @@
-// Public API for the `api` segment's server-side http client (SSR/RSC).
 import axios from "axios";
 import { API_BASE_URL } from "@/shared/config";
 

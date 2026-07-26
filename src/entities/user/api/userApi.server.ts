@@ -1,5 +1,4 @@
-import { toApiError } from "@/shared/api";
-import { createServerHttpClient } from "@/shared/api/server";
+import { toApiError, createServerHttpClient } from "@/shared/api";
 import type { User } from "@/entities/user/model/types";
 
 // Server-side counterpart of `getMe`, for prefetching the current-user
