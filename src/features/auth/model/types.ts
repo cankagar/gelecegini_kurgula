@@ -21,7 +21,6 @@ export type AuthResponse = {
 export type RegisterResponse = {
   user: AuthUser;
   message: string;
-  email_confirmation_required: boolean;
 };
 
 export type PasswordResetPayload = {

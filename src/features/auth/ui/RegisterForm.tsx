@@ -43,13 +43,9 @@ export function RegisterForm() {
 
     setLoading(true);
     try {
-      const result = await registerAccount({ email, password, full_name: fullName || undefined });
-      if (result.email_confirmation_required) {
-        router.push("/auth/login?verify=1");
-      } else {
-        router.push("/");
-        router.refresh();
-      }
+      await registerAccount({ email, password, full_name: fullName || undefined });
+      router.push("/");
+      router.refresh();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Kayıt oluşturulamadı. Lütfen tekrar deneyin.");
     } finally {
