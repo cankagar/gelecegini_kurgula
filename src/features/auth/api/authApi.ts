@@ -10,7 +10,9 @@ import type {
 
 export async function registerAccount(payload: RegisterPayload) {
   try {
-    const { data } = await httpClient.post<RegisterResponse>("/v1/auth/register", payload);
+    const { data } = await httpClient.post<RegisterResponse>("/v1/auth/register", payload, {
+      skipAuthRetry: true,
+    });
     return data;
   } catch (err) {
     throw toApiError(err);
@@ -19,7 +21,20 @@ export async function registerAccount(payload: RegisterPayload) {
 
 export async function login(payload: LoginPayload) {
   try {
-    const { data } = await httpClient.post<AuthResponse>("/v1/auth/login", payload);
+    const { data } = await httpClient.post<AuthResponse>("/v1/auth/login", payload, {
+      skipAuthRetry: true,
+    });
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function refreshSession() {
+  try {
+    const { data } = await httpClient.post<AuthResponse>("/v1/auth/refresh", undefined, {
+      skipAuthRetry: true,
+    });
     return data;
   } catch (err) {
     throw toApiError(err);
