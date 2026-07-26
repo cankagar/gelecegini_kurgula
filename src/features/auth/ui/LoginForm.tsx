@@ -22,7 +22,7 @@ export function LoginForm() {
     setLoading(true);
     try {
       await login({ email, password });
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Giriş yapılamadı. Lütfen tekrar deneyin.");
