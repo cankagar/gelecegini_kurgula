@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAdminUserQuery, useUpdateAdminUserMutation } from "@/entities/user";
 import type { AdminUser, UserRole } from "@/entities/user";
+import { useClassroomsForMemberQuery } from "@/entities/classroom";
 import { SpinnerIcon } from "@/shared/ui/icons";
 
 const ROLE_LABELS: Record<UserRole, string> = {
@@ -42,6 +43,8 @@ type DashboardAdminUserDetailViewProps = {
 export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetailViewProps) {
   const { data: user, isLoading, isError } = useAdminUserQuery(userId);
   const { updateFields, updateRole } = useUpdateAdminUserMutation(userId);
+  const { data: classrooms, isLoading: isClassroomsLoading } =
+    useClassroomsForMemberQuery(userId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -226,6 +229,37 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
               <dd className="mt-1.5 font-medium text-text break-all">{user.id}</dd>
             </div>
           </dl>
+
+          <div className="border-t border-[#EAEAEA] px-8 py-6">
+            <h2 className="text-[0.9rem] font-medium text-text">Sınıfları</h2>
+
+            {isClassroomsLoading && (
+              <div className="mt-3 flex text-text-muted">
+                <SpinnerIcon className="animate-spin" size={16} />
+              </div>
+            )}
+
+            {!isClassroomsLoading && classrooms?.length === 0 && (
+              <p className="mt-3 text-[0.85rem] text-text-muted">
+                Bu kullanıcı henüz bir sınıfa dahil değil.
+              </p>
+            )}
+
+            {!isClassroomsLoading && classrooms && classrooms.length > 0 && (
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {classrooms.map((classroom) => (
+                  <li key={classroom.id}>
+                    <Link
+                      href={`/dashboard/admin/classrooms/${classroom.id}`}
+                      className="rounded-full border border-[#EAEAEA] px-3 py-1 text-[0.8rem] font-medium text-text transition-colors duration-150 hover:bg-[#F0EFEC]"
+                    >
+                      {classroom.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           {(updateFields.isError || updateRole.isError) && (
             <div className="border-t border-[#EAEAEA] px-8 py-4">

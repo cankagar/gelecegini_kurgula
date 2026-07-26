@@ -20,6 +20,7 @@ export const ROLE_NAV_ITEMS: Record<DashboardRole, NavItem[]> = {
   admin: [
     { href: "/dashboard/admin", label: "Panelim" },
     { href: "/dashboard/admin/users", label: "Kullanıcılar" },
+    { href: "/dashboard/admin/classrooms", label: "Sınıflar" },
     { href: "/dashboard/admin/reports", label: "Raporlar" },
   ],
 };

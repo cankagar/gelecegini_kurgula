@@ -1,0 +1,260 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useClassroomMutations, useClassroomQuery } from "@/entities/classroom";
+import { useAdminUsersQuery } from "@/entities/user";
+import { SpinnerIcon } from "@/shared/ui/icons";
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Yönetici",
+  teacher: "Öğretmen",
+  student: "Öğrenci",
+};
+
+// Sınıfa eklenebilecek roller — henüz rol atanmamış ("user") hesaplar hariç.
+const ELIGIBLE_ROLES = new Set(["student", "teacher", "admin"]);
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleString("tr-TR");
+}
+
+type DashboardAdminClassroomDetailViewProps = {
+  classroomId: string;
+};
+
+export function DashboardAdminClassroomDetailView({
+  classroomId,
+}: DashboardAdminClassroomDetailViewProps) {
+  const router = useRouter();
+  const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
+  const { update, remove, addMember, removeMember } = useClassroomMutations(classroomId);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+  const [memberSearch, setMemberSearch] = useState("");
+
+  // Rol filtresi vermiyoruz: admin öğrenci, öğretmen veya admin — herhangi bir
+  // uygun rolde kullanıcı arayabilmeli. "user" rolü ve mevcut üyeler aşağıda elenir.
+  const { data: searchData, isFetching: isSearching } = useAdminUsersQuery(memberSearch);
+
+  const existingMemberIds = new Set(classroom?.members.map((m) => m.member_id));
+  const searchResults = (searchData ?? []).filter(
+    (u) => ELIGIBLE_ROLES.has(u.role) && !existingMemberIds.has(u.id)
+  );
+
+  function startEditingName() {
+    if (!classroom) return;
+    setNameDraft(classroom.name);
+    setIsEditingName(true);
+  }
+
+  async function saveName() {
+    const trimmed = nameDraft.trim();
+    if (!trimmed) return;
+    try {
+      await update.mutateAsync(trimmed);
+      setIsEditingName(false);
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
+  }
+
+  async function handleDeleteClassroom() {
+    if (!window.confirm("Bu sınıfı silmek istediğine emin misin?")) return;
+    try {
+      await remove.mutateAsync();
+      router.push("/dashboard/admin/classrooms");
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
+  }
+
+  async function handleAddMember(memberId: string) {
+    try {
+      await addMember.mutateAsync(memberId);
+      setMemberSearch("");
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
+  }
+
+  async function handleRemoveMember(memberId: string) {
+    try {
+      await removeMember.mutateAsync(memberId);
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl px-6 py-10">
+      <Link
+        href="/dashboard/admin/classrooms"
+        className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
+      >
+        ← Sınıflar
+      </Link>
+
+      {isLoading && (
+        <div className="mt-8 flex justify-center text-text-muted">
+          <SpinnerIcon className="animate-spin" size={20} />
+        </div>
+      )}
+
+      {isError && <p className="mt-8 text-[0.9rem] text-text-muted">Sınıf yüklenemedi.</p>}
+
+      {classroom && (
+        <div className="mt-6 rounded-md border border-[#EAEAEA] bg-white">
+          <div className="flex items-start justify-between border-b border-[#EAEAEA] px-8 py-6">
+            <div className="flex-1">
+              {isEditingName ? (
+                <input
+                  type="text"
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                />
+              ) : (
+                <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+                  {classroom.name}
+                </h1>
+              )}
+              <p className="mt-1 text-[0.85rem] text-text-muted">
+                {classroom.members.length} üye
+              </p>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-2">
+              {isEditingName ? (
+                <>
+                  <button
+                    onClick={saveName}
+                    disabled={update.isPending}
+                    className="rounded-md bg-[#111111] px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+                  >
+                    {update.isPending ? "Kaydediliyor..." : "Kaydet"}
+                  </button>
+                  <button
+                    onClick={() => setIsEditingName(false)}
+                    disabled={update.isPending}
+                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
+                  >
+                    İptal
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={startEditingName}
+                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
+                  >
+                    Düzenle
+                  </button>
+                  <button
+                    onClick={handleDeleteClassroom}
+                    disabled={remove.isPending}
+                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-[#B3261E] transition-colors duration-150 hover:bg-[#F3E8E8] disabled:opacity-50"
+                  >
+                    Sil
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="border-b border-[#EAEAEA] px-8 py-6">
+            <h2 className="text-[0.9rem] font-medium text-text">Üye Ekle</h2>
+            <p className="mt-1 text-[0.8rem] text-text-muted">
+              Öğrenci, öğretmen veya admin rolündeki kullanıcıları ekleyebilirsin.
+            </p>
+            <div className="relative mt-3 max-w-sm">
+              <input
+                type="text"
+                value={memberSearch}
+                onChange={(e) => setMemberSearch(e.target.value)}
+                placeholder="İsim veya e-posta ile ara..."
+                className="w-full rounded-md border border-[#EAEAEA] bg-white px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+              />
+
+              {memberSearch.trim().length > 0 && (
+                <div className="absolute z-10 mt-1 w-full rounded-md border border-[#EAEAEA] bg-white shadow-sm">
+                  {isSearching && (
+                    <div className="px-3 py-2.5 text-[0.85rem] text-text-muted">Aranıyor...</div>
+                  )}
+                  {!isSearching && searchResults.length === 0 && (
+                    <div className="px-3 py-2.5 text-[0.85rem] text-text-muted">
+                      Uygun kullanıcı bulunamadı.
+                    </div>
+                  )}
+                  {!isSearching &&
+                    searchResults.map((candidate) => (
+                      <button
+                        key={candidate.id}
+                        onClick={() => handleAddMember(candidate.id)}
+                        disabled={addMember.isPending}
+                        className="flex w-full items-center justify-between px-3 py-2.5 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-[#F0EFEC] disabled:opacity-50"
+                      >
+                        <span>
+                          <span className="font-medium">{candidate.full_name ?? "İsimsiz"}</span>{" "}
+                          <span className="text-text-muted">{candidate.email}</span>{" "}
+                          <span className="text-[0.75rem] text-text-muted">
+                            ({ROLE_LABELS[candidate.role] ?? candidate.role})
+                          </span>
+                        </span>
+                        <span className="text-text-muted">Ekle</span>
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            {addMember.isError && (
+              <p className="mt-2 text-[0.8rem] text-[#B3261E]">
+                Kullanıcı eklenemedi. Zaten sınıfta olabilir veya rolü uygun değil.
+              </p>
+            )}
+          </div>
+
+          <div className="px-8 py-6">
+            <h2 className="text-[0.9rem] font-medium text-text">Üyeler</h2>
+
+            {classroom.members.length === 0 ? (
+              <p className="mt-3 text-[0.85rem] text-text-muted">Henüz üye yok.</p>
+            ) : (
+              <ul className="mt-3 divide-y divide-[#EAEAEA] rounded-md border border-[#EAEAEA]">
+                {classroom.members.map((member) => (
+                  <li
+                    key={member.member_id}
+                    className="flex items-center justify-between px-4 py-2.5 text-[0.85rem]"
+                  >
+                    <div>
+                      <span className="font-medium text-text">
+                        {member.full_name ?? "İsimsiz"}
+                      </span>{" "}
+                      <span className="text-text-muted">{member.email}</span>{" "}
+                      <span className="rounded-full bg-[#F0EFEC] px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
+                        {ROLE_LABELS[member.role] ?? member.role}
+                      </span>
+                      <p className="mt-0.5 text-[0.75rem] text-text-muted">
+                        Katılım: {formatDate(member.joined_at)}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveMember(member.member_id)}
+                      disabled={removeMember.isPending}
+                      className="text-[0.8rem] font-medium text-[#B3261E] underline underline-offset-2 transition-colors duration-150 hover:opacity-80 disabled:opacity-50"
+                    >
+                      Çıkar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
