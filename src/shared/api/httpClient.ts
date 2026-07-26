@@ -57,22 +57,33 @@ httpClient.interceptors.response.use(
   }
 );
 
+export interface ApiErrorDetail {
+  field: string;
+  message: string;
+}
+
 export class ApiError extends Error {
   status: number;
+  code: string;
+  errors?: ApiErrorDetail[];
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, code: string, errors?: ApiErrorDetail[]) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.code = code;
+    this.errors = errors;
   }
 }
 
+const FALLBACK_MESSAGE = "Bir şeyler ters gitti. Lütfen tekrar deneyin.";
+
 export function toApiError(err: unknown): ApiError {
   if (err instanceof AxiosError) {
-    const detail = err.response?.data?.detail;
-    const message =
-      typeof detail === "string" ? detail : "Bir şeyler ters gitti. Lütfen tekrar deneyin.";
-    return new ApiError(message, err.response?.status ?? 0);
+    const data = err.response?.data;
+    const message = typeof data?.message === "string" ? data.message : FALLBACK_MESSAGE;
+    const code = typeof data?.code === "string" ? data.code : "UNKNOWN_ERROR";
+    return new ApiError(message, err.response?.status ?? 0, code, data?.errors);
   }
-  return new ApiError("Bir şeyler ters gitti. Lütfen tekrar deneyin.", 0);
+  return new ApiError(FALLBACK_MESSAGE, 0, "UNKNOWN_ERROR");
 }
