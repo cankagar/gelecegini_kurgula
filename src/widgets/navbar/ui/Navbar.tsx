@@ -3,12 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrolledPast, NAV_HIDE_THRESHOLD } from "@/shared/lib";
 import { UserIcon, ChevronDownIcon } from "@/shared/ui/icons";
-import { useSyncCurrentUser, useUserStore } from "@/entities/user";
-import { logout } from "@/features/auth";
+import { useSyncCurrentUser } from "@/entities/user";
+import { useLogout } from "@/features/auth";
 
 type NavLink = { href: string; label: string };
 
@@ -26,9 +25,8 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const scrolled = useScrolledPast(NAV_HIDE_THRESHOLD);
-  const router = useRouter();
   const user = useSyncCurrentUser();
-  const clearUser = useUserStore((s) => s.clearUser);
+  const logout = useLogout();
 
   useEffect(() => {
     function handleResize() {
@@ -51,10 +49,7 @@ export default function Navbar() {
   async function handleLogout() {
     setIsProfileOpen(false);
     setIsMobileOpen(false);
-    await logout().catch(() => {});
-    clearUser();
-    router.push("/");
-    router.refresh();
+    await logout();
   }
 
   return (

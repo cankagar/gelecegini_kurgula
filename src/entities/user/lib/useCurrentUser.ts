@@ -1,13 +1,14 @@
 "use client";
 
-import { useUserStore } from "@/entities/user/model/store";
+import { useCurrentUserQuery } from "@/entities/user/lib/useCurrentUserQuery";
 
-// Read-only access to the current user, once `useRequireRole`/`useRedirectToRoleHome`
-// has resolved it into the store. Throws if read before that (programmer error).
+// Read-only access to the current user, for UI rendered only after a guard
+// (`useRequireRole`/`useRedirectToRoleHome`) has already resolved it.
+// Throws if read before that (programmer error).
 export function useCurrentUser() {
-  const user = useUserStore((s) => s.user);
+  const { data: user } = useCurrentUserQuery();
   if (!user) {
-    throw new Error("useCurrentUser must be called after useRequireRole has resolved");
+    throw new Error("useCurrentUser must be called after a dashboard guard has resolved");
   }
   return user;
 }

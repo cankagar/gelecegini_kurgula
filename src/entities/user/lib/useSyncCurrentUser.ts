@@ -1,32 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
-import { getMe } from "@/entities/user/api/userApi";
-import { useUserStore } from "@/entities/user/model/store";
+import { useCurrentUserQuery } from "@/entities/user/lib/useCurrentUserQuery";
 
-// Silently checks auth state on mount — no redirect, unlike `useRequireRole`.
-// For UI that renders on every page (navbar) and just needs to know whether
-// someone is logged in.
+// Silently checks auth state — no redirect, unlike `useRequireRole`. For UI
+// that renders on every page (navbar) and just needs to know whether
+// someone is logged in. Shares the cache with any other guard mounted at
+// the same time — React Query dedupes concurrent fetches by query key.
+// The root layout prefetches this query server-side when a session cookie
+// is present, so logged-in users get hydrated data on the first render
+// instead of a guest-UI flash.
 export function useSyncCurrentUser() {
-  const user = useUserStore((s) => s.user);
-  const setUser = useUserStore((s) => s.setUser);
-  const clearUser = useUserStore((s) => s.clearUser);
-
-  useEffect(() => {
-    let active = true;
-
-    getMe()
-      .then((fetchedUser) => {
-        if (active) setUser(fetchedUser);
-      })
-      .catch(() => {
-        if (active) clearUser();
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [setUser, clearUser]);
-
-  return user;
+  const { data: user } = useCurrentUserQuery();
+  return user ?? null;
 }

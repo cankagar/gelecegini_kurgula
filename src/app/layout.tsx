@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { Outfit, Plus_Jakarta_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import { SiteChrome } from "@/widgets/site-chrome/SiteChrome";
 import { ClickSpark } from "@/shared/ui/click-spark";
+import { getMeServer } from "@/entities/user";
+import { QueryProvider } from "./query-provider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -28,16 +32,28 @@ export const metadata: Metadata = {
   description: "Gençler için bilim, teknoloji, mühendislik ve matematik odaklı eğitim ve topluluk platformu.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const queryClient = new QueryClient();
+
+  if (cookieStore.has("access_token")) {
+    await queryClient.prefetchQuery({
+      queryKey: ["currentUser"],
+      queryFn: () => getMeServer(cookieStore.toString()),
+    });
+  }
+
   return (
     <html lang="tr">
       <body className={`${jakarta.variable} ${outfit.variable} ${newsreader.variable} font-sans`}>
-        <ClickSpark />
-        <SiteChrome>{children}</SiteChrome>
+        <QueryProvider dehydratedState={dehydrate(queryClient)}>
+          <ClickSpark />
+          <SiteChrome>{children}</SiteChrome>
+        </QueryProvider>
       </body>
     </html>
   );

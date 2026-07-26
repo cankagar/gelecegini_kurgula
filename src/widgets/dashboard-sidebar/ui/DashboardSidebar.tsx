@@ -1,26 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useCurrentUser, useUserStore } from "@/entities/user";
+import { usePathname } from "next/navigation";
+import { useCurrentUser } from "@/entities/user";
 import { ROLE_NAV_ITEMS, isDashboardRole } from "@/entities/dashboard";
-import { logout } from "@/features/auth";
+import { useLogout } from "@/features/auth";
 
 export function DashboardSidebar() {
   const user = useCurrentUser();
   const pathname = usePathname();
-  const router = useRouter();
-  const clearUser = useUserStore((s) => s.clearUser);
+  const handleLogout = useLogout();
   // Always rendered inside a role layout after `useRequireRole` succeeds,
   // so `user.role` is guaranteed dashboard-eligible here.
   const items = isDashboardRole(user.role) ? ROLE_NAV_ITEMS[user.role] : [];
-
-  async function handleLogout() {
-    await logout().catch(() => {});
-    clearUser();
-    router.push("/");
-    router.refresh();
-  }
 
   return (
     <aside className="w-60 shrink-0 min-h-screen border-r border-[#EAEAEA] bg-[#FBFBFA] flex flex-col">
