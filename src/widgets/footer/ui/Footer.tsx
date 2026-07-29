@@ -10,7 +10,7 @@ export default function Footer() {
             Paya<span className="text-primary">STEM</span>
           </span>
           <p className="mt-3 text-sm text-white/40 max-w-[260px] leading-relaxed">
-            Öğrenciler, öğretmenler ve bilim tutkunları için Türkiye'nin STEM eğitim ve topluluk platformu.
+            Öğrenciler, öğretmenler ve bilim tutkunları için Türkiye&apos;nin STEM eğitim ve topluluk platformu.
           </p>
         </div>
 
@@ -19,7 +19,7 @@ export default function Footer() {
           <nav className="flex flex-col gap-2.5">
             {[
               { href: "/serbest-kursu", label: "Serbest Kürsü" },
-              { href: "/oyun-merkezi",  label: "Oyun Merkezi"  },
+              { href: "/oyun-merkezi", label: "Oyun Merkezi" },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="text-sm text-white/50 hover:text-primary transition-colors duration-200">
                 {l.label}
@@ -32,9 +32,9 @@ export default function Footer() {
           <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-primary mb-4">Hesap</p>
           <nav className="flex flex-col gap-2.5">
             {[
-              { href: "/auth/login",     label: "Giriş Yap" },
-              { href: "/auth/register",  label: "Kayıt Ol"  },
-              { href: "/dashboard", label: "Panelim"   },
+              { href: "/auth/login", label: "Giriş Yap" },
+              { href: "/auth/register", label: "Kayıt Ol" },
+              { href: "/dashboard", label: "Panelim" },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="text-sm text-white/50 hover:text-primary transition-colors duration-200">
                 {l.label}
