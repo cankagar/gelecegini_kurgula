@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useClassroomsQuery, useCreateClassroomMutation } from "@/entities/classroom";
+import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
 
 function formatDate(value: string) {
@@ -34,7 +35,7 @@ export function DashboardAdminClassroomsView() {
       const classroom = await createClassroom.mutateAsync(trimmed);
       setName("");
       setIsCreateOpen(false);
-      router.push(`/dashboard/admin/classrooms/${classroom.id}/edit`);
+      router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_EDIT(classroom.id)}`);
     } catch {
       // hata mesajı mutation state'inden okunuyor
     }
@@ -104,14 +105,13 @@ export function DashboardAdminClassroomsView() {
           <thead>
             <tr className="border-b border-border bg-bg-alt text-text-muted">
               <th className="px-4 py-2.5 font-medium">Sınıf Adı</th>
-              <th className="px-4 py-2.5 font-medium">Durum</th>
               <th className="px-4 py-2.5 font-medium">Oluşturulma Tarihi</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-text-muted">
+                <td colSpan={2} className="px-4 py-8 text-center text-text-muted">
                   <SpinnerIcon className="mx-auto animate-spin" size={20} />
                 </td>
               </tr>
@@ -119,7 +119,7 @@ export function DashboardAdminClassroomsView() {
 
             {isError && (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-text-muted">
+                <td colSpan={2} className="px-4 py-8 text-center text-text-muted">
                   Sınıflar yüklenemedi.
                 </td>
               </tr>
@@ -127,7 +127,7 @@ export function DashboardAdminClassroomsView() {
 
             {!isLoading && !isError && classrooms?.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-text-muted">
+                <td colSpan={2} className="px-4 py-8 text-center text-text-muted">
                   {search ? "Aramayla eşleşen sınıf yok." : "Henüz sınıf yok."}
                 </td>
               </tr>
@@ -136,21 +136,10 @@ export function DashboardAdminClassroomsView() {
             {classrooms?.map((classroom) => (
               <tr
                 key={classroom.id}
-                onClick={() => router.push(`/dashboard/admin/classrooms/${classroom.id}`)}
+                onClick={() => router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_DETAIL(classroom.id)}`)}
                 className="cursor-pointer border-b border-border last:border-0 text-text transition-colors duration-150 hover:bg-surface"
               >
                 <td className="px-4 py-2.5 font-medium">{classroom.name}</td>
-                <td className="px-4 py-2.5">
-                  {classroom.closed_at ? (
-                    <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[0.75rem] font-medium text-danger">
-                      Kapandı · {formatDate(classroom.closed_at)}
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-success-bg px-2 py-0.5 text-[0.75rem] font-medium text-success">
-                      Aktif
-                    </span>
-                  )}
-                </td>
                 <td className="px-4 py-2.5 text-text-muted">{formatDate(classroom.created_at)}</td>
               </tr>
             ))}

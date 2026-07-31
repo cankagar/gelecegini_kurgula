@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useClassroomQuery } from "@/entities/classroom";
-import { ClipboardListIcon, SpinnerIcon } from "@/shared/ui/icons";
+import { SpinnerIcon } from "@/shared/ui/icons";
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
@@ -19,6 +19,8 @@ type Assignment = {
   dueDate: string;
 };
 
+type Tab = "assignments" | "members";
+
 function formatDate(value: string) {
   return new Date(value).toLocaleString("tr-TR");
 }
@@ -31,6 +33,8 @@ export function DashboardTeacherClassroomDetailView({
   classroomId,
 }: DashboardTeacherClassroomDetailViewProps) {
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
+
+  const [tab, setTab] = useState<Tab>("assignments");
 
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -67,7 +71,7 @@ export function DashboardTeacherClassroomDetailView({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10">
       <Link
         href="/dashboard/teacher/classes"
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
@@ -85,136 +89,141 @@ export function DashboardTeacherClassroomDetailView({
 
       {classroom && (
         <>
-          <div className="mt-4 flex items-center gap-2.5">
-            <h1 className="font-heading text-2xl font-bold text-text tracking-[-0.02em]">
-              {classroom.name}
-            </h1>
-            {classroom.closed_at && (
-              <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[0.75rem] font-medium text-danger">
-                Kapandı
-              </span>
-            )}
+          <h1 className="mt-4 font-heading text-2xl font-bold text-text tracking-[-0.02em]">
+            {classroom.name}
+          </h1>
+          <p className="mt-1.5 text-[0.9rem] text-text-muted">{classroom.members.length} üye</p>
+
+          <div className="mt-6 flex border-b border-border">
+            <button
+              onClick={() => setTab("assignments")}
+              className={`px-4 py-2.5 text-[0.85rem] font-medium border-b-2 transition-colors duration-150 ${
+                tab === "assignments"
+                  ? "border-primary text-text"
+                  : "border-transparent text-text-muted hover:text-text"
+              }`}
+            >
+              Ödevler
+            </button>
+            <button
+              onClick={() => setTab("members")}
+              className={`px-4 py-2.5 text-[0.85rem] font-medium border-b-2 transition-colors duration-150 ${
+                tab === "members"
+                  ? "border-primary text-text"
+                  : "border-transparent text-text-muted hover:text-text"
+              }`}
+            >
+              Üyeler
+            </button>
           </div>
-          <p className="mt-1.5 text-[0.9rem] text-text-muted">
-            {classroom.members.length} üye
-          </p>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="rounded-md border border-[#EAEAEA] bg-white">
-                <div className="flex items-center justify-between border-b border-[#EAEAEA] px-6 py-4">
-                  <h2 className="flex items-center gap-2 text-[0.95rem] font-semibold text-text">
-                    <ClipboardListIcon size={18} />
-                    Ödevler
-                  </h2>
-                  <button
-                    onClick={() => setIsFormOpen((open) => !open)}
-                    className="rounded-md bg-[#111111] px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90"
-                  >
-                    {isFormOpen ? "Vazgeç" : "Ödev Ver"}
-                  </button>
-                </div>
+          {tab === "assignments" && (
+            <div className="mt-6 rounded-md border border-border bg-bg">
+              <div className="flex items-center justify-between border-b border-border px-6 py-4">
+                <h2 className="text-[0.95rem] font-semibold text-text">Ödevler</h2>
+                <button
+                  onClick={() => setIsFormOpen((open) => !open)}
+                  className="rounded-md bg-text px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90"
+                >
+                  {isFormOpen ? "Vazgeç" : "Ödev Ver"}
+                </button>
+              </div>
 
-                {isFormOpen && (
-                  <form
-                    onSubmit={handleCreateAssignment}
-                    className="flex flex-col gap-3 border-b border-[#EAEAEA] px-6 py-5"
-                  >
+              {isFormOpen && (
+                <form
+                  onSubmit={handleCreateAssignment}
+                  className="flex flex-col gap-3 border-b border-border px-6 py-5"
+                >
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Ödev başlığı"
+                    className="rounded-md border border-border px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Açıklama (opsiyonel)"
+                    rows={3}
+                    className="rounded-md border border-border px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <div className="flex items-center gap-3">
                     <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Ödev başlığı"
-                      className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="rounded-md border border-border px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
-                    <textarea
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Açıklama (opsiyonel)"
-                      rows={3}
-                      className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
-                    />
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="date"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
-                      />
+                    <button
+                      type="submit"
+                      disabled={!title.trim()}
+                      className="rounded-md bg-text px-3.5 py-2 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+                    >
+                      Oluştur
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {assignments.length === 0 ? (
+                <p className="px-6 py-8 text-center text-[0.85rem] text-text-muted">
+                  Henüz ödev verilmedi.
+                </p>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {assignments.map((assignment) => (
+                    <li key={assignment.id} className="flex items-start justify-between px-6 py-4">
+                      <div>
+                        <p className="text-[0.9rem] font-medium text-text">{assignment.title}</p>
+                        {assignment.description && (
+                          <p className="mt-1 text-[0.8rem] text-text-muted">
+                            {assignment.description}
+                          </p>
+                        )}
+                        {assignment.dueDate && (
+                          <p className="mt-1.5 text-[0.75rem] text-text-muted">
+                            Teslim: {new Date(assignment.dueDate).toLocaleDateString("tr-TR")}
+                          </p>
+                        )}
+                      </div>
                       <button
-                        type="submit"
-                        disabled={!title.trim()}
-                        className="rounded-md bg-[#111111] px-3.5 py-2 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+                        onClick={() => handleRemoveAssignment(assignment.id)}
+                        className="text-[0.8rem] font-medium text-danger underline underline-offset-2 transition-colors duration-150 hover:opacity-80"
                       >
-                        Oluştur
+                        Kaldır
                       </button>
-                    </div>
-                  </form>
-                )}
-
-                {assignments.length === 0 ? (
-                  <p className="px-6 py-8 text-center text-[0.85rem] text-text-muted">
-                    Henüz ödev verilmedi.
-                  </p>
-                ) : (
-                  <ul className="divide-y divide-[#EAEAEA]">
-                    {assignments.map((assignment) => (
-                      <li key={assignment.id} className="flex items-start justify-between px-6 py-4">
-                        <div>
-                          <p className="text-[0.9rem] font-medium text-text">{assignment.title}</p>
-                          {assignment.description && (
-                            <p className="mt-1 text-[0.8rem] text-text-muted">
-                              {assignment.description}
-                            </p>
-                          )}
-                          {assignment.dueDate && (
-                            <p className="mt-1.5 text-[0.75rem] text-text-muted">
-                              Teslim: {new Date(assignment.dueDate).toLocaleDateString("tr-TR")}
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => handleRemoveAssignment(assignment.id)}
-                          className="text-[0.8rem] font-medium text-[#B3261E] underline underline-offset-2 transition-colors duration-150 hover:opacity-80"
-                        >
-                          Kaldır
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
+          )}
 
-            <div>
-              <div className="rounded-md border border-[#EAEAEA] bg-white">
-                <div className="border-b border-[#EAEAEA] px-6 py-4">
-                  <h2 className="text-[0.95rem] font-semibold text-text">Sınıf Listesi</h2>
-                </div>
-
-                {classroom.members.length === 0 ? (
-                  <p className="px-6 py-8 text-center text-[0.85rem] text-text-muted">
-                    Henüz üye yok.
-                  </p>
-                ) : (
-                  <ul className="divide-y divide-[#EAEAEA]">
-                    {classroom.members.map((member) => (
-                      <li key={member.member_id} className="px-6 py-3">
-                        <p className="text-[0.85rem] font-medium text-text">
-                          {member.full_name ?? "İsimsiz"}
-                        </p>
-                        <p className="mt-0.5 text-[0.78rem] text-text-muted">{member.email}</p>
-                        <p className="mt-1 text-[0.72rem] text-text-muted">
-                          {ROLE_LABELS[member.role] ?? member.role} · Katılım:{" "}
-                          {formatDate(member.joined_at)}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+          {tab === "members" && (
+            <div className="mt-6 rounded-md border border-border bg-bg">
+              {classroom.members.length === 0 ? (
+                <p className="px-6 py-8 text-center text-[0.85rem] text-text-muted">
+                  Henüz üye yok.
+                </p>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {classroom.members.map((member) => (
+                    <li key={member.member_id} className="px-6 py-3">
+                      <p className="text-[0.85rem] font-medium text-text">
+                        {member.full_name ?? "İsimsiz"}
+                      </p>
+                      <p className="mt-0.5 text-[0.78rem] text-text-muted">{member.email}</p>
+                      <p className="mt-1 text-[0.72rem] text-text-muted">
+                        {ROLE_LABELS[member.role] ?? member.role} · Katılım:{" "}
+                        {formatDate(member.joined_at)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          </div>
+          )}
         </>
       )}
     </div>

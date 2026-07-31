@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useClassroomMutations, useClassroomQuery } from "@/entities/classroom";
 import { useAdminUsersQuery } from "@/entities/user";
+import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -78,7 +79,7 @@ export function DashboardAdminClassroomEditView({
     if (!window.confirm("Bu sınıfı silmek istediğine emin misin? Bu işlem geri alınamaz.")) return;
     try {
       await remove.mutateAsync();
-      router.push("/dashboard/admin/classrooms");
+      router.push(`/dashboard${ROUTES.ADMIN.CLASSROOMS}`);
     } catch {
       // hata mesajı mutation state'inden okunuyor
     }
@@ -104,7 +105,7 @@ export function DashboardAdminClassroomEditView({
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
       <Link
-        href={`/dashboard/admin/classrooms/${classroomId}`}
+        href={`/dashboard${ROUTES.ADMIN.CLASSROOM_DETAIL(classroomId)}`}
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
       >
         ← Sınıf
@@ -130,20 +131,9 @@ export function DashboardAdminClassroomEditView({
                   className="rounded-md border border-border px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               ) : (
-                <div className="flex items-center gap-2.5">
-                  <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
-                    {classroom.name}
-                  </h1>
-                  {classroom.closed_at ? (
-                    <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[0.75rem] font-medium text-danger">
-                      Kapandı · {formatDate(classroom.closed_at)}
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-success-bg px-2 py-0.5 text-[0.75rem] font-medium text-success">
-                      Aktif
-                    </span>
-                  )}
-                </div>
+                <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+                  {classroom.name}
+                </h1>
               )}
               <p className="mt-1 text-[0.85rem] text-text-muted">{classroom.members.length} üye</p>
             </div>

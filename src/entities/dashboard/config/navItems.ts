@@ -9,6 +9,7 @@ export type NavItem = {
 export const ROLE_NAV_ITEMS: Record<DashboardRole, NavItem[]> = {
   student: [
     { href: "/dashboard/student", label: "Panelim" },
+    { href: "/dashboard/student/classrooms", label: "Sınıflarım" },
     { href: "/dashboard/student/courses", label: "Derslerim" },
     { href: "/dashboard/student/assignments", label: "Ödevlerim" },
   ],

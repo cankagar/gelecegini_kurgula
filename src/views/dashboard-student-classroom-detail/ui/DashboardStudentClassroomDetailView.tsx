@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useClassroomQuery } from "@/entities/classroom";
 import { ROUTES } from "@/shared/lib/routes";
-import { PenIcon, SpinnerIcon } from "@/shared/ui/icons";
+import { SpinnerIcon } from "@/shared/ui/icons";
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
@@ -19,22 +18,23 @@ function formatDate(value: string) {
   return new Date(value).toLocaleString("tr-TR");
 }
 
-type DashboardAdminClassroomViewProps = {
+type DashboardStudentClassroomDetailViewProps = {
   classroomId: string;
 };
 
-export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClassroomViewProps) {
-  const router = useRouter();
+export function DashboardStudentClassroomDetailView({
+  classroomId,
+}: DashboardStudentClassroomDetailViewProps) {
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
   const [tab, setTab] = useState<Tab>("assignments");
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
       <Link
-        href={`/dashboard${ROUTES.ADMIN.CLASSROOMS}`}
+        href={`/dashboard${ROUTES.STUDENT.CLASSROOMS}`}
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
       >
-        ← Sınıflar
+        ← Sınıflarım
       </Link>
 
       {isLoading && (
@@ -47,21 +47,11 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
 
       {classroom && (
         <div className="mt-6 rounded-md border border-border bg-bg">
-          <div className="flex items-start justify-between border-b border-border px-8 py-6">
-            <div>
-              <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
-                {classroom.name}
-              </h1>
-              <p className="mt-1 text-[0.85rem] text-text-muted">{classroom.members.length} üye</p>
-            </div>
-
-            <button
-              onClick={() => router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_EDIT(classroomId)}`)}
-              className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
-            >
-              <PenIcon size={14} />
-              Düzenle
-            </button>
+          <div className="border-b border-border px-8 py-6">
+            <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+              {classroom.name}
+            </h1>
+            <p className="mt-1 text-[0.85rem] text-text-muted">{classroom.members.length} üye</p>
           </div>
 
           <div className="flex border-b border-border px-8">

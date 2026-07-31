@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useMyClassroomsQuery } from "@/entities/classroom";
+import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR");
 }
 
-export function DashboardTeacherClassesView() {
+export function DashboardStudentClassroomsView() {
   const { data: classrooms, isLoading, isError } = useMyClassroomsQuery();
 
   return (
@@ -29,12 +30,12 @@ export function DashboardTeacherClassesView() {
       )}
 
       {classrooms && classrooms.length > 0 && (
-        <ul className="mt-6 divide-y divide-[#EAEAEA] rounded-md border border-[#EAEAEA]">
+        <ul className="mt-6 divide-y divide-border rounded-md border border-border">
           {classrooms.map((classroom) => (
             <li key={classroom.id}>
               <Link
-                href={`/dashboard/teacher/classes/${classroom.id}`}
-                className="flex items-center justify-between px-4 py-3 transition-colors duration-150 hover:bg-[#F0EFEC]"
+                href={`/dashboard${ROUTES.STUDENT.CLASSROOM_DETAIL(classroom.id)}`}
+                className="flex items-center justify-between px-4 py-3 transition-colors duration-150 hover:bg-surface"
               >
                 <span className="text-[0.9rem] font-medium text-text">{classroom.name}</span>
                 <span className="text-[0.8rem] text-text-muted">
