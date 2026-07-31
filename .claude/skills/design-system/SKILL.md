@@ -60,12 +60,14 @@ Hardcoded hex görürsen (`#EAEAEA`, `#FBFBFA`, `#111111`, `#787774`, `#F0EFEC`,
 - Framer Motion `fadeUp` girişi: `opacity 0→1`, `y 18→0`, `blur(6px)→0`, `duration 0.8`, custom ease `[0.16,1,0.3,1]`, kademeli `delay`.
 - Form kartı: "double bezel" — dış `p-[3px] rounded-[2rem] bg-border`, iç `rounded-[calc(2rem-3px)] bg-bg` + `inset` box-shadow highlight.
 
-### Dashboard sayfası (`views/dashboard-*`)
-- Container: `mx-auto max-w-5xl px-6 py-10`.
-- Başlık bloğu: `h1` (`font-heading text-2xl font-bold text-text tracking-[-0.02em]`) + alt açıklama (`mt-1.5 text-[0.9rem] text-text-muted`).
+### Dashboard liste sayfası (`views/dashboard-admin-*`, örnek: `dashboard-admin-users`, `dashboard-admin-classrooms`)
+- Container: **full-width**, `mx-auto` YOK — `w-full px-8 py-10 lg:px-12` (sidebar zaten yanda, içerik ortalanıp sağdan/soldan boşluk bırakmamalı).
+- Başlık bloğu: sade — `h1` (`font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]`) + alt açıklama (`text-[0.9rem] text-text-muted`). Eyebrow/badge ekleme ("Yönetim" tarzı pill kaldırıldı, kullanıcı istemedikçe ekleme).
+- Stat bento kartları (opsiyonel, sayfada anlamlı 2-3 metrik varsa): `grid grid-cols-1 gap-4 sm:grid-cols-3`, her kart double-bezel — dış `rounded-2xl bg-border p-1.5`, iç `rounded-[calc(1rem-0.375rem)] bg-bg px-5 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)]` + solda `h-10 w-10 rounded-full bg-primary-tint text-accent` ikon rozeti, sağda `font-heading text-xl font-bold` değer + `text-[0.78rem] text-text-muted` etiket. Metrik yoksa zorla ekleme.
+- Arama: proje içinde reusable arama input component'i varsa onu kullan (kendi input'unu sıfırdan yazma). Arama tetikleme davranışı sayfaya göre değişir: canlı/debounce (`useEffect` + `setTimeout(500)`) ya da submit-on-click (`<form>` + yanında "Ara" butonu `rounded-md border border-border px-3.5 py-2 text-[0.85rem] font-medium text-text-muted hover:text-text`) — hangisi olduğunu kullanıcıya sor/mevcut sayfadaki davranışa bak, varsayılan olarak tek bir yöne zorlama.
 - Tablo: `rounded-md border border-border overflow-hidden`, `thead` → `bg-bg-alt text-text-muted`, satır hover → `hover:bg-surface`, satır border → `border-b border-border last:border-0`.
-- Tab/segment: alt çizgi stili — aktif `border-b-2 border-primary text-text` (hex `#111111` yerine primary/text kullan), pasif `border-transparent text-text-muted`.
-- Badge/status pill: `rounded-full px-2 py-0.5 text-[0.75rem] font-medium` + success/danger bg-text çifti.
+- Tab/segment: alt çizgi stili — aktif `border-b-2 border-primary text-text`, pasif `border-transparent text-text-muted`.
+- Badge/status pill: `rounded-full px-2 py-0.5 text-[0.75rem] font-medium` + `bg-success-bg text-success` / `bg-danger-bg text-danger` çifti (hardcoded yeşil/kırmızı hex değil).
 - Input: `rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem]`, focus → `focus:ring-2 focus:ring-primary/20`.
 - Sidebar: sabit genişlik `w-60`, `border-r border-border bg-bg-alt`, aktif link `bg-text text-white` (ya da `bg-primary`), pasif `text-text-muted hover:bg-surface hover:text-text`.
 

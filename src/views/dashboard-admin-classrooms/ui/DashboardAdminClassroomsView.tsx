@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useClassroomsQuery, useCreateClassroomMutation } from "@/entities/classroom";
 import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
+import { SearchInput } from "@/shared/ui/search-input";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR");
@@ -42,19 +43,15 @@ export function DashboardAdminClassroomsView() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="font-heading text-2xl font-bold text-text tracking-[-0.02em]">Sınıflar</h1>
-      <p className="mt-1.5 text-[0.9rem] text-text-muted">Sınıf oluştur ve öğrenci ata.</p>
+    <div className="w-full px-8 py-10 lg:px-12">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">Sınıflar</h1>
+        <p className="text-[0.9rem] text-text-muted">Sınıf oluştur ve öğrenci ata.</p>
+      </div>
 
-      <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
+      <div className="mt-8 flex flex-wrap items-start justify-between gap-3">
         <form onSubmit={handleSearch} className="flex w-full max-w-sm gap-2">
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Sınıf adı ile ara..."
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
+          <SearchInput value={searchInput} onChange={setSearchInput} placeholder="Sınıf adı ile ara..." />
           <button
             type="submit"
             className="shrink-0 rounded-md border border-border px-3.5 py-2 text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
@@ -66,7 +63,7 @@ export function DashboardAdminClassroomsView() {
         <div className="relative shrink-0">
           <button
             onClick={() => setIsCreateOpen((open) => !open)}
-            className="rounded-md bg-text px-3.5 py-2 text-[0.85rem] font-medium text-white transition-opacity duration-150 hover:opacity-90"
+            className="rounded-full bg-primary px-5 py-2.5 text-[0.85rem] font-semibold text-cta-text transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover active:scale-[0.98]"
           >
             {isCreateOpen ? "Vazgeç" : "Oluştur"}
           </button>
@@ -106,12 +103,13 @@ export function DashboardAdminClassroomsView() {
             <tr className="border-b border-border bg-bg-alt text-text-muted">
               <th className="px-4 py-2.5 font-medium">Sınıf Adı</th>
               <th className="px-4 py-2.5 font-medium">Oluşturulma Tarihi</th>
+              <th className="px-4 py-2.5 font-medium">Durum</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={2} className="px-4 py-8 text-center text-text-muted">
+                <td colSpan={3} className="px-4 py-8 text-center text-text-muted">
                   <SpinnerIcon className="mx-auto animate-spin" size={20} />
                 </td>
               </tr>
@@ -119,7 +117,7 @@ export function DashboardAdminClassroomsView() {
 
             {isError && (
               <tr>
-                <td colSpan={2} className="px-4 py-8 text-center text-text-muted">
+                <td colSpan={3} className="px-4 py-8 text-center text-text-muted">
                   Sınıflar yüklenemedi.
                 </td>
               </tr>
@@ -127,7 +125,7 @@ export function DashboardAdminClassroomsView() {
 
             {!isLoading && !isError && classrooms?.length === 0 && (
               <tr>
-                <td colSpan={2} className="px-4 py-8 text-center text-text-muted">
+                <td colSpan={3} className="px-4 py-8 text-center text-text-muted">
                   {search ? "Aramayla eşleşen sınıf yok." : "Henüz sınıf yok."}
                 </td>
               </tr>
@@ -137,10 +135,19 @@ export function DashboardAdminClassroomsView() {
               <tr
                 key={classroom.id}
                 onClick={() => router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_DETAIL(classroom.id)}`)}
-                className="cursor-pointer border-b border-border last:border-0 text-text transition-colors duration-150 hover:bg-surface"
+                className="cursor-pointer border-b border-border text-text transition-colors duration-150 last:border-0 hover:bg-surface"
               >
                 <td className="px-4 py-2.5 font-medium">{classroom.name}</td>
                 <td className="px-4 py-2.5 text-text-muted">{formatDate(classroom.created_at)}</td>
+                <td className="px-4 py-2.5">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[0.75rem] font-medium ${
+                      classroom.closed_at ? "bg-danger-bg text-danger" : "bg-success-bg text-success"
+                    }`}
+                  >
+                    {classroom.closed_at ? "Kapalı" : "Açık"}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>

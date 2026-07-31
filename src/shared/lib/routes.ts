@@ -7,6 +7,8 @@ export const ROUTES = {
     CLASSROOMS: `${ADMIN}/classrooms`,
     CLASSROOM_DETAIL: (id: string) => `${ADMIN}/classrooms/${id}`,
     CLASSROOM_EDIT: (id: string) => `${ADMIN}/classrooms/${id}/edit`,
+    USERS: `${ADMIN}/users`,
+    USER_DETAIL: (id: string) => `${ADMIN}/users/${id}`,
   },
   TEACHER: {
     CLASSROOMS: `${TEACHER}/classrooms`,

@@ -19,11 +19,15 @@ export function DashboardSidebar() {
   const user = useCurrentUser();
   const pathname = usePathname();
   const logout = useLogout();
-  const [collapsed, setCollapsed] = useState(
-    () => typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "1"
-  );
+  const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (localStorage.getItem(STORAGE_KEY) === "1") {
+      setCollapsed(true);
+    }
+  }, []);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {

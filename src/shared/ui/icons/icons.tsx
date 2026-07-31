@@ -490,3 +490,12 @@ export function CalculatorIcon({ className, size = 24 }: IconProps) {
     </svg>
   );
 }
+
+export function SearchIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m20 20-4.3-4.3" />
+    </svg>
+  );
+}
