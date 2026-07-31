@@ -13,8 +13,8 @@ export function DashboardStudentClassroomsView() {
   const { data: classrooms, isLoading, isError } = useMyClassroomsQuery();
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="font-heading text-2xl font-bold text-text tracking-[-0.02em]">Sınıflarım</h1>
+    <div className="w-full px-8 py-10 lg:px-12">
+      <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">Sınıflarım</h1>
       <p className="mt-1.5 text-[0.9rem] text-text-muted">Dahil olduğun sınıflar burada listelenir.</p>
 
       {isLoading && (
@@ -30,21 +30,20 @@ export function DashboardStudentClassroomsView() {
       )}
 
       {classrooms && classrooms.length > 0 && (
-        <ul className="mt-6 divide-y divide-border rounded-md border border-border">
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {classrooms.map((classroom) => (
-            <li key={classroom.id}>
-              <Link
-                href={`/dashboard${ROUTES.STUDENT.CLASSROOM_DETAIL(classroom.id)}`}
-                className="flex items-center justify-between px-4 py-3 transition-colors duration-150 hover:bg-surface"
-              >
-                <span className="text-[0.9rem] font-medium text-text">{classroom.name}</span>
-                <span className="text-[0.8rem] text-text-muted">
-                  {formatDate(classroom.created_at)}
-                </span>
-              </Link>
-            </li>
+            <Link
+              key={classroom.id}
+              href={`/dashboard${ROUTES.STUDENT.CLASSROOM_DETAIL(classroom.id)}`}
+              className="group flex aspect-[2/1] flex-col justify-between rounded-2xl border border-border bg-bg p-5 transition-colors duration-150 hover:border-primary-border hover:bg-surface"
+            >
+              <span className="font-heading text-[1.05rem] font-bold text-text tracking-[-0.02em] group-hover:text-primary">
+                {classroom.name}
+              </span>
+              <span className="text-[0.78rem] text-text-muted">{formatDate(classroom.created_at)}</span>
+            </Link>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

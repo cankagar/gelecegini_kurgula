@@ -103,7 +103,7 @@ export function DashboardAdminClassroomEditView({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="w-full px-8 py-10 lg:px-12">
       <Link
         href={`/dashboard${ROUTES.ADMIN.CLASSROOM_DETAIL(classroomId)}`}
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
@@ -131,11 +131,11 @@ export function DashboardAdminClassroomEditView({
                   className="rounded-md border border-border px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               ) : (
-                <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+                <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
                   {classroom.name}
                 </h1>
               )}
-              <p className="mt-1 text-[0.85rem] text-text-muted">{classroom.members.length} üye</p>
+              <p className="mt-1 text-[0.9rem] text-text-muted">{classroom.members.length} üye</p>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
@@ -144,7 +144,7 @@ export function DashboardAdminClassroomEditView({
                   <button
                     onClick={saveName}
                     disabled={update.isPending}
-                    className="rounded-md bg-text px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+                    className="rounded-md bg-primary px-3 py-1.5 text-[0.8rem] font-medium text-cta-text transition-colors duration-150 hover:bg-primary-hover disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {update.isPending ? "Kaydediliyor..." : "Kaydet"}
                   </button>

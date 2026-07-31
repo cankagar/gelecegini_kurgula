@@ -11,8 +11,8 @@ export const ROUTES = {
     USER_DETAIL: (id: string) => `${ADMIN}/users/${id}`,
   },
   TEACHER: {
-    CLASSROOMS: `${TEACHER}/classrooms`,
-    CLASSROOM_DETAIL: (id: string) => `${TEACHER}/classrooms/${id}`,
+    CLASSROOMS: `${TEACHER}/classes`,
+    CLASSROOM_DETAIL: (id: string) => `${TEACHER}/classes/${id}`,
   },
   STUDENT: {
     CLASSROOMS: `${STUDENT}/classrooms`,

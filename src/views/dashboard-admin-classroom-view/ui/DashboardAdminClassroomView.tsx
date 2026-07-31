@@ -29,7 +29,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
   const [tab, setTab] = useState<Tab>("assignments");
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="w-full px-8 py-10 lg:px-12">
       <Link
         href={`/dashboard${ROUTES.ADMIN.CLASSROOMS}`}
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
@@ -49,10 +49,10 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
         <div className="mt-6 rounded-md border border-border bg-bg">
           <div className="flex items-start justify-between border-b border-border px-8 py-6">
             <div>
-              <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+              <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
                 {classroom.name}
               </h1>
-              <p className="mt-1 text-[0.85rem] text-text-muted">{classroom.members.length} üye</p>
+              <p className="mt-1 text-[0.9rem] text-text-muted">{classroom.members.length} üye</p>
             </div>
 
             <button

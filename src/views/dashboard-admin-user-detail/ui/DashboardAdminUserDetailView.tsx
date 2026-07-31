@@ -95,7 +95,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="w-full px-8 py-10 lg:px-12">
       <Link
         href="/dashboard/admin/users"
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
@@ -112,8 +112,8 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
       {isError && <p className="mt-8 text-[0.9rem] text-text-muted">Kullanıcı yüklenemedi.</p>}
 
       {user && (
-        <div className="mt-6 rounded-md border border-[#EAEAEA] bg-white">
-          <div className="flex items-start justify-between border-b border-[#EAEAEA] px-8 py-6">
+        <div className="mt-6 max-w-2xl rounded-md border border-border bg-bg">
+          <div className="flex items-start justify-between border-b border-border px-8 py-6">
             <div className="flex-1">
               {isEditing && draft ? (
                 <div className="flex flex-col gap-2 max-w-md">
@@ -122,22 +122,22 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                     value={draft.fullName}
                     onChange={(e) => patch({ fullName: e.target.value })}
                     placeholder="Ad Soyad"
-                    className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                    className="rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                   <input
                     type="email"
                     value={draft.email}
                     onChange={(e) => patch({ email: e.target.value })}
                     placeholder="E-posta"
-                    className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                    className="rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               ) : (
                 <>
-                  <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+                  <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
                     {user.full_name ?? "İsimsiz Kullanıcı"}
                   </h1>
-                  <p className="mt-1 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
+                  <p className="mt-1 text-[0.9rem] text-text-muted">{user.email ?? "—"}</p>
                 </>
               )}
             </div>
@@ -148,14 +148,14 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                   <button
                     onClick={save}
                     disabled={isSaving}
-                    className="rounded-md bg-[#111111] px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+                    className="rounded-md bg-text px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
                   >
                     {isSaving ? "Kaydediliyor..." : "Kaydet"}
                   </button>
                   <button
                     onClick={cancelEditing}
                     disabled={isSaving}
-                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
+                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
                   >
                     İptal
                   </button>
@@ -163,7 +163,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
               ) : (
                 <button
                   onClick={startEditing}
-                  className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
+                  className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
                 >
                   Düzenle
                 </button>
@@ -179,7 +179,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                   <select
                     value={draft.role}
                     onChange={(e) => patch({ role: e.target.value as UserRole })}
-                    className="rounded-md border border-[#EAEAEA] bg-white px-2.5 py-1.5 text-[0.85rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                    className="rounded-md border border-border bg-bg px-2.5 py-1.5 text-[0.85rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                   >
                     {ROLE_OPTIONS.map((role) => (
                       <option key={role} value={role}>
@@ -199,8 +199,8 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                 <span
                   className={`rounded-full px-2 py-0.5 text-[0.75rem] font-medium ${
                     (isEditing && draft ? draft.isActive : user.is_active)
-                      ? "bg-[#E6F4EA] text-[#1E7A34]"
-                      : "bg-[#F3E8E8] text-[#B3261E]"
+                      ? "bg-success-bg text-success"
+                      : "bg-danger-bg text-danger"
                   }`}
                 >
                   {(isEditing && draft ? draft.isActive : user.is_active) ? "Aktif" : "Pasif"}
@@ -230,7 +230,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
             </div>
           </dl>
 
-          <div className="border-t border-[#EAEAEA] px-8 py-6">
+          <div className="border-t border-border px-8 py-6">
             <h2 className="text-[0.9rem] font-medium text-text">Sınıfları</h2>
 
             {isClassroomsLoading && (
@@ -251,7 +251,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                   <li key={classroom.id}>
                     <Link
                       href={`/dashboard/admin/classrooms/${classroom.id}`}
-                      className="rounded-full border border-[#EAEAEA] px-3 py-1 text-[0.8rem] font-medium text-text transition-colors duration-150 hover:bg-[#F0EFEC]"
+                      className="rounded-full border border-border px-3 py-1 text-[0.8rem] font-medium text-text transition-colors duration-150 hover:bg-surface"
                     >
                       {classroom.name}
                     </Link>
@@ -262,8 +262,8 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
           </div>
 
           {(updateFields.isError || updateRole.isError) && (
-            <div className="border-t border-[#EAEAEA] px-8 py-4">
-              <p className="text-[0.8rem] text-[#B3261E]">
+            <div className="border-t border-border px-8 py-4">
+              <p className="text-[0.8rem] text-danger">
                 Kaydedilemedi. E-posta başka bir kullanıcıda olabilir.
               </p>
             </div>

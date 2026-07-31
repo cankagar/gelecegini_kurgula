@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useClassroomQuery } from "@/entities/classroom";
 import { SpinnerIcon } from "@/shared/ui/icons";
+import { ROUTES } from "@/shared/lib/routes";
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
@@ -71,9 +72,9 @@ export function DashboardTeacherClassroomDetailView({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="w-full px-8 py-10 lg:px-12">
       <Link
-        href="/dashboard/teacher/classes"
+        href={`/dashboard${ROUTES.TEACHER.CLASSROOMS}`}
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
       >
         ← Sınıflarım
@@ -89,7 +90,7 @@ export function DashboardTeacherClassroomDetailView({
 
       {classroom && (
         <>
-          <h1 className="mt-4 font-heading text-2xl font-bold text-text tracking-[-0.02em]">
+          <h1 className="mt-4 font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
             {classroom.name}
           </h1>
           <p className="mt-1.5 text-[0.9rem] text-text-muted">{classroom.members.length} üye</p>
