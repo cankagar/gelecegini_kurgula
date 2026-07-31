@@ -79,7 +79,7 @@ export function DashboardAdminClassroomEditView({
     if (!window.confirm("Bu sınıfı silmek istediğine emin misin? Bu işlem geri alınamaz.")) return;
     try {
       await remove.mutateAsync();
-      router.push(`/dashboard${ROUTES.ADMIN.CLASSROOMS}`);
+      router.push(ROUTES.ADMIN.CLASSROOMS);
     } catch {
       // hata mesajı mutation state'inden okunuyor
     }
@@ -104,7 +104,7 @@ export function DashboardAdminClassroomEditView({
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
-      <BackLink href={`/dashboard${ROUTES.ADMIN.CLASSROOM_DETAIL(classroomId)}`}>Sınıf</BackLink>
+      <BackLink href={ROUTES.ADMIN.CLASSROOM_DETAIL(classroomId)}>Sınıf</BackLink>
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">

@@ -30,7 +30,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
-      <BackLink href={`/dashboard${ROUTES.ADMIN.CLASSROOMS}`}>Sınıflar</BackLink>
+      <BackLink href={ROUTES.ADMIN.CLASSROOMS}>Sınıflar</BackLink>
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">
@@ -51,7 +51,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
             </div>
 
             <button
-              onClick={() => router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_EDIT(classroomId)}`)}
+              onClick={() => router.push(ROUTES.ADMIN.CLASSROOM_EDIT(classroomId))}
               className="flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
             >
               <PenIcon size={14} />

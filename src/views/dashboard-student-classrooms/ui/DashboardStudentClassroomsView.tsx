@@ -34,7 +34,7 @@ export function DashboardStudentClassroomsView() {
           {classrooms.map((classroom) => (
             <Link
               key={classroom.id}
-              href={`/dashboard${ROUTES.STUDENT.CLASSROOM_DETAIL(classroom.id)}`}
+              href={ROUTES.STUDENT.CLASSROOM_DETAIL(classroom.id)}
               className="group flex aspect-[2/1] flex-col justify-between rounded-2xl border border-border bg-bg p-5 transition-colors duration-150 hover:border-primary-border hover:bg-surface"
             >
               <span className="font-heading text-[1.05rem] font-bold text-text tracking-[-0.02em] group-hover:text-primary">

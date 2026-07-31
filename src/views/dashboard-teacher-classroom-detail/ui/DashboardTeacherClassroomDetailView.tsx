@@ -73,7 +73,7 @@ export function DashboardTeacherClassroomDetailView({
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
-      <BackLink href={`/dashboard${ROUTES.TEACHER.CLASSROOMS}`}>Sınıflarım</BackLink>
+      <BackLink href={ROUTES.TEACHER.CLASSROOMS}>Sınıflarım</BackLink>
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">

@@ -36,7 +36,7 @@ export function DashboardAdminClassroomsView() {
       const classroom = await createClassroom.mutateAsync(trimmed);
       setName("");
       setIsCreateOpen(false);
-      router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_EDIT(classroom.id)}`);
+      router.push(ROUTES.ADMIN.CLASSROOM_EDIT(classroom.id));
     } catch {
       // hata mesajı mutation state'inden okunuyor
     }
@@ -134,7 +134,7 @@ export function DashboardAdminClassroomsView() {
             {classrooms?.map((classroom) => (
               <tr
                 key={classroom.id}
-                onClick={() => router.push(`/dashboard${ROUTES.ADMIN.CLASSROOM_DETAIL(classroom.id)}`)}
+                onClick={() => router.push(ROUTES.ADMIN.CLASSROOM_DETAIL(classroom.id))}
                 className="cursor-pointer border-b border-border text-text transition-colors duration-150 last:border-0 hover:bg-surface"
               >
                 <td className="px-4 py-2.5 font-medium">{classroom.name}</td>

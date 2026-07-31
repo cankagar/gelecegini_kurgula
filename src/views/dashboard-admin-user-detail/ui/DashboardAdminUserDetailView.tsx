@@ -98,7 +98,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
-      <BackLink href={`/dashboard${ROUTES.ADMIN.USERS}`}>Kullanıcılar</BackLink>
+      <BackLink href={ROUTES.ADMIN.USERS}>Kullanıcılar</BackLink>
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">

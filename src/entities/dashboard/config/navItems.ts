@@ -5,6 +5,7 @@ import {
   UsersIcon,
 } from "@/shared/ui/icons";
 import type { DashboardRole } from "@/entities/dashboard/model/types";
+import { ROUTES } from "@/shared/lib/routes";
 
 export type NavItem = {
   href: string;
@@ -15,16 +16,16 @@ export type NavItem = {
 // Placeholder items per role — swap in real sections as each area is built.
 export const ROLE_NAV_ITEMS: Record<DashboardRole, NavItem[]> = {
   student: [
-    { href: "/dashboard/student", label: "Panelim", icon: HomeIcon },
-    { href: "/dashboard/student/classrooms", label: "Sınıflarım", icon: GraduationCapIcon },
+    { href: ROUTES.STUDENT.HOME, label: "Panelim", icon: HomeIcon },
+    { href: ROUTES.STUDENT.CLASSROOMS, label: "Sınıflarım", icon: GraduationCapIcon },
   ],
   teacher: [
-    { href: "/dashboard/teacher", label: "Panelim", icon: HomeIcon },
-    { href: "/dashboard/teacher/classes", label: "Sınıflarım", icon: GraduationCapIcon },
+    { href: ROUTES.TEACHER.HOME, label: "Panelim", icon: HomeIcon },
+    { href: ROUTES.TEACHER.CLASSROOMS, label: "Sınıflarım", icon: GraduationCapIcon },
   ],
   admin: [
-    { href: "/dashboard/admin", label: "Panelim", icon: HomeIcon },
-    { href: "/dashboard/admin/users", label: "Kullanıcılar", icon: UsersIcon },
-    { href: "/dashboard/admin/classrooms", label: "Sınıflar", icon: GraduationCapIcon },
+    { href: ROUTES.ADMIN.HOME, label: "Panelim", icon: HomeIcon },
+    { href: ROUTES.ADMIN.USERS, label: "Kullanıcılar", icon: UsersIcon },
+    { href: ROUTES.ADMIN.CLASSROOMS, label: "Sınıflar", icon: GraduationCapIcon },
   ],
 };
