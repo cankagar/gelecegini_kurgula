@@ -452,6 +452,35 @@ export function SpinnerIcon({ className, size = 24 }: IconProps) {
   );
 }
 
+export function ChevronsLeftIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="m17 6-6 6 6 6" />
+      <path d="m11 6-6 6 6 6" />
+    </svg>
+  );
+}
+
+export function LogOutIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="M13 4h4.5A1.5 1.5 0 0 1 19 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13" />
+      <path d="M3 12h12.5" />
+      <path d="m11.5 8 4 4-4 4" />
+    </svg>
+  );
+}
+
+export function MoreHorizontalIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <circle cx="5" cy="12" r="1.6" />
+      <circle cx="12" cy="12" r="1.6" />
+      <circle cx="19" cy="12" r="1.6" />
+    </svg>
+  );
+}
+
 export function CalculatorIcon({ className, size = 24 }: IconProps) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" {...base}>
