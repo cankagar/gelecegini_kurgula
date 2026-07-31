@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useAdminUserQuery, useUpdateAdminUserMutation } from "@/entities/user";
 import type { AdminUser, UserRole } from "@/entities/user";
 import { useClassroomsForMemberQuery } from "@/entities/classroom";
+import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
+import { BackLink } from "@/shared/ui/back-link";
 
 const ROLE_LABELS: Record<UserRole, string> = {
   admin: "Yönetici",
@@ -96,12 +98,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
-      <Link
-        href="/dashboard/admin/users"
-        className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
-      >
-        ← Kullanıcılar
-      </Link>
+      <BackLink href={`/dashboard${ROUTES.ADMIN.USERS}`}>Kullanıcılar</BackLink>
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useClassroomQuery } from "@/entities/classroom";
 import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
+import { BackLink } from "@/shared/ui/back-link";
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
@@ -30,12 +30,7 @@ export function DashboardStudentClassroomDetailView({
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
-      <Link
-        href={`/dashboard${ROUTES.STUDENT.CLASSROOMS}`}
-        className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
-      >
-        ← Sınıflarım
-      </Link>
+      <BackLink href={`/dashboard${ROUTES.STUDENT.CLASSROOMS}`}>Sınıflarım</BackLink>
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">
