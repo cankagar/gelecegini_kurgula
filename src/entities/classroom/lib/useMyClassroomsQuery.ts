@@ -3,10 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { listMyClassrooms } from "@/entities/classroom/api/classroomApi";
 
-export function useMyClassroomsQuery() {
+export function useMyClassroomsQuery(search?: string) {
   return useQuery({
-    queryKey: ["myClassrooms"],
-    queryFn: listMyClassrooms,
+    queryKey: ["myClassrooms", search ?? ""],
+    queryFn: () => listMyClassrooms(search),
     staleTime: 30 * 1000,
   });
 }

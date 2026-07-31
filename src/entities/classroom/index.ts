@@ -1,6 +1,7 @@
 export type { Classroom, ClassroomMember, ClassroomMemberRole, ClassroomWithMembers } from "./model/types";
 export {
   addMemberToClassroom,
+  closeClassroom,
   createClassroom,
   deleteClassroom,
   getClassroomById,
@@ -8,6 +9,7 @@ export {
   listClassroomsForMember,
   listMyClassrooms,
   removeMemberFromClassroom,
+  reopenClassroom,
   updateClassroom,
 } from "./api/classroomApi";
 export { useClassroomsQuery } from "./lib/useClassroomsQuery";

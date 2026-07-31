@@ -36,7 +36,14 @@ export function DashboardTeacherClassesView() {
                 href={`/dashboard/teacher/classes/${classroom.id}`}
                 className="flex items-center justify-between px-4 py-3 transition-colors duration-150 hover:bg-[#F0EFEC]"
               >
-                <span className="text-[0.9rem] font-medium text-text">{classroom.name}</span>
+                <span className="flex items-center gap-2">
+                  <span className="text-[0.9rem] font-medium text-text">{classroom.name}</span>
+                  {classroom.closed_at && (
+                    <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[0.75rem] font-medium text-danger">
+                      Kapandı
+                    </span>
+                  )}
+                </span>
                 <span className="text-[0.8rem] text-text-muted">
                   {formatDate(classroom.created_at)}
                 </span>

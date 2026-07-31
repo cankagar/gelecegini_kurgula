@@ -3,8 +3,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addMemberToClassroom,
+  closeClassroom,
   createClassroom,
   deleteClassroom,
+  reopenClassroom,
   removeMemberFromClassroom,
   updateClassroom,
 } from "@/entities/classroom/api/classroomApi";
@@ -48,5 +50,15 @@ export function useClassroomMutations(classroomId: string) {
     onSuccess: invalidate,
   });
 
-  return { update, remove, addMember, removeMember };
+  const close = useMutation({
+    mutationFn: () => closeClassroom(classroomId),
+    onSuccess: invalidate,
+  });
+
+  const reopen = useMutation({
+    mutationFn: () => reopenClassroom(classroomId),
+    onSuccess: invalidate,
+  });
+
+  return { update, remove, addMember, removeMember, close, reopen };
 }

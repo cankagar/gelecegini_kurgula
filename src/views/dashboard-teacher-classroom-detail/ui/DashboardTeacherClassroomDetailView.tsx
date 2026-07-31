@@ -85,9 +85,16 @@ export function DashboardTeacherClassroomDetailView({
 
       {classroom && (
         <>
-          <h1 className="mt-4 font-heading text-2xl font-bold text-text tracking-[-0.02em]">
-            {classroom.name}
-          </h1>
+          <div className="mt-4 flex items-center gap-2.5">
+            <h1 className="font-heading text-2xl font-bold text-text tracking-[-0.02em]">
+              {classroom.name}
+            </h1>
+            {classroom.closed_at && (
+              <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[0.75rem] font-medium text-danger">
+                Kapandı
+              </span>
+            )}
+          </div>
           <p className="mt-1.5 text-[0.9rem] text-text-muted">
             {classroom.members.length} üye
           </p>

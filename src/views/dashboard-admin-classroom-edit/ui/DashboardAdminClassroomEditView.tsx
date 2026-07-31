@@ -20,16 +20,17 @@ function formatDate(value: string) {
   return new Date(value).toLocaleString("tr-TR");
 }
 
-type DashboardAdminClassroomDetailViewProps = {
+type DashboardAdminClassroomEditViewProps = {
   classroomId: string;
 };
 
-export function DashboardAdminClassroomDetailView({
+export function DashboardAdminClassroomEditView({
   classroomId,
-}: DashboardAdminClassroomDetailViewProps) {
+}: DashboardAdminClassroomEditViewProps) {
   const router = useRouter();
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
-  const { update, remove, addMember, removeMember } = useClassroomMutations(classroomId);
+  const { update, remove, addMember, removeMember, close, reopen } =
+    useClassroomMutations(classroomId);
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
@@ -61,8 +62,20 @@ export function DashboardAdminClassroomDetailView({
     }
   }
 
+  async function handleToggleClosed() {
+    try {
+      if (classroom?.closed_at) {
+        await reopen.mutateAsync();
+      } else {
+        await close.mutateAsync();
+      }
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
+  }
+
   async function handleDeleteClassroom() {
-    if (!window.confirm("Bu sınıfı silmek istediğine emin misin?")) return;
+    if (!window.confirm("Bu sınıfı silmek istediğine emin misin? Bu işlem geri alınamaz.")) return;
     try {
       await remove.mutateAsync();
       router.push("/dashboard/admin/classrooms");
@@ -91,10 +104,10 @@ export function DashboardAdminClassroomDetailView({
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
       <Link
-        href="/dashboard/admin/classrooms"
+        href={`/dashboard/admin/classrooms/${classroomId}`}
         className="text-[0.85rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
       >
-        ← Sınıflar
+        ← Sınıf
       </Link>
 
       {isLoading && (
@@ -106,24 +119,33 @@ export function DashboardAdminClassroomDetailView({
       {isError && <p className="mt-8 text-[0.9rem] text-text-muted">Sınıf yüklenemedi.</p>}
 
       {classroom && (
-        <div className="mt-6 rounded-md border border-[#EAEAEA] bg-white">
-          <div className="flex items-start justify-between border-b border-[#EAEAEA] px-8 py-6">
+        <div className="mt-6 rounded-md border border-border bg-bg">
+          <div className="flex items-start justify-between border-b border-border px-8 py-6">
             <div className="flex-1">
               {isEditingName ? (
                 <input
                   type="text"
                   value={nameDraft}
                   onChange={(e) => setNameDraft(e.target.value)}
-                  className="rounded-md border border-[#EAEAEA] px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                  className="rounded-md border border-border px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               ) : (
-                <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
-                  {classroom.name}
-                </h1>
+                <div className="flex items-center gap-2.5">
+                  <h1 className="font-heading text-xl font-bold text-text tracking-[-0.02em]">
+                    {classroom.name}
+                  </h1>
+                  {classroom.closed_at ? (
+                    <span className="rounded-full bg-danger-bg px-2 py-0.5 text-[0.75rem] font-medium text-danger">
+                      Kapandı · {formatDate(classroom.closed_at)}
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-success-bg px-2 py-0.5 text-[0.75rem] font-medium text-success">
+                      Aktif
+                    </span>
+                  )}
+                </div>
               )}
-              <p className="mt-1 text-[0.85rem] text-text-muted">
-                {classroom.members.length} üye
-              </p>
+              <p className="mt-1 text-[0.85rem] text-text-muted">{classroom.members.length} üye</p>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
@@ -132,14 +154,14 @@ export function DashboardAdminClassroomDetailView({
                   <button
                     onClick={saveName}
                     disabled={update.isPending}
-                    className="rounded-md bg-[#111111] px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+                    className="rounded-md bg-text px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
                   >
                     {update.isPending ? "Kaydediliyor..." : "Kaydet"}
                   </button>
                   <button
                     onClick={() => setIsEditingName(false)}
                     disabled={update.isPending}
-                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
+                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
                   >
                     İptal
                   </button>
@@ -148,14 +170,21 @@ export function DashboardAdminClassroomDetailView({
                 <>
                   <button
                     onClick={startEditingName}
-                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
+                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
                   >
-                    Düzenle
+                    İsmi Düzenle
+                  </button>
+                  <button
+                    onClick={handleToggleClosed}
+                    disabled={close.isPending || reopen.isPending}
+                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
+                  >
+                    {classroom.closed_at ? "Yeniden Aç" : "Kapat"}
                   </button>
                   <button
                     onClick={handleDeleteClassroom}
                     disabled={remove.isPending}
-                    className="rounded-md border border-[#EAEAEA] px-3 py-1.5 text-[0.8rem] font-medium text-[#B3261E] transition-colors duration-150 hover:bg-[#F3E8E8] disabled:opacity-50"
+                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-danger transition-colors duration-150 hover:bg-danger-bg disabled:opacity-50"
                   >
                     Sil
                   </button>
@@ -164,7 +193,7 @@ export function DashboardAdminClassroomDetailView({
             </div>
           </div>
 
-          <div className="border-b border-[#EAEAEA] px-8 py-6">
+          <div className="border-b border-border px-8 py-6">
             <h2 className="text-[0.9rem] font-medium text-text">Üye Ekle</h2>
             <p className="mt-1 text-[0.8rem] text-text-muted">
               Öğrenci, öğretmen veya admin rolündeki kullanıcıları ekleyebilirsin.
@@ -175,11 +204,11 @@ export function DashboardAdminClassroomDetailView({
                 value={memberSearch}
                 onChange={(e) => setMemberSearch(e.target.value)}
                 placeholder="İsim veya e-posta ile ara..."
-                className="w-full rounded-md border border-[#EAEAEA] bg-white px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-[#111111]/10"
+                className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
 
               {memberSearch.trim().length > 0 && (
-                <div className="absolute z-10 mt-1 w-full rounded-md border border-[#EAEAEA] bg-white shadow-sm">
+                <div className="absolute z-10 mt-1 w-full rounded-md border border-border bg-bg shadow-sm">
                   {isSearching && (
                     <div className="px-3 py-2.5 text-[0.85rem] text-text-muted">Aranıyor...</div>
                   )}
@@ -194,7 +223,7 @@ export function DashboardAdminClassroomDetailView({
                         key={candidate.id}
                         onClick={() => handleAddMember(candidate.id)}
                         disabled={addMember.isPending}
-                        className="flex w-full items-center justify-between px-3 py-2.5 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-[#F0EFEC] disabled:opacity-50"
+                        className="flex w-full items-center justify-between px-3 py-2.5 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-surface disabled:opacity-50"
                       >
                         <span>
                           <span className="font-medium">{candidate.full_name ?? "İsimsiz"}</span>{" "}
@@ -211,7 +240,7 @@ export function DashboardAdminClassroomDetailView({
             </div>
 
             {addMember.isError && (
-              <p className="mt-2 text-[0.8rem] text-[#B3261E]">
+              <p className="mt-2 text-[0.8rem] text-danger">
                 Kullanıcı eklenemedi. Zaten sınıfta olabilir veya rolü uygun değil.
               </p>
             )}
@@ -223,7 +252,7 @@ export function DashboardAdminClassroomDetailView({
             {classroom.members.length === 0 ? (
               <p className="mt-3 text-[0.85rem] text-text-muted">Henüz üye yok.</p>
             ) : (
-              <ul className="mt-3 divide-y divide-[#EAEAEA] rounded-md border border-[#EAEAEA]">
+              <ul className="mt-3 divide-y divide-border rounded-md border border-border">
                 {classroom.members.map((member) => (
                   <li
                     key={member.member_id}
@@ -234,7 +263,7 @@ export function DashboardAdminClassroomDetailView({
                         {member.full_name ?? "İsimsiz"}
                       </span>{" "}
                       <span className="text-text-muted">{member.email}</span>{" "}
-                      <span className="rounded-full bg-[#F0EFEC] px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
+                      <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
                         {ROLE_LABELS[member.role] ?? member.role}
                       </span>
                       <p className="mt-0.5 text-[0.75rem] text-text-muted">
@@ -244,7 +273,7 @@ export function DashboardAdminClassroomDetailView({
                     <button
                       onClick={() => handleRemoveMember(member.member_id)}
                       disabled={removeMember.isPending}
-                      className="text-[0.8rem] font-medium text-[#B3261E] underline underline-offset-2 transition-colors duration-150 hover:opacity-80 disabled:opacity-50"
+                      className="text-[0.8rem] font-medium text-danger underline underline-offset-2 transition-colors duration-150 hover:opacity-80 disabled:opacity-50"
                     >
                       Çıkar
                     </button>

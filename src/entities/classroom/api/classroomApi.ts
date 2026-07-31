@@ -6,9 +6,11 @@ import type {
 } from "@/entities/classroom/model/types";
 
 // Admin-only — backend rejects with 403 for non-admins.
-export async function listClassrooms() {
+export async function listClassrooms(search?: string) {
   try {
-    const { data } = await httpClient.get<Classroom[]>("/v1/classrooms");
+    const { data } = await httpClient.get<Classroom[]>("/v1/classrooms", {
+      params: search ? { search } : undefined,
+    });
     return data;
   } catch (err) {
     throw toApiError(err);
@@ -16,9 +18,11 @@ export async function listClassrooms() {
 }
 
 // Any authenticated user — returns the classrooms *they* belong to.
-export async function listMyClassrooms() {
+export async function listMyClassrooms(search?: string) {
   try {
-    const { data } = await httpClient.get<Classroom[]>("/v1/classrooms/me");
+    const { data } = await httpClient.get<Classroom[]>("/v1/classrooms/me", {
+      params: search ? { search } : undefined,
+    });
     return data;
   } catch (err) {
     throw toApiError(err);
@@ -85,6 +89,24 @@ export async function addMemberToClassroom(classroomId: string, memberId: string
 export async function removeMemberFromClassroom(classroomId: string, memberId: string) {
   try {
     await httpClient.delete(`/v1/classrooms/${classroomId}/members/${memberId}`);
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function closeClassroom(id: string) {
+  try {
+    const { data } = await httpClient.post<Classroom>(`/v1/classrooms/${id}/close`);
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function reopenClassroom(id: string) {
+  try {
+    const { data } = await httpClient.post<Classroom>(`/v1/classrooms/${id}/reopen`);
+    return data;
   } catch (err) {
     throw toApiError(err);
   }
