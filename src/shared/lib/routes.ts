@@ -14,8 +14,8 @@ export const ROUTES = {
   },
   TEACHER: {
     HOME: TEACHER,
-    CLASSROOMS: `${TEACHER}/classes`,
-    CLASSROOM_DETAIL: (id: string) => `${TEACHER}/classes/${id}`,
+    CLASSROOMS: `${TEACHER}/classrooms`,
+    CLASSROOM_DETAIL: (id: string) => `${TEACHER}/classrooms/${id}`,
   },
   STUDENT: {
     HOME: STUDENT,

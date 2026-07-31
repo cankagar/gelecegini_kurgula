@@ -1,4 +1,5 @@
 export type { AdminUser, User, UserRole } from "./model/types";
+export { ROLE_LABELS } from "./model/roleLabels";
 export { getMe, listUsers, getUserById, updateUser, updateUserRole } from "./api/userApi";
 export { getMeServer } from "./api/userApi.server";
 export { useCurrentUserQuery } from "./lib/useCurrentUserQuery";

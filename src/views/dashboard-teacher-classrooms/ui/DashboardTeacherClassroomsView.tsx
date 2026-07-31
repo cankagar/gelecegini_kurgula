@@ -4,12 +4,9 @@ import Link from "next/link";
 import { useMyClassroomsQuery } from "@/entities/classroom";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { ROUTES } from "@/shared/lib/routes";
+import { formatDate } from "@/shared/lib/date";
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("tr-TR");
-}
-
-export function DashboardTeacherClassesView() {
+export function DashboardTeacherClassroomsView() {
   const { data: classrooms, isLoading, isError } = useMyClassroomsQuery();
 
   return (

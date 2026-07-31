@@ -2,19 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAdminUsersQuery } from "@/entities/user";
+import { useAdminUsersQuery, ROLE_LABELS } from "@/entities/user";
 import type { UserRole } from "@/entities/user";
 import { SpinnerIcon, UsersIcon, CheckCircleIcon, AlertTriangleIcon } from "@/shared/ui/icons";
 import { Avatar } from "@/shared/ui/avatar";
 import { SearchInput } from "@/shared/ui/search-input";
 import { ROUTES } from "@/shared/lib/routes";
-
-const ROLE_LABELS: Record<string, string> = {
-  admin: "Yönetici",
-  teacher: "Öğretmen",
-  student: "Öğrenci",
-  user: "Kullanıcı",
-};
 
 const TABS: { label: string; role: UserRole | undefined }[] = [
   { label: "Tümü", role: undefined },

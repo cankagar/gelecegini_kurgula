@@ -2,25 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useAdminUserQuery, useUpdateAdminUserMutation } from "@/entities/user";
+import { useAdminUserQuery, useUpdateAdminUserMutation, ROLE_LABELS } from "@/entities/user";
 import type { AdminUser, UserRole } from "@/entities/user";
 import { useClassroomsForMemberQuery } from "@/entities/classroom";
 import { ROUTES } from "@/shared/lib/routes";
+import { formatDateTime } from "@/shared/lib/date";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 
-const ROLE_LABELS: Record<UserRole, string> = {
-  admin: "Yönetici",
-  teacher: "Öğretmen",
-  student: "Öğrenci",
-  user: "Kullanıcı",
-};
-
 const ROLE_OPTIONS: UserRole[] = ["user", "student", "teacher", "admin"];
-
-function formatDate(value: string) {
-  return new Date(value).toLocaleString("tr-TR");
-}
 
 type Draft = {
   fullName: string;
@@ -215,11 +205,11 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
 
             <div>
               <dt className="text-text-muted">Kayıt Tarihi</dt>
-              <dd className="mt-1.5 font-medium text-text">{formatDate(user.created_at)}</dd>
+              <dd className="mt-1.5 font-medium text-text">{formatDateTime(user.created_at)}</dd>
             </div>
             <div>
               <dt className="text-text-muted">Son Güncelleme</dt>
-              <dd className="mt-1.5 font-medium text-text">{formatDate(user.updated_at)}</dd>
+              <dd className="mt-1.5 font-medium text-text">{formatDateTime(user.updated_at)}</dd>
             </div>
             <div className="col-span-2">
               <dt className="text-text-muted">Kullanıcı ID</dt>
