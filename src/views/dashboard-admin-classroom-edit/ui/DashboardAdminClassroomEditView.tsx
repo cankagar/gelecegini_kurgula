@@ -43,7 +43,7 @@ export function DashboardAdminClassroomEditView({
 
   const existingMemberIds = new Set(classroom?.members.map((m) => m.member_id));
   const searchResults = (searchData ?? []).filter(
-    (u) => ELIGIBLE_ROLES.has(u.role) && !existingMemberIds.has(u.id)
+    (u) => u.roles.some((r) => ELIGIBLE_ROLES.has(r)) && !existingMemberIds.has(u.id)
   );
 
   function startEditingName() {
@@ -214,7 +214,7 @@ export function DashboardAdminClassroomEditView({
                           <span className="font-medium">{candidate.full_name ?? "İsimsiz"}</span>{" "}
                           <span className="text-text-muted">{candidate.email}</span>{" "}
                           <span className="text-[0.75rem] text-text-muted">
-                            ({ROLE_LABELS[candidate.role] ?? candidate.role})
+                            ({candidate.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")})
                           </span>
                         </span>
                         <span className="text-text-muted">Ekle</span>
@@ -249,7 +249,7 @@ export function DashboardAdminClassroomEditView({
                       </span>{" "}
                       <span className="text-text-muted">{member.email}</span>{" "}
                       <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
-                        {ROLE_LABELS[member.role] ?? member.role}
+                        {member.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
                       </span>
                       <p className="mt-0.5 text-[0.75rem] text-text-muted">
                         Katılım: {formatDate(member.joined_at)}

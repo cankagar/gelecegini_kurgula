@@ -139,7 +139,9 @@ export function DashboardAdminUsersView() {
                   </div>
                 </td>
                 <td className="px-4 py-2.5 text-text-muted">{user.email ?? "—"}</td>
-                <td className="px-4 py-2.5">{ROLE_LABELS[user.role] ?? user.role}</td>
+                <td className="px-4 py-2.5">
+                  {user.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
+                </td>
                 <td className="px-4 py-2.5">
                   <span
                     className={`rounded-full px-2 py-0.5 text-[0.75rem] font-medium ${

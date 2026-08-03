@@ -69,7 +69,7 @@ export function ClassroomDetailShell({
                   <span className="font-medium text-text">{member.full_name ?? "İsimsiz"}</span>{" "}
                   <span className="text-text-muted">{member.email}</span>{" "}
                   <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
-                    {ROLE_LABELS[member.role] ?? member.role}
+                    {member.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
                   </span>
                   <p className="mt-0.5 text-[0.75rem] text-text-muted">
                     Katılım: {formatDateTime(member.joined_at)}

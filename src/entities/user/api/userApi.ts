@@ -46,9 +46,18 @@ export async function updateUser(
   }
 }
 
-export async function updateUserRole(id: string, role: UserRole) {
+export async function addUserRole(id: string, role: UserRole) {
   try {
-    const { data } = await httpClient.patch<AdminUser>(`/v1/users/${id}/role`, { role });
+    const { data } = await httpClient.post<AdminUser>(`/v1/users/${id}/roles`, { role });
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function removeUserRole(id: string, role: UserRole) {
+  try {
+    const { data } = await httpClient.delete<AdminUser>(`/v1/users/${id}/roles/${role}`);
     return data;
   } catch (err) {
     throw toApiError(err);

@@ -1,8 +1,12 @@
 "use client";
 
-import { useRedirectToRoleHome } from "@/features/dashboard-access";
+import { useRedirectToRoleHome, RolePicker } from "@/features/dashboard-access";
 
 export default function DashboardPage() {
-  useRedirectToRoleHome();
+  const { eligibleRoles, needsRoleChoice } = useRedirectToRoleHome();
+
+  if (needsRoleChoice) {
+    return <RolePicker roles={eligibleRoles} />;
+  }
   return null;
 }

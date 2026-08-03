@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUser, updateUserRole } from "@/entities/user/api/userApi";
+import { addUserRole, removeUserRole, updateUser } from "@/entities/user/api/userApi";
 import type { UserRole } from "@/entities/user/model/types";
 
 export function useUpdateAdminUserMutation(userId: string) {
@@ -18,10 +18,15 @@ export function useUpdateAdminUserMutation(userId: string) {
     onSuccess: invalidate,
   });
 
-  const updateRole = useMutation({
-    mutationFn: (role: UserRole) => updateUserRole(userId, role),
+  const addRole = useMutation({
+    mutationFn: (role: UserRole) => addUserRole(userId, role),
     onSuccess: invalidate,
   });
 
-  return { updateFields, updateRole };
+  const removeRole = useMutation({
+    mutationFn: (role: UserRole) => removeUserRole(userId, role),
+    onSuccess: invalidate,
+  });
+
+  return { updateFields, addRole, removeRole };
 }

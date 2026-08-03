@@ -13,12 +13,12 @@ import { BackLink } from "@/shared/ui/back-link";
 import { Avatar } from "@/shared/ui/avatar";
 import { IconChip } from "@/shared/ui/icon-chip";
 
-const ROLE_OPTIONS: UserRole[] = ["user", "student", "teacher", "admin"];
+const ROLE_OPTIONS: UserRole[] = ["user", "student", "teacher", "admin", "author"];
 
 type Draft = {
   fullName: string;
   email: string;
-  role: UserRole;
+  roles: UserRole[];
   isActive: boolean;
 };
 
@@ -26,7 +26,7 @@ function draftFromUser(user: AdminUser): Draft {
   return {
     fullName: user.full_name ?? "",
     email: user.email ?? "",
-    role: user.role,
+    roles: user.roles,
     isActive: user.is_active,
   };
 }
@@ -37,18 +37,26 @@ type DashboardAdminUserDetailViewProps = {
 
 export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetailViewProps) {
   const { data: user, isLoading, isError } = useAdminUserQuery(userId);
-  const { updateFields, updateRole } = useUpdateAdminUserMutation(userId);
+  const { updateFields, addRole, removeRole } = useUpdateAdminUserMutation(userId);
   const { data: classrooms, isLoading: isClassroomsLoading } =
     useClassroomsForMemberQuery(userId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
 
-  const isSaving = updateFields.isPending || updateRole.isPending;
+  const isSaving = updateFields.isPending || addRole.isPending || removeRole.isPending;
 
   function patch(changes: Partial<Draft>) {
     if (!user) return;
     setDraft({ ...(draft ?? draftFromUser(user)), ...changes });
+  }
+
+  function toggleRole(role: UserRole) {
+    if (!draft) return;
+    const roles = draft.roles.includes(role)
+      ? draft.roles.filter((r) => r !== role)
+      : [...draft.roles, role];
+    patch({ roles });
   }
 
   function startEditing() {
@@ -61,7 +69,8 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
     setDraft(null);
     setIsEditing(false);
     updateFields.reset();
-    updateRole.reset();
+    addRole.reset();
+    removeRole.reset();
   }
 
   async function save() {
@@ -72,13 +81,15 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
     if (draft.email !== (user.email ?? "")) fieldChanges.email = draft.email.trim();
     if (draft.isActive !== user.is_active) fieldChanges.is_active = draft.isActive;
 
+    const rolesToAdd = draft.roles.filter((r) => !user.roles.includes(r));
+    const rolesToRemove = user.roles.filter((r) => !draft.roles.includes(r));
+
     const tasks: Promise<unknown>[] = [];
     if (Object.keys(fieldChanges).length > 0) {
       tasks.push(updateFields.mutateAsync(fieldChanges));
     }
-    if (draft.role !== user.role) {
-      tasks.push(updateRole.mutateAsync(draft.role));
-    }
+    rolesToAdd.forEach((r) => tasks.push(addRole.mutateAsync(r)));
+    rolesToRemove.forEach((r) => tasks.push(removeRole.mutateAsync(r)));
 
     try {
       await Promise.all(tasks);
@@ -169,21 +180,31 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
             <div className="flex items-center gap-3 rounded-xl border border-border bg-bg-alt px-4 py-3">
               <IconChip icon={ShieldCheck} />
               <div className="flex-1">
-                <p className="text-text-muted">Rol</p>
+                <p className="text-text-muted">Roller</p>
                 {isEditing && draft ? (
-                  <select
-                    value={draft.role}
-                    onChange={(e) => patch({ role: e.target.value as UserRole })}
-                    className="mt-1 rounded-md border border-border bg-bg px-2.5 py-1.5 text-[0.85rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  >
-                    {ROLE_OPTIONS.map((role) => (
-                      <option key={role} value={role}>
-                        {ROLE_LABELS[role]}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {ROLE_OPTIONS.map((role) => {
+                      const selected = draft.roles.includes(role);
+                      return (
+                        <button
+                          key={role}
+                          type="button"
+                          onClick={() => toggleRole(role)}
+                          className={`rounded-full border px-2.5 py-1 text-[0.78rem] font-medium transition-colors duration-150 ${
+                            selected
+                              ? "border-primary-border bg-primary-tint text-accent"
+                              : "border-border text-text-muted hover:text-text"
+                          }`}
+                        >
+                          {ROLE_LABELS[role]}
+                        </button>
+                      );
+                    })}
+                  </div>
                 ) : (
-                  <p className="font-medium text-text">{ROLE_LABELS[user.role]}</p>
+                  <p className="font-medium text-text">
+                    {user.roles.map((r) => ROLE_LABELS[r]).join(", ") || "—"}
+                  </p>
                 )}
               </div>
             </div>
@@ -271,7 +292,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
             )}
           </div>
 
-          {(updateFields.isError || updateRole.isError) && (
+          {(updateFields.isError || addRole.isError || removeRole.isError) && (
             <div className="border-t border-border bg-danger-bg px-8 py-4">
               <p className="text-[0.8rem] text-danger">
                 Kaydedilemedi. E-posta başka bir kullanıcıda olabilir.

@@ -2,10 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useCurrentUser } from "@/entities/user";
-import { ROLE_NAV_ITEMS, isDashboardRole } from "@/entities/dashboard";
+import {
+  ROLE_NAV_ITEMS,
+  isDashboardRole,
+  setStoredActiveRole,
+  type DashboardRole,
+} from "@/entities/dashboard";
 import { useLogout } from "@/features/auth";
 import { ChevronsLeftIcon, LogOutIcon, MoreHorizontalIcon } from "@/shared/ui/icons";
 import { Avatar } from "@/shared/ui/avatar";
@@ -15,13 +21,28 @@ const EASE = [0.32, 0.72, 0, 1] as const;
 const EXPANDED_WIDTH = 248;
 const COLLAPSED_WIDTH = 76;
 
-export function DashboardSidebar() {
+const ROLE_LABELS: Record<DashboardRole, string> = {
+  admin: "Yönetici",
+  teacher: "Öğretmen",
+  student: "Öğrenci",
+};
+
+type DashboardSidebarProps = {
+  // Which role's dashboard this sidebar belongs to — passed by the layout,
+  // not derived from the user, since a user can hold several roles at once.
+  role: DashboardRole;
+};
+
+export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const user = useCurrentUser();
+  const router = useRouter();
   const pathname = usePathname();
   const logout = useLogout();
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const roleMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "1") {
@@ -42,6 +63,9 @@ export function DashboardSidebar() {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
+      if (roleMenuRef.current && !roleMenuRef.current.contains(e.target as Node)) {
+        setRoleMenuOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -52,9 +76,14 @@ export function DashboardSidebar() {
     await logout();
   }
 
-  // Always rendered inside a role layout after `useRequireRole` succeeds,
-  // so `user.role` is guaranteed dashboard-eligible here.
-  const items = isDashboardRole(user.role) ? ROLE_NAV_ITEMS[user.role] : [];
+  function switchToRole(target: DashboardRole) {
+    setRoleMenuOpen(false);
+    setStoredActiveRole(target);
+    router.push(`/dashboard/${target}`);
+  }
+
+  const items = ROLE_NAV_ITEMS[role];
+  const otherRoles = user.roles.filter(isDashboardRole).filter((r) => r !== role);
 
   return (
     <motion.aside
@@ -78,6 +107,51 @@ export function DashboardSidebar() {
           {collapsed ? "PS" : "PayaSTEM"}
         </span>
       </div>
+
+      {!collapsed && (
+        <div ref={roleMenuRef} className="relative px-3 pt-3">
+          <button
+            onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
+            disabled={otherRoles.length === 0}
+            className={`flex w-full items-center justify-between rounded-md border border-border px-3 py-2 text-[0.82rem] font-medium text-text transition-colors duration-150 ${
+              otherRoles.length > 0 ? "bg-bg hover:bg-surface cursor-pointer" : "bg-bg-alt cursor-default"
+            }`}
+          >
+            {ROLE_LABELS[role]}
+            {otherRoles.length > 0 && (
+              <ChevronDown
+                size={14}
+                className={`shrink-0 text-text-muted transition-transform duration-150 ${roleMenuOpen ? "rotate-180" : ""}`}
+              />
+            )}
+          </button>
+
+          <AnimatePresence>
+            {roleMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.15, ease: EASE }}
+                className="absolute left-3 right-3 z-20 mt-1.5 overflow-hidden rounded-md border border-border bg-bg py-1 shadow-lg"
+              >
+                <p className="px-3 pb-1 pt-1.5 text-[0.68rem] font-medium uppercase tracking-wide text-text-muted opacity-60">
+                  Panel Değiştir
+                </p>
+                {otherRoles.map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => switchToRole(r)}
+                    className="flex w-full items-center px-3 py-2 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-surface"
+                  >
+                    {ROLE_LABELS[r]}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
       <nav className="flex-1 px-3 py-4">
         <ul className="flex flex-col gap-1">

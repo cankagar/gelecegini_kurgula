@@ -13,7 +13,7 @@ export default function StudentDashboardLayout({ children }: { children: ReactNo
 
   return (
     <div className="flex min-h-screen">
-      <DashboardSidebar />
+      <DashboardSidebar role="student" />
       <main className="flex-1">{children}</main>
     </div>
   );

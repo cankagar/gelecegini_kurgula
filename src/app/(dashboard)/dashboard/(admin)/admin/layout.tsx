@@ -13,7 +13,7 @@ export default function AdminDashboardLayout({ children }: { children: ReactNode
 
   return (
     <div className="flex min-h-screen">
-      <DashboardSidebar />
+      <DashboardSidebar role="admin" />
       <main className="flex-1">{children}</main>
     </div>
   );
