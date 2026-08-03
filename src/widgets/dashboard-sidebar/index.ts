@@ -1,1 +1,1 @@
-export { DashboardSidebar } from "./ui/DashboardSidebar";
+export { DashboardSidebar, DASHBOARD_MOBILE_MAIN_CLEARANCE_CLASS } from "./ui/DashboardSidebar";

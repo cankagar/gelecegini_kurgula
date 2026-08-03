@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useCurrentUser } from "@/entities/user";
 import {
   ROLE_NAV_ITEMS,
@@ -13,13 +13,19 @@ import {
   type DashboardRole,
 } from "@/entities/dashboard";
 import { useLogout } from "@/features/auth";
-import { ChevronsLeftIcon, LogOutIcon, MoreHorizontalIcon } from "@/shared/ui/icons";
+import { ChevronsLeftIcon, LogOutIcon, MoreHorizontalIcon, UserIcon } from "@/shared/ui/icons";
 import { Avatar } from "@/shared/ui/avatar";
 
 const STORAGE_KEY = "payastem:sidebar-collapsed";
 const EASE = [0.32, 0.72, 0, 1] as const;
 const EXPANDED_WIDTH = 248;
 const COLLAPSED_WIDTH = 76;
+const MOBILE_NAV_PEEK_TOP = "30%";
+
+// Bottom padding a page's <main> needs on mobile so its content clears the
+// floating trigger button below (bottom-6 h-12) — unneeded once this sidebar
+// takes over as a fixed column on md+.
+export const DASHBOARD_MOBILE_MAIN_CLEARANCE_CLASS = "pb-24 md:pb-0";
 
 const ROLE_LABELS: Record<DashboardRole, string> = {
   admin: "Yönetici",
@@ -41,8 +47,11 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileNavExpanded, setMobileNavExpanded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const roleMenuRef = useRef<HTMLDivElement>(null);
+  const mobileRoleMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "1") {
@@ -63,7 +72,12 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
-      if (roleMenuRef.current && !roleMenuRef.current.contains(e.target as Node)) {
+      if (
+        roleMenuRef.current &&
+        !roleMenuRef.current.contains(e.target as Node) &&
+        mobileRoleMenuRef.current &&
+        !mobileRoleMenuRef.current.contains(e.target as Node)
+      ) {
         setRoleMenuOpen(false);
       }
     }
@@ -71,13 +85,20 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  function closeMobileNav() {
+    setMobileNavOpen(false);
+    setMobileNavExpanded(false);
+  }
+
   async function handleLogout() {
     setMenuOpen(false);
+    closeMobileNav();
     await logout();
   }
 
   function switchToRole(target: DashboardRole) {
     setRoleMenuOpen(false);
+    closeMobileNav();
     setStoredActiveRole(target);
     router.push(`/dashboard/${target}`);
   }
@@ -86,10 +107,11 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const otherRoles = user.roles.filter(isDashboardRole).filter((r) => r !== role);
 
   return (
+    <>
     <motion.aside
       animate={{ width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
       transition={{ duration: 0.35, ease: EASE }}
-      className="relative shrink-0 min-h-screen border-r border-border bg-bg-alt flex flex-col"
+      className="relative hidden md:flex shrink-0 min-h-screen border-r border-border bg-bg-alt flex-col"
     >
       <button
         onClick={toggleCollapsed}
@@ -241,5 +263,153 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
         </button>
       </div>
     </motion.aside>
+
+    {/* Mobile trigger — floating pill, replaces the sidebar on small screens */}
+    {!mobileNavOpen && (
+      <button
+        onClick={() => {
+          setMobileNavExpanded(false);
+          setMobileNavOpen(true);
+        }}
+        aria-label="Menüyü aç"
+        className="md:hidden fixed bottom-6 left-1/2 z-40 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-text text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition-transform duration-150 active:scale-95"
+      >
+        <Menu size={20} />
+      </button>
+    )}
+
+    {/* Mobile nav scrim — blurs the page peeking above the sheet */}
+    <AnimatePresence>
+      {mobileNavOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={closeMobileNav}
+          className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+        />
+      )}
+    </AnimatePresence>
+
+    {/* Mobile nav modal — full-screen, mirrors the desktop sidebar's items */}
+    <AnimatePresence>
+      {mobileNavOpen && (
+        <motion.div
+          initial={{ opacity: 0, top: MOBILE_NAV_PEEK_TOP }}
+          animate={{ opacity: 1, top: mobileNavExpanded ? 0 : MOBILE_NAV_PEEK_TOP }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: EASE }}
+          className={`md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-[#0a0a0a]/97 backdrop-blur-sm transition-[border-radius] duration-300 ${
+            mobileNavExpanded ? "rounded-none" : "rounded-t-3xl"
+          }`}
+        >
+          <div
+            className="flex-1 overflow-y-auto px-5 pb-28 pt-10"
+            onScroll={(e) => {
+              if (!mobileNavExpanded && e.currentTarget.scrollTop > 4) {
+                setMobileNavExpanded(true);
+              }
+            }}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <Link
+                href="/profile/settings"
+                onClick={closeMobileNav}
+                className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-white transition-colors duration-150 hover:bg-white/10"
+              >
+                <UserIcon size={16} className="shrink-0 text-white/70" />
+                Profilim
+              </Link>
+
+              <div ref={mobileRoleMenuRef} className="relative shrink-0">
+                <button
+                  onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
+                  disabled={otherRoles.length === 0}
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-white/15 px-3.5 py-2.5 text-[0.85rem] font-medium text-white transition-colors duration-150 ${
+                    otherRoles.length > 0 ? "bg-white/5 hover:bg-white/10" : "bg-white/5 opacity-70"
+                  }`}
+                >
+                  {ROLE_LABELS[role]}
+                  {otherRoles.length > 0 && (
+                    <ChevronDown
+                      size={14}
+                      className={`shrink-0 text-white/60 transition-transform duration-150 ${roleMenuOpen ? "rotate-180" : ""}`}
+                    />
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {roleMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.15, ease: EASE }}
+                      className="absolute right-0 z-20 mt-1.5 w-44 overflow-hidden rounded-xl border border-white/15 bg-[#161616] py-1 shadow-lg"
+                    >
+                      <p className="px-3 pb-1 pt-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-white/40">
+                        Panel Değiştir
+                      </p>
+                      {otherRoles.map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => switchToRole(r)}
+                          className="flex w-full items-center px-3 py-2 text-left text-[0.85rem] text-white/80 transition-colors duration-150 hover:bg-white/10 hover:text-white"
+                        >
+                          {ROLE_LABELS[r]}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            <div className="my-4 border-t border-white/10" />
+
+            <ul className="flex flex-col gap-1">
+              {items.map((item) => {
+                const active = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      onClick={closeMobileNav}
+                      className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-[0.95rem] font-medium transition-colors duration-150 ${
+                        active ? "bg-white/10 text-white" : "text-white/80 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <Icon size={18} className="shrink-0" />
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="my-4 border-t border-white/10" />
+
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-[0.95rem] font-medium text-white/80 transition-colors duration-150 hover:bg-white/5 hover:text-white"
+            >
+              <LogOutIcon size={18} className="shrink-0" />
+              Çıkış Yap
+            </button>
+          </div>
+
+          <button
+            onClick={closeMobileNav}
+            aria-label="Menüyü kapat"
+            className="fixed bottom-6 left-1/2 z-50 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/15 backdrop-blur transition-transform duration-150 active:scale-95"
+          >
+            <X size={20} />
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

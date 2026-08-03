@@ -1,20 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useRequireRole } from "@/features/dashboard-access";
-import { DashboardSidebar } from "@/widgets/dashboard-sidebar";
+import { DashboardShell } from "@/widgets/dashboard-shell";
 
 export default function StudentDashboardLayout({ children }: { children: ReactNode }) {
-  const user = useRequireRole("student");
-
-  if (!user) {
-    return null;
-  }
-
-  return (
-    <div className="flex min-h-screen">
-      <DashboardSidebar role="student" />
-      <main className="flex-1">{children}</main>
-    </div>
-  );
+  return <DashboardShell role="student">{children}</DashboardShell>;
 }
