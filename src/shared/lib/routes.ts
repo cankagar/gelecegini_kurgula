@@ -2,8 +2,13 @@ const DASHBOARD = "/dashboard";
 const ADMIN = `${DASHBOARD}/admin`;
 const TEACHER = `${DASHBOARD}/teacher`;
 const STUDENT = `${DASHBOARD}/student`;
+const PROFILE = "/profile";
 
 export const ROUTES = {
+  PROFILE: {
+    HOME: PROFILE,
+    SETTINGS: `${PROFILE}/settings`,
+  },
   ADMIN: {
     HOME: ADMIN,
     CLASSROOMS: `${ADMIN}/classrooms`,

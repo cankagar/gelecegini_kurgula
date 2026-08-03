@@ -8,6 +8,7 @@ import { useScrolledPast, NAV_HIDE_THRESHOLD } from "@/shared/lib";
 import { UserIcon, ChevronDownIcon } from "@/shared/ui/icons";
 import { useSyncCurrentUser } from "@/entities/user";
 import { useLogout } from "@/features/auth";
+import { ROUTES } from "@/shared/lib/routes";
 
 type NavLink = { href: string; label: string };
 
@@ -117,6 +118,13 @@ export default function Navbar() {
                       >
                         Panele Git
                       </Link>
+                      <Link
+                        href={ROUTES.PROFILE.SETTINGS}
+                        onClick={() => setIsProfileOpen(false)}
+                        className="block px-3.5 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] transition-colors duration-150"
+                      >
+                        Profil Ayarları
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-3.5 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] transition-colors duration-150"
@@ -190,12 +198,21 @@ export default function Navbar() {
 
           <div className="mt-4 pt-4 border-t border-[#EAEAEA] flex flex-col gap-2">
             {user ? (
-              <button
-                onClick={handleLogout}
-                className="block text-center px-4 py-2.5 rounded-md text-[0.82rem] font-semibold bg-[#111111] hover:bg-[#333333] text-white transition-colors"
-              >
-                Çıkış Yap
-              </button>
+              <>
+                <Link
+                  href={ROUTES.PROFILE.SETTINGS}
+                  onClick={() => setIsMobileOpen(false)}
+                  className="block text-center px-4 py-2.5 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] rounded-md transition-all"
+                >
+                  Profil Ayarları
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block text-center px-4 py-2.5 rounded-md text-[0.82rem] font-semibold bg-[#111111] hover:bg-[#333333] text-white transition-colors"
+                >
+                  Çıkış Yap
+                </button>
+              </>
             ) : (
               <>
                 <Link

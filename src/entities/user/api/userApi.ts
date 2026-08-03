@@ -46,6 +46,15 @@ export async function updateUser(
   }
 }
 
+export async function updateMe(updates: { email?: string; full_name?: string }) {
+  try {
+    const { data } = await httpClient.patch<User>("/v1/users/me", updates);
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
 export async function addUserRole(id: string, role: UserRole) {
   try {
     const { data } = await httpClient.post<AdminUser>(`/v1/users/${id}/roles`, { role });

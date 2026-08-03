@@ -103,9 +103,12 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       </button>
 
       <div className="h-[65px] flex items-center px-6 border-b border-border overflow-hidden">
-        <span className="font-heading text-[1.1rem] font-bold text-text tracking-[-0.02em] whitespace-nowrap">
+        <Link
+          href="/"
+          className="font-heading text-[1.1rem] font-bold text-text tracking-[-0.02em] whitespace-nowrap transition-opacity duration-150 hover:opacity-70"
+        >
           {collapsed ? "PS" : "PayaSTEM"}
-        </span>
+        </Link>
       </div>
 
       {!collapsed && (
@@ -196,9 +199,13 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               transition={{ duration: 0.2, ease: EASE }}
               className="absolute bottom-full left-3 z-20 mb-2 w-52 overflow-hidden rounded-md border border-border bg-bg py-1.5 shadow-lg"
             >
-              <p className="cursor-not-allowed px-3.5 py-2 text-[0.82rem] text-text-muted opacity-60">
+              <Link
+                href="/profile/settings"
+                onClick={() => setMenuOpen(false)}
+                className="block px-3.5 py-2 text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
+              >
                 Profilim
-              </p>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
