@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { AuthShell } from "@/widgets/auth-shell";
 import { AuthFormError } from "@/shared/ui/auth-form";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { useInvitationTokenQuery } from "@/entities/classroom-invitation";
 import { hasSessionFlag, useCurrentUserQuery } from "@/entities/user";
 import { InvitationAcceptConfirm, InvitationSignupForm } from "@/features/classroom-invitations";
+import { useRedirectToRoleHome } from "@/features/dashboard-access";
 
 type AuthInvitationAcceptViewProps = {
   token: string;
@@ -20,6 +22,13 @@ export function AuthInvitationAcceptView({ token }: AuthInvitationAcceptViewProp
   const hasSession = hasSessionFlag();
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useCurrentUserQuery();
   const currentUser = !hasSession ? null : isUserLoading ? undefined : isUserError ? null : user ?? null;
+
+  // Signup formu başarıyla tamamlanınca (accept-signup oturumu otomatik
+  // açtıysa) kullanıcıyı kendi rolünün dashboard'ına yönlendiriyoruz. İki
+  // feature'ı (classroom-invitations + dashboard-access) birleştirmek view'in
+  // işi — feature'lar birbirini FSD gereği import edemez.
+  const [signupCompleted, setSignupCompleted] = useState(false);
+  useRedirectToRoleHome({ enabled: signupCompleted && hasSessionFlag() });
 
   return (
     <AuthShell
@@ -42,6 +51,7 @@ export function AuthInvitationAcceptView({ token }: AuthInvitationAcceptViewProp
           token={token}
           email={invitation.email}
           classroomName={invitation.classroom_name}
+          onSuccess={() => setSignupCompleted(true)}
         />
       )}
 

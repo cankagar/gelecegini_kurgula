@@ -1,23 +1,33 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { LockIcon, MailIcon, UserIcon } from "@/shared/ui/icons";
+import { LockIcon, MailIcon, SpinnerIcon, UserIcon } from "@/shared/ui/icons";
 import { AuthFormError, AuthFormSuccess, AuthSubmitButton } from "@/shared/ui/auth-form";
 import { AuthTextInput, AuthPasswordInput } from "@/shared/ui/auth-input";
 import { useAcceptInvitationWithSignupMutation } from "@/entities/classroom-invitation";
+import { hasSessionFlag } from "@/entities/user";
 import { ApiError } from "@/shared/api";
 
 type InvitationSignupFormProps = {
   token: string;
   email: string;
   classroomName: string;
+  // Dashboard'a yönlendirme kararı (rol bazlı) bu feature'ın işi değil —
+  // FSD'de feature'lar birbirini import edemez, o yüzden bu karar view'e ait.
+  onSuccess?: () => void;
 };
 
 // Hesabı olmayan kullanıcı davet linkinden kayıt olur — backend hesabı oluşturup
-// direkt STUDENT olarak sınıfa ekler, ama oturum açmaz (bkz. accept-signup
-// endpoint'i), bu yüzden başarı sonrası giriş sayfasına yönlendiriyoruz.
-export function InvitationSignupForm({ token, email, classroomName }: InvitationSignupFormProps) {
+// direkt STUDENT olarak sınıfa ekler. E-posta doğrulaması kapalıysa (bkz.
+// accept-signup endpoint'i) oturum da otomatik açılır; bu durumu sadece
+// kendi gösterimimiz (spinner vs. giriş linki) için `hasSessionFlag()` ile okuyoruz.
+export function InvitationSignupForm({
+  token,
+  email,
+  classroomName,
+  onSuccess,
+}: InvitationSignupFormProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +35,12 @@ export function InvitationSignupForm({ token, email, classroomName }: Invitation
   const [error, setError] = useState<string | null>(null);
 
   const signup = useAcceptInvitationWithSignupMutation(token);
+  const autoLoggedIn = signup.isSuccess && hasSessionFlag();
+
+  useEffect(() => {
+    if (signup.isSuccess) onSuccess?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- yalnızca başarı anında bir kez tetiklenmeli
+  }, [signup.isSuccess]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -63,7 +79,9 @@ export function InvitationSignupForm({ token, email, classroomName }: Invitation
       <AuthFormSuccess
         message={
           signup.isSuccess
-            ? `Hesabın oluşturuldu ve ${classroomName} sınıfına eklendin. Giriş yapabilirsin.`
+            ? autoLoggedIn
+              ? `Hesabın oluşturuldu ve ${classroomName} sınıfına eklendin.`
+              : `Hesabın oluşturuldu ve ${classroomName} sınıfına eklendin. Giriş yapabilirsin.`
             : null
         }
       />
@@ -126,12 +144,19 @@ export function InvitationSignupForm({ token, email, classroomName }: Invitation
 
       {signup.isSuccess && (
         <div className="mt-2">
-          <Link
-            href="/auth/login"
-            className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-primary-hover"
-          >
-            Giriş Yap
-          </Link>
+          {autoLoggedIn ? (
+            <div className="flex items-center justify-center gap-2 text-[0.85rem] text-text-muted">
+              <SpinnerIcon className="animate-spin" size={16} />
+              Panele yönlendiriliyorsun...
+            </div>
+          ) : (
+            <Link
+              href="/auth/login"
+              className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-primary-hover"
+            >
+              Giriş Yap
+            </Link>
+          )}
         </div>
       )}
     </form>

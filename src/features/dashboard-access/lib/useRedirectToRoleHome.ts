@@ -13,7 +13,11 @@ import type { DashboardRole } from "@/entities/dashboard";
 // last-used role if it's still valid — otherwise the caller should render a
 // role picker (see `eligibleRoles`/`needsRoleChoice`), since which role to
 // open isn't ours to guess.
-export function useRedirectToRoleHome() {
+// `enabled: false` yalnızca veriyi okur, yönlendirme yapmaz — davet kabulü
+// gibi "sadece belirli bir olaydan sonra tetiklensin" senaryoları için
+// (aksi halde sayfa açılır açılmaz, davete konu olmayan mevcut bir oturum
+// üzerinden istenmeyen bir yönlendirme tetiklenebilir).
+export function useRedirectToRoleHome({ enabled = true }: { enabled?: boolean } = {}) {
   const router = useRouter();
   const { data: user, isError } = useCurrentUserQuery();
 
@@ -22,6 +26,7 @@ export function useRedirectToRoleHome() {
   const needsRoleChoice = eligibleRoles.length > 1 && !(stored && eligibleRoles.includes(stored));
 
   useEffect(() => {
+    if (!enabled) return;
     if (isError) {
       router.replace("/auth/login");
       return;
@@ -38,7 +43,7 @@ export function useRedirectToRoleHome() {
     }
     // else: more than one role and no valid stored choice — let the caller
     // render a picker instead of guessing which one to open.
-  }, [isError, user, eligibleRoles, stored, router]);
+  }, [enabled, isError, user, eligibleRoles, stored, router]);
 
   return { eligibleRoles, needsRoleChoice };
 }
