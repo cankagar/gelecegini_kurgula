@@ -28,6 +28,27 @@ function redirectToLogin() {
   }
 }
 
+// Supabase rotates the refresh token on every use — two concurrent refresh
+// calls with the same (stale) token would race: one succeeds and rotates it,
+// the other fails and the failure handler clears the (now valid) cookies.
+// `refreshPromise` only dedupes within this tab; `navigator.locks` also
+// serializes across tabs, so a second tab's refresh request is only actually
+// sent after the first tab's has completed and updated the session cookies.
+async function refreshSession(): Promise<void> {
+  const doRefresh = () =>
+    (refreshPromise ??= httpClient
+      .post(REFRESH_URL, undefined, { skipAuthRetry: true })
+      .finally(() => {
+        refreshPromise = null;
+      }));
+
+  if (typeof navigator !== "undefined" && "locks" in navigator) {
+    await navigator.locks.request("payastem-auth-refresh", () => doRefresh());
+  } else {
+    await doRefresh();
+  }
+}
+
 httpClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -40,14 +61,8 @@ httpClient.interceptors.response.use(
 
     config._retried = true;
 
-    refreshPromise ??= httpClient
-      .post(REFRESH_URL, undefined, { skipAuthRetry: true })
-      .finally(() => {
-        refreshPromise = null;
-      });
-
     try {
-      await refreshPromise;
+      await refreshSession();
     } catch {
       redirectToLogin();
       throw error;
