@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import type { ClassroomWithMembers } from "@/entities/classroom";
 import { ROLE_LABELS } from "@/entities/user";
 import { formatDateTime } from "@/shared/lib/date";
+import { formatFullName } from "@/shared/lib";
 
 type Tab = "assignments" | "members";
 
@@ -66,7 +67,7 @@ export function ClassroomDetailShell({
             <ul className="divide-y divide-border rounded-md border border-border">
               {classroom.members.map((member) => (
                 <li key={member.member_id} className="px-4 py-2.5 text-[0.85rem]">
-                  <span className="font-medium text-text">{member.full_name ?? "İsimsiz"}</span>{" "}
+                  <span className="font-medium text-text">{formatFullName(member, "İsimsiz")}</span>{" "}
                   <span className="text-text-muted">{member.email}</span>{" "}
                   <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
                     {member.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useScrolledPast, NAV_HIDE_THRESHOLD } from "@/shared/lib";
+import { useScrolledPast, NAV_HIDE_THRESHOLD, formatFullName } from "@/shared/lib";
 import { UserIcon, ChevronDownIcon } from "@/shared/ui/icons";
 import { useSyncCurrentUser } from "@/entities/user";
 import { useLogout } from "@/features/auth";
@@ -28,6 +28,7 @@ export default function Navbar() {
   const scrolled = useScrolledPast(NAV_HIDE_THRESHOLD);
   const user = useSyncCurrentUser();
   const logout = useLogout();
+  const isOnlyUserRole = user ? user.roles.every((role) => role === "user") : false;
 
   useEffect(() => {
     function handleResize() {
@@ -89,8 +90,11 @@ export default function Navbar() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -24, opacity: 0 }}
                 transition={SLIDE_TRANSITION}
-                className="flex items-center"
+                className="flex items-center gap-2.5"
               >
+                <span className="text-[0.82rem] font-medium text-[#111111] max-w-[140px] truncate">
+                  {formatFullName(user, user.email ?? "")}
+                </span>
                 <div className="relative" ref={profileRef}>
                   <button
                     onClick={() => setIsProfileOpen((v) => !v)}
@@ -109,15 +113,17 @@ export default function Navbar() {
                   {isProfileOpen && (
                     <div className="absolute right-0 top-full mt-2 w-52 rounded-md border border-[#EAEAEA] bg-white shadow-lg py-1.5">
                       <p className="px-3.5 py-2 text-[0.78rem] font-medium text-[#111111] truncate border-b border-[#EAEAEA]">
-                        {user.full_name ?? user.email}
+                        {formatFullName(user, user.email ?? "")}
                       </p>
-                      <Link
-                        href="/dashboard"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="block px-3.5 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] transition-colors duration-150"
-                      >
-                        Panele Git
-                      </Link>
+                      {!isOnlyUserRole && (
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-3.5 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] transition-colors duration-150"
+                        >
+                          Panele Git
+                        </Link>
+                      )}
                       <Link
                         href={ROUTES.PROFILE.HOME}
                         onClick={() => setIsProfileOpen(false)}

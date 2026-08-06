@@ -8,6 +8,7 @@ import type { AdminUser, UserRole } from "@/entities/user";
 import { useClassroomsForMemberQuery } from "@/entities/classroom";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatDateTime } from "@/shared/lib/date";
+import { formatFullName } from "@/shared/lib";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 import { Avatar } from "@/shared/ui/avatar";
@@ -16,7 +17,8 @@ import { IconChip } from "@/shared/ui/icon-chip";
 const ROLE_OPTIONS: UserRole[] = ["user", "student", "teacher", "admin", "author"];
 
 type Draft = {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   roles: UserRole[];
   isActive: boolean;
@@ -24,7 +26,8 @@ type Draft = {
 
 function draftFromUser(user: AdminUser): Draft {
   return {
-    fullName: user.full_name ?? "",
+    firstName: user.first_name ?? "",
+    lastName: user.last_name ?? "",
     email: user.email ?? "",
     roles: user.roles,
     isActive: user.is_active,
@@ -76,8 +79,16 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
   async function save() {
     if (!user || !draft) return;
 
-    const fieldChanges: { email?: string; full_name?: string; is_active?: boolean } = {};
-    if (draft.fullName !== (user.full_name ?? "")) fieldChanges.full_name = draft.fullName.trim();
+    const fieldChanges: {
+      email?: string;
+      first_name?: string;
+      last_name?: string;
+      is_active?: boolean;
+    } = {};
+    if (draft.firstName !== (user.first_name ?? ""))
+      fieldChanges.first_name = draft.firstName.trim();
+    if (draft.lastName !== (user.last_name ?? ""))
+      fieldChanges.last_name = draft.lastName.trim();
     if (draft.email !== (user.email ?? "")) fieldChanges.email = draft.email.trim();
     if (draft.isActive !== user.is_active) fieldChanges.is_active = draft.isActive;
 
@@ -116,18 +127,27 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
         <div className="mt-8">
           <div className="flex items-start justify-between gap-4 border-b border-border pb-6">
             <div className="flex flex-1 items-start gap-4">
-              <Avatar name={user.full_name ?? user.email ?? "?"} size={48} className="mt-0.5" />
+              <Avatar name={formatFullName(user, user.email ?? "?")} size={48} className="mt-0.5" />
 
               <div className="flex-1">
                 {isEditing && draft ? (
                   <div className="flex max-w-md flex-col gap-2">
-                    <input
-                      type="text"
-                      value={draft.fullName}
-                      onChange={(e) => patch({ fullName: e.target.value })}
-                      placeholder="Ad Soyad"
-                      className="rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={draft.firstName}
+                        onChange={(e) => patch({ firstName: e.target.value })}
+                        placeholder="Ad"
+                        className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                      <input
+                        type="text"
+                        value={draft.lastName}
+                        onChange={(e) => patch({ lastName: e.target.value })}
+                        placeholder="Soyad"
+                        className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
                     <input
                       type="email"
                       value={draft.email}
@@ -139,7 +159,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                 ) : (
                   <>
                     <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
-                      {user.full_name ?? "İsimsiz Kullanıcı"}
+                      {formatFullName(user)}
                     </h1>
                     <p className="mt-1 text-[0.9rem] text-text-muted">{user.email ?? "—"}</p>
                   </>

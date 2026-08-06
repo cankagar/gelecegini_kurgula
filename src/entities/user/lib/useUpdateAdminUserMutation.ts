@@ -13,8 +13,9 @@ export function useUpdateAdminUserMutation(userId: string) {
   };
 
   const updateFields = useMutation({
-    mutationFn: (updates: { email?: string; full_name?: string; is_active?: boolean }) =>
-      updateUser(userId, updates),
+    mutationFn: (
+      updates: { email?: string; first_name?: string; last_name?: string; is_active?: boolean }
+    ) => updateUser(userId, updates),
     onSuccess: invalidate,
   });
 

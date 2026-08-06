@@ -6,6 +6,7 @@ import { useRequireAuth } from "@/features/auth";
 import { useUpdateMeMutation, ROLE_LABELS } from "@/entities/user";
 import { Avatar } from "@/shared/ui/avatar";
 import { PenIcon } from "@/shared/ui/icons";
+import { formatFullName } from "@/shared/lib";
 
 const EASE = [0.32, 0.72, 0, 1] as const;
 
@@ -17,7 +18,7 @@ const fadeUp = {
 const fieldClass =
   "rounded-xl border border-border bg-bg-alt px-3.5 py-2.5 text-[0.9rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20";
 
-type Draft = { fullName: string; email: string };
+type Draft = { firstName: string; lastName: string; email: string };
 
 export function ProfileView() {
   const user = useRequireAuth();
@@ -29,7 +30,11 @@ export function ProfileView() {
   if (!user) return null;
 
   function startEditing() {
-    setDraft({ fullName: user!.full_name ?? "", email: user!.email ?? "" });
+    setDraft({
+      firstName: user!.first_name ?? "",
+      lastName: user!.last_name ?? "",
+      email: user!.email ?? "",
+    });
     setIsEditing(true);
   }
 
@@ -42,8 +47,9 @@ export function ProfileView() {
   async function save() {
     if (!draft) return;
 
-    const changes: { email?: string; full_name?: string } = {};
-    if (draft.fullName !== (user!.full_name ?? "")) changes.full_name = draft.fullName.trim();
+    const changes: { email?: string; first_name?: string; last_name?: string } = {};
+    if (draft.firstName !== (user!.first_name ?? "")) changes.first_name = draft.firstName.trim();
+    if (draft.lastName !== (user!.last_name ?? "")) changes.last_name = draft.lastName.trim();
     if (draft.email !== (user!.email ?? "")) changes.email = draft.email.trim();
 
     if (Object.keys(changes).length === 0) {
@@ -75,7 +81,7 @@ export function ProfileView() {
           </span>
 
           <h1 className="mt-5 font-heading text-[2.5rem] font-bold leading-[1.05] tracking-[-0.03em] text-text sm:text-[3rem]">
-            {user.full_name ?? "İsimsiz Kullanıcı"}
+            {formatFullName(user)}
           </h1>
           <p className="mt-2 font-serif text-[1.05rem] italic text-text-muted">{user.email ?? "—"}</p>
         </motion.div>
@@ -92,18 +98,27 @@ export function ProfileView() {
             <div className="flex h-full flex-col justify-between rounded-[calc(2rem-0.5rem)] bg-bg p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-8">
               <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-1 items-start gap-4">
-                  <Avatar name={user.full_name ?? user.email ?? "?"} size={64} className="mt-1 shrink-0" />
+                  <Avatar name={formatFullName(user, user.email ?? "?")} size={64} className="mt-1 shrink-0" />
 
                   <div className="flex-1">
                     {isEditing && draft ? (
                       <div className="flex flex-col gap-2.5">
-                        <input
-                          type="text"
-                          value={draft.fullName}
-                          onChange={(e) => setDraft({ ...draft, fullName: e.target.value })}
-                          placeholder="Ad Soyad"
-                          className={`${fieldClass} font-medium`}
-                        />
+                        <div className="flex gap-2.5">
+                          <input
+                            type="text"
+                            value={draft.firstName}
+                            onChange={(e) => setDraft({ ...draft, firstName: e.target.value })}
+                            placeholder="Ad"
+                            className={`${fieldClass} font-medium`}
+                          />
+                          <input
+                            type="text"
+                            value={draft.lastName}
+                            onChange={(e) => setDraft({ ...draft, lastName: e.target.value })}
+                            placeholder="Soyad"
+                            className={`${fieldClass} font-medium`}
+                          />
+                        </div>
                         <input
                           type="email"
                           value={draft.email}
@@ -114,9 +129,7 @@ export function ProfileView() {
                       </div>
                     ) : (
                       <>
-                        <p className="text-[1.1rem] font-semibold text-text">
-                          {user.full_name ?? "İsimsiz Kullanıcı"}
-                        </p>
+                        <p className="text-[1.1rem] font-semibold text-text">{formatFullName(user)}</p>
                         <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
                       </>
                     )}

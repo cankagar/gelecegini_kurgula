@@ -10,7 +10,8 @@ import { ApiError } from "@/shared/api";
 
 export function RegisterForm() {
   const router = useRouter();
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,7 +44,12 @@ export function RegisterForm() {
 
     setLoading(true);
     try {
-      await registerAccount({ email, password, full_name: fullName || undefined });
+      await registerAccount({
+        email,
+        password,
+        first_name: firstName || undefined,
+        last_name: lastName || undefined,
+      });
       router.push("/");
       router.refresh();
     } catch (err) {
@@ -63,14 +69,24 @@ export function RegisterForm() {
       <AuthFormError message={error} />
 
       <div className="flex flex-col gap-4">
-        <AuthTextInput
-          label="Ad Soyad"
-          value={fullName}
-          onChange={setFullName}
-          icon={<UserIcon size={17} />}
-          placeholder="Adın Soyadın"
-          autoComplete="name"
-        />
+        <div className="grid grid-cols-2 gap-3">
+          <AuthTextInput
+            label="Ad"
+            value={firstName}
+            onChange={setFirstName}
+            icon={<UserIcon size={17} />}
+            placeholder="Adın"
+            autoComplete="given-name"
+          />
+          <AuthTextInput
+            label="Soyad"
+            value={lastName}
+            onChange={setLastName}
+            icon={<UserIcon size={17} />}
+            placeholder="Soyadın"
+            autoComplete="family-name"
+          />
+        </div>
         <AuthTextInput
           label="E-posta"
           type="email"

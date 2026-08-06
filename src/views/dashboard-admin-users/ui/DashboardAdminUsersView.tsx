@@ -8,6 +8,7 @@ import { SpinnerIcon, UsersIcon, CheckCircleIcon, AlertTriangleIcon } from "@/sh
 import { Avatar } from "@/shared/ui/avatar";
 import { SearchInput } from "@/shared/ui/search-input";
 import { ROUTES } from "@/shared/lib/routes";
+import { formatFullName } from "@/shared/lib";
 
 const TABS: { label: string; role: UserRole | undefined }[] = [
   { label: "Tümü", role: undefined },
@@ -134,8 +135,8 @@ export function DashboardAdminUsersView() {
               >
                 <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <Avatar name={user.full_name ?? user.email ?? "?"} size={28} />
-                    <span className="font-medium">{user.full_name ?? "—"}</span>
+                    <Avatar name={formatFullName(user, user.email ?? "?")} size={28} />
+                    <span className="font-medium">{formatFullName(user, "—")}</span>
                   </div>
                 </td>
                 <td className="px-4 py-2.5 text-text-muted">{user.email ?? "—"}</td>

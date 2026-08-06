@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useClassroomMutations, useClassroomQuery } from "@/entities/classroom";
 import { useAdminUsersQuery } from "@/entities/user";
 import { ROUTES } from "@/shared/lib/routes";
+import { formatFullName } from "@/shared/lib";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 
@@ -211,7 +212,7 @@ export function DashboardAdminClassroomEditView({
                         className="flex w-full items-center justify-between px-3 py-2.5 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-surface disabled:opacity-50"
                       >
                         <span>
-                          <span className="font-medium">{candidate.full_name ?? "İsimsiz"}</span>{" "}
+                          <span className="font-medium">{formatFullName(candidate, "İsimsiz")}</span>{" "}
                           <span className="text-text-muted">{candidate.email}</span>{" "}
                           <span className="text-[0.75rem] text-text-muted">
                             ({candidate.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")})
@@ -245,7 +246,7 @@ export function DashboardAdminClassroomEditView({
                   >
                     <div>
                       <span className="font-medium text-text">
-                        {member.full_name ?? "İsimsiz"}
+                        {formatFullName(member, "İsimsiz")}
                       </span>{" "}
                       <span className="text-text-muted">{member.email}</span>{" "}
                       <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">

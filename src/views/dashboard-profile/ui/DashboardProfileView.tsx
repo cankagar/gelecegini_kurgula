@@ -6,9 +6,10 @@ import { useRequireAuth } from "@/features/auth";
 import { useUpdateMeMutation, ROLE_LABELS } from "@/entities/user";
 import { Avatar } from "@/shared/ui/avatar";
 import { IconChip } from "@/shared/ui/icon-chip";
+import { formatFullName } from "@/shared/lib";
 import { StudentDemographicsForm } from "./StudentDemographicsForm";
 
-type Draft = { fullName: string; email: string };
+type Draft = { firstName: string; lastName: string; email: string };
 
 // Self-profile as seen from inside a dashboard (admin/teacher/student) — same
 // page shell and header pattern as viewing any other record in the
@@ -24,7 +25,11 @@ export function DashboardProfileView() {
   if (!user) return null;
 
   function startEditing() {
-    setDraft({ fullName: user!.full_name ?? "", email: user!.email ?? "" });
+    setDraft({
+      firstName: user!.first_name ?? "",
+      lastName: user!.last_name ?? "",
+      email: user!.email ?? "",
+    });
     setIsEditing(true);
   }
 
@@ -37,8 +42,9 @@ export function DashboardProfileView() {
   async function save() {
     if (!draft) return;
 
-    const changes: { email?: string; full_name?: string } = {};
-    if (draft.fullName !== (user!.full_name ?? "")) changes.full_name = draft.fullName.trim();
+    const changes: { email?: string; first_name?: string; last_name?: string } = {};
+    if (draft.firstName !== (user!.first_name ?? "")) changes.first_name = draft.firstName.trim();
+    if (draft.lastName !== (user!.last_name ?? "")) changes.last_name = draft.lastName.trim();
     if (draft.email !== (user!.email ?? "")) changes.email = draft.email.trim();
 
     if (Object.keys(changes).length === 0) {
@@ -60,18 +66,27 @@ export function DashboardProfileView() {
     <div className="w-full px-8 py-10 lg:px-12">
       <div className="flex items-start justify-between gap-4 border-b border-border pb-6">
         <div className="flex flex-1 items-start gap-4">
-          <Avatar name={user.full_name ?? user.email ?? "?"} size={48} className="mt-0.5" />
+          <Avatar name={formatFullName(user, user.email ?? "?")} size={48} className="mt-0.5" />
 
           <div className="flex-1">
             {isEditing && draft ? (
               <div className="flex max-w-md flex-col gap-2">
-                <input
-                  type="text"
-                  value={draft.fullName}
-                  onChange={(e) => setDraft({ ...draft, fullName: e.target.value })}
-                  placeholder="Ad Soyad"
-                  className="rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={draft.firstName}
+                    onChange={(e) => setDraft({ ...draft, firstName: e.target.value })}
+                    placeholder="Ad"
+                    className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <input
+                    type="text"
+                    value={draft.lastName}
+                    onChange={(e) => setDraft({ ...draft, lastName: e.target.value })}
+                    placeholder="Soyad"
+                    className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
                 <input
                   type="email"
                   value={draft.email}
@@ -83,7 +98,7 @@ export function DashboardProfileView() {
             ) : (
               <>
                 <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
-                  {user.full_name ?? "İsimsiz Kullanıcı"}
+                  {formatFullName(user)}
                 </h1>
                 <p className="mt-1 text-[0.9rem] text-text-muted">{user.email ?? "—"}</p>
               </>

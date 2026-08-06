@@ -8,7 +8,8 @@ export type UserRole = "student" | "teacher" | "admin" | "author" | "user";
 export type User = {
   id: string;
   email: string | null;
-  full_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
   roles: UserRole[];
 };
 

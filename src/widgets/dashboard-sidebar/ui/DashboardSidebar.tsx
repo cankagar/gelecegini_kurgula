@@ -16,6 +16,7 @@ import {
 import { useLogout } from "@/features/auth";
 import { ChevronsLeftIcon, LogOutIcon, MoreHorizontalIcon, UserIcon } from "@/shared/ui/icons";
 import { Avatar } from "@/shared/ui/avatar";
+import { formatFullName } from "@/shared/lib";
 
 const STORAGE_KEY = "payastem:sidebar-collapsed";
 const EASE = [0.32, 0.72, 0, 1] as const;
@@ -242,18 +243,18 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
         <button
           onClick={() => setMenuOpen((v) => !v)}
-          title={collapsed ? (user.full_name ?? user.email ?? "?") : undefined}
+          title={collapsed ? formatFullName(user, user.email ?? "?") : undefined}
           className={`flex h-10 w-full items-center gap-3 rounded-md px-1.5 transition-colors duration-150 hover:bg-surface ${
             collapsed ? "justify-center" : ""
           }`}
         >
-          <Avatar name={user.full_name ?? user.email ?? "?"} size={28} />
+          <Avatar name={formatFullName(user, user.email ?? "?")} size={28} />
           <span
             className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-medium text-text transition-[max-width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
               collapsed ? "max-w-0 opacity-0" : "max-w-[150px] opacity-100"
             }`}
           >
-            {user.full_name ?? user.email ?? "?"}
+            {formatFullName(user, user.email ?? "?")}
           </span>
           <MoreHorizontalIcon
             size={16}
