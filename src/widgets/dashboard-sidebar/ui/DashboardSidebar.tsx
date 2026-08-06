@@ -15,6 +15,7 @@ import {
 import { useLogout } from "@/features/auth";
 import { ChevronsLeftIcon, LogOutIcon, MoreHorizontalIcon, UserIcon } from "@/shared/ui/icons";
 import { Avatar } from "@/shared/ui/avatar";
+import { ROUTES } from "@/shared/lib/routes";
 
 const STORAGE_KEY = "payastem:sidebar-collapsed";
 const EASE = [0.32, 0.72, 0, 1] as const;
@@ -222,7 +223,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               className="absolute bottom-full left-3 z-20 mb-2 w-52 overflow-hidden rounded-md border border-border bg-bg py-1.5 shadow-lg"
             >
               <Link
-                href="/profile/settings"
+                href={ROUTES.PROFILE.SETTINGS}
                 onClick={() => setMenuOpen(false)}
                 className="block px-3.5 py-2 text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
               >
@@ -314,7 +315,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
           >
             <div className="flex items-center justify-between gap-2">
               <Link
-                href="/profile/settings"
+                href={ROUTES.PROFILE.SETTINGS}
                 onClick={closeMobileNav}
                 className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-white transition-colors duration-150 hover:bg-white/10"
               >

@@ -8,7 +8,7 @@ import Footer from "@/widgets/footer";
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname?.startsWith("/dashboard")) {
+  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/profile")) {
     return <>{children}</>;
   }
 
