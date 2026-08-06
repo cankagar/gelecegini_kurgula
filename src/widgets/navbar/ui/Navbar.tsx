@@ -119,11 +119,11 @@ export default function Navbar() {
                         Panele Git
                       </Link>
                       <Link
-                        href={ROUTES.PROFILE.SETTINGS}
+                        href={ROUTES.PROFILE.HOME}
                         onClick={() => setIsProfileOpen(false)}
                         className="block px-3.5 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] transition-colors duration-150"
                       >
-                        Profil Ayarları
+                        Profilim
                       </Link>
                       <button
                         onClick={handleLogout}
@@ -200,11 +200,11 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link
-                  href={ROUTES.PROFILE.SETTINGS}
+                  href={ROUTES.PROFILE.HOME}
                   onClick={() => setIsMobileOpen(false)}
                   className="block text-center px-4 py-2.5 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] rounded-md transition-all"
                 >
-                  Profil Ayarları
+                  Profilim
                 </Link>
                 <button
                   onClick={handleLogout}

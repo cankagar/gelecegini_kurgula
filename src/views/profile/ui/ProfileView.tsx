@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRequireAuth } from "@/features/auth";
-import { ROLE_LABELS } from "@/entities/user";
+import { useUpdateMeMutation, ROLE_LABELS } from "@/entities/user";
 import { Avatar } from "@/shared/ui/avatar";
-import { ROUTES } from "@/shared/lib/routes";
-import { PenIcon, ArrowRightIcon } from "@/shared/ui/icons";
+import { PenIcon } from "@/shared/ui/icons";
 
 const EASE = [0.32, 0.72, 0, 1] as const;
 
@@ -15,11 +14,52 @@ const fadeUp = {
   show: { opacity: 1, y: 0 },
 };
 
+const fieldClass =
+  "rounded-xl border border-border bg-bg-alt px-3.5 py-2.5 text-[0.9rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20";
+
+type Draft = { fullName: string; email: string };
+
 export function ProfileView() {
   const user = useRequireAuth();
+  const updateMe = useUpdateMeMutation();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState<Draft | null>(null);
+
   if (!user) return null;
 
-  const shortId = user.id.slice(0, 8);
+  function startEditing() {
+    setDraft({ fullName: user!.full_name ?? "", email: user!.email ?? "" });
+    setIsEditing(true);
+  }
+
+  function cancelEditing() {
+    setDraft(null);
+    setIsEditing(false);
+    updateMe.reset();
+  }
+
+  async function save() {
+    if (!draft) return;
+
+    const changes: { email?: string; full_name?: string } = {};
+    if (draft.fullName !== (user!.full_name ?? "")) changes.full_name = draft.fullName.trim();
+    if (draft.email !== (user!.email ?? "")) changes.email = draft.email.trim();
+
+    if (Object.keys(changes).length === 0) {
+      setIsEditing(false);
+      setDraft(null);
+      return;
+    }
+
+    try {
+      await updateMe.mutateAsync(changes);
+      setDraft(null);
+      setIsEditing(false);
+    } catch {
+      // hata mesajı mutation state'inden okunuyor, formu açık bırak
+    }
+  }
 
   return (
     <div className="w-full px-8 py-14 lg:px-12">
@@ -50,32 +90,76 @@ export function ProfileView() {
             className="rounded-[2rem] bg-bg-alt p-2 ring-1 ring-border md:col-span-2"
           >
             <div className="flex h-full flex-col justify-between rounded-[calc(2rem-0.5rem)] bg-bg p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-8">
-              <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar name={user.full_name ?? user.email ?? "?"} size={64} />
-                  <div>
-                    <p className="text-[1.1rem] font-semibold text-text">
-                      {user.full_name ?? "İsimsiz Kullanıcı"}
-                    </p>
-                    <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
+              <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex flex-1 items-start gap-4">
+                  <Avatar name={user.full_name ?? user.email ?? "?"} size={64} className="mt-1 shrink-0" />
+
+                  <div className="flex-1">
+                    {isEditing && draft ? (
+                      <div className="flex flex-col gap-2.5">
+                        <input
+                          type="text"
+                          value={draft.fullName}
+                          onChange={(e) => setDraft({ ...draft, fullName: e.target.value })}
+                          placeholder="Ad Soyad"
+                          className={`${fieldClass} font-medium`}
+                        />
+                        <input
+                          type="email"
+                          value={draft.email}
+                          onChange={(e) => setDraft({ ...draft, email: e.target.value })}
+                          placeholder="E-posta"
+                          className={fieldClass}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-[1.1rem] font-semibold text-text">
+                          {user.full_name ?? "İsimsiz Kullanıcı"}
+                        </p>
+                        <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                <Link
-                  href={ROUTES.PROFILE.SETTINGS}
-                  className="group flex shrink-0 items-center gap-2.5 rounded-full bg-text pl-5 pr-1.5 py-1.5 text-[0.8rem] font-medium text-white transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:opacity-90 active:scale-[0.98]"
-                >
-                  Düzenle
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                    <PenIcon size={13} />
-                  </span>
-                </Link>
+                <div className="flex shrink-0 items-center gap-2.5">
+                  {isEditing ? (
+                    <>
+                      <button
+                        onClick={save}
+                        disabled={updateMe.isPending}
+                        className="rounded-full bg-text px-5 py-2 text-[0.82rem] font-medium text-white transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+                      >
+                        {updateMe.isPending ? "Kaydediliyor..." : "Kaydet"}
+                      </button>
+                      <button
+                        onClick={cancelEditing}
+                        disabled={updateMe.isPending}
+                        className="rounded-full border border-border px-5 py-2 text-[0.82rem] font-medium text-text-muted transition-colors duration-300 hover:text-text disabled:opacity-50"
+                      >
+                        İptal
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={startEditing}
+                      className="group flex items-center gap-2.5 rounded-full bg-text pl-5 pr-1.5 py-1.5 text-[0.8rem] font-medium text-white transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:opacity-90 active:scale-[0.98]"
+                    >
+                      Düzenle
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                        <PenIcon size={13} />
+                      </span>
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div className="mt-8 flex items-center gap-2 border-t border-border pt-5 text-[0.72rem] text-text-muted">
-                <span className="uppercase tracking-[0.14em]">Hesap No</span>
-                <span className="font-mono text-text-muted/80">#{shortId}</span>
-              </div>
+              {updateMe.isError && (
+                <p className="mt-4 text-[0.8rem] text-danger">
+                  Kaydedilemedi. E-posta başka bir kullanıcıda olabilir.
+                </p>
+              )}
             </div>
           </motion.div>
 
@@ -105,17 +189,6 @@ export function ProfileView() {
                   <p className="text-[0.82rem] text-text-muted">Henüz rol atanmadı.</p>
                 )}
               </div>
-
-              <Link
-                href={ROUTES.PROFILE.SETTINGS}
-                className="group mt-5 flex items-center gap-1.5 text-[0.78rem] font-medium text-text-muted transition-colors duration-300 hover:text-text"
-              >
-                Ayarlara git
-                <ArrowRightIcon
-                  size={13}
-                  className="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1"
-                />
-              </Link>
             </div>
           </motion.div>
         </div>

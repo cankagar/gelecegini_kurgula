@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import {
   GENDER_LABELS,
   PARENT_RELATION_LABELS,
@@ -115,6 +116,7 @@ export function StudentDemographicsForm() {
   const { data, isLoading, isError, refetch } = useMyDemographicsQuery(true);
   const updateDemographics = useUpdateMyDemographicsMutation();
 
+  const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
 
@@ -171,19 +173,35 @@ export function StudentDemographicsForm() {
     updateDemographics.reset();
   }
 
+  function toggleOpen() {
+    if (isOpen && isEditing) cancelEditing();
+    setIsOpen((v) => !v);
+  }
+
   return (
     <Shell>
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-[0.72rem] uppercase tracking-[0.14em] text-text-muted">Öğrenci Bilgileri</p>
-          <p className="mt-1.5 text-[0.85rem] text-text-muted">
-            Demografik ve veli bilgilerini güncelle.
-          </p>
-        </div>
-        {!isEditing && (
+        <button
+          type="button"
+          onClick={toggleOpen}
+          className="flex flex-1 items-center justify-between gap-4 text-left"
+        >
+          <div>
+            <p className="text-[0.72rem] uppercase tracking-[0.14em] text-text-muted">Öğrenci Bilgileri</p>
+            <p className="mt-1.5 text-[0.85rem] text-text-muted">
+              Demografik ve veli bilgilerini güncelle.
+            </p>
+          </div>
+          <ChevronDown
+            size={18}
+            className={`shrink-0 text-text-muted transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${isOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {isOpen && !isEditing && (
           <button
             onClick={startEditing}
-            className="group flex shrink-0 items-center gap-2.5 rounded-full bg-text pl-5 pr-1.5 py-1.5 text-[0.8rem] font-medium text-white transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:opacity-90 active:scale-[0.98]"
+            className="group ml-4 flex shrink-0 items-center gap-2.5 rounded-full bg-text pl-5 pr-1.5 py-1.5 text-[0.8rem] font-medium text-white transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:opacity-90 active:scale-[0.98]"
           >
             Düzenle
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
@@ -193,6 +211,15 @@ export function StudentDemographicsForm() {
         )}
       </div>
 
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: EASE }}
+            className="overflow-hidden"
+          >
       <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Doğum tarihi">
           <input
@@ -408,6 +435,9 @@ export function StudentDemographicsForm() {
       {updateDemographics.isError && (
         <p className="mt-4 text-[0.8rem] text-danger">Kaydedilemedi. Lütfen tekrar dene.</p>
       )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Shell>
   );
 }
