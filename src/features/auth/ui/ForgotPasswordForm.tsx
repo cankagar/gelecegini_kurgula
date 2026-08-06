@@ -3,8 +3,8 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { MailIcon } from "@/shared/ui/icons";
-import { AuthFormError, AuthFormSuccess, AuthSubmitButton } from "@/widgets/auth-shell";
-import { AuthTextInput } from "@/features/auth/ui/AuthInput";
+import { AuthFormError, AuthFormSuccess, AuthSubmitButton } from "@/shared/ui/auth-form";
+import { AuthTextInput } from "@/shared/ui/auth-input";
 import { requestPasswordReset } from "@/features/auth/api/authApi";
 import { ApiError } from "@/shared/api";
 

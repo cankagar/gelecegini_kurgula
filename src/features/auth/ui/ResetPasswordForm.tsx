@@ -4,8 +4,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LockIcon } from "@/shared/ui/icons";
-import { AuthFormError, AuthFormSuccess, AuthSubmitButton } from "@/widgets/auth-shell";
-import { AuthPasswordInput } from "@/features/auth/ui/AuthInput";
+import { AuthFormError, AuthFormSuccess, AuthSubmitButton } from "@/shared/ui/auth-form";
+import { AuthPasswordInput } from "@/shared/ui/auth-input";
 import { confirmPasswordReset } from "@/features/auth/api/authApi";
 import { ApiError } from "@/shared/api";
 

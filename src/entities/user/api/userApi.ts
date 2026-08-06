@@ -3,12 +3,11 @@ import type { AdminUser, User, UserRole } from "@/entities/user/model/types";
 
 export async function getMe() {
   try {
-    // Just an auth check — on 401 the caller decides what happens (clear
-    // store, soft-redirect). Must not trigger the interceptor's refresh +
-    // hard `window.location` redirect, or every page (incl. /auth/login,
-    // which also renders the navbar) reload-loops when there's no valid
-    // session.
-    const { data } = await httpClient.get<User>("/v1/auth/me", { skipAuthRetry: true });
+    // Query is only enabled when `hasSessionFlag()` is true (see
+    // useCurrentUserQuery), so a 401 here means the access token expired —
+    // let the interceptor's refresh + retry run. It redirects to login only
+    // if the refresh itself fails (refresh token invalid/expired too).
+    const { data } = await httpClient.get<User>("/v1/auth/me");
     return data;
   } catch (err) {
     throw toApiError(err);

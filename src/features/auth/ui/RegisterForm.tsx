@@ -3,8 +3,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { MailIcon, LockIcon, UserIcon } from "@/shared/ui/icons";
-import { AuthFormError, AuthSubmitButton } from "@/widgets/auth-shell";
-import { AuthTextInput, AuthPasswordInput } from "@/features/auth/ui/AuthInput";
+import { AuthFormError, AuthSubmitButton } from "@/shared/ui/auth-form";
+import { AuthTextInput, AuthPasswordInput } from "@/shared/ui/auth-input";
 import { registerAccount } from "@/features/auth/api/authApi";
 import { ApiError } from "@/shared/api";
 

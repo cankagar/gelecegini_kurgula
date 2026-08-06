@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useClassroomMutations, useClassroomQuery } from "@/entities/classroom";
 import { useAdminUsersQuery } from "@/entities/user";
+import { ClassroomInvitationsPanel } from "@/features/classroom-invitations";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatFullName } from "@/shared/lib";
 import { SpinnerIcon } from "@/shared/ui/icons";
@@ -12,11 +13,11 @@ import { BackLink } from "@/shared/ui/back-link";
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
   teacher: "Öğretmen",
-  student: "Öğrenci",
 };
 
-// Sınıfa eklenebilecek roller — henüz rol atanmamış ("user") hesaplar hariç.
-const ELIGIBLE_ROLES = new Set(["student", "teacher", "admin"]);
+// Öğrenciler artık "Öğrenci Davet Et" akışından eklenir (rol ataması + davet
+// e-postası orada yönetiliyor) — bu arama kutusu sadece öğretmen/admin üyeliği için.
+const ELIGIBLE_ROLES = new Set(["teacher", "admin"]);
 
 function formatDate(value: string) {
   return new Date(value).toLocaleString("tr-TR");
@@ -179,10 +180,12 @@ export function DashboardAdminClassroomEditView({
             </div>
           </div>
 
+          <ClassroomInvitationsPanel classroomId={classroomId} />
+
           <div className="border-b border-border px-8 py-6">
-            <h2 className="text-[0.9rem] font-medium text-text">Üye Ekle</h2>
+            <h2 className="text-[0.9rem] font-medium text-text">Öğretmen/Admin Ekle</h2>
             <p className="mt-1 text-[0.8rem] text-text-muted">
-              Öğrenci, öğretmen veya admin rolündeki kullanıcıları ekleyebilirsin.
+              Öğretmen veya admin rolündeki kullanıcıları ekleyebilirsin.
             </p>
             <div className="relative mt-3 max-w-sm">
               <input

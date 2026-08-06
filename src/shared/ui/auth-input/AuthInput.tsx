@@ -43,7 +43,17 @@ function InputShell({
 const inputClass =
   "w-full rounded-2xl border border-border bg-surface/60 pl-11 pr-4 py-3 text-[0.9rem] text-text placeholder:text-text-muted/70 outline-none transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus:border-primary-border focus:bg-bg focus:ring-4 focus:ring-primary/10";
 
-export function AuthTextInput({ label, value, onChange, icon, placeholder, autoComplete, required, type = "text" }: BaseProps & { type?: string }) {
+export function AuthTextInput({
+  label,
+  value,
+  onChange,
+  icon,
+  placeholder,
+  autoComplete,
+  required,
+  disabled,
+  type = "text",
+}: BaseProps & { type?: string; disabled?: boolean }) {
   const id = useId();
   return (
     <InputShell id={id} label={label} icon={icon}>
@@ -55,7 +65,8 @@ export function AuthTextInput({ label, value, onChange, icon, placeholder, autoC
         placeholder={placeholder}
         autoComplete={autoComplete}
         required={required}
-        className={inputClass}
+        disabled={disabled}
+        className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-70`}
       />
     </InputShell>
   );
