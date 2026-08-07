@@ -11,7 +11,7 @@ import { useAdminUsersQuery } from "@/entities/user";
 import { useClassroomInvitationsQuery } from "@/entities/classroom-invitation";
 import { ClassroomInvitationsPanel, InvitationRow } from "@/features/classroom-invitations";
 import { ROUTES } from "@/shared/lib/routes";
-import { formatFullName } from "@/shared/lib";
+import { formatFullName, useDebouncedValue } from "@/shared/lib";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 import { Modal, ModalTitle, ModalDescription, ModalFooter } from "@/shared/ui/modal";
@@ -55,7 +55,13 @@ export function DashboardAdminClassroomEditView({
 
   // Rol filtresi vermiyoruz: admin öğrenci, öğretmen veya admin — herhangi bir
   // uygun rolde kullanıcı arayabilmeli. "user" rolü ve mevcut üyeler aşağıda elenir.
-  const { data: searchData, isFetching: isSearching } = useAdminUsersQuery(memberSearch);
+  const debouncedMemberSearch = useDebouncedValue(memberSearch, 600);
+  const { data: searchData, isFetching } = useAdminUsersQuery(
+    debouncedMemberSearch,
+    undefined,
+    debouncedMemberSearch.trim().length > 0
+  );
+  const isSearching = isFetching || memberSearch !== debouncedMemberSearch;
 
   const existingMemberIds = new Set(classroom?.members.map((m) => m.member_id));
   const searchResults = (searchData ?? []).filter(
