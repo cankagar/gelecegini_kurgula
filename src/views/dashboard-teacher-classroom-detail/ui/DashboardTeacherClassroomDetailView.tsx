@@ -2,19 +2,15 @@
 
 import { useState } from "react";
 import { useClassroomQuery } from "@/entities/classroom";
-import { ClassroomDetailShell } from "@/widgets/classroom-detail";
+import {
+  AssignmentList,
+  ClassroomDetailShell,
+  createMockAssignments,
+  type Assignment,
+} from "@/widgets/classroom-detail";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 import { ROUTES } from "@/shared/lib/routes";
-import { formatDate } from "@/shared/lib/date";
-
-// Ödev verme burada yalnızca görsel/client-side bir taslak — henüz backend'e bağlı değil.
-type Assignment = {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-};
 
 type DashboardTeacherClassroomDetailViewProps = {
   classroomId: string;
@@ -25,7 +21,7 @@ export function DashboardTeacherClassroomDetailView({
 }: DashboardTeacherClassroomDetailViewProps) {
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
 
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>(createMockAssignments);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -75,12 +71,12 @@ export function DashboardTeacherClassroomDetailView({
         <ClassroomDetailShell
           classroom={classroom}
           assignmentsContent={
-            <div className="-mx-8 -my-6">
-              <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
                 <h2 className="text-[0.95rem] font-semibold text-text">Ödevler</h2>
                 <button
                   onClick={() => setIsFormOpen((open) => !open)}
-                  className="rounded-md bg-text px-3 py-1.5 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90"
+                  className="rounded-full bg-text px-4 py-2 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90"
                 >
                   {isFormOpen ? "Vazgeç" : "Ödev Ver"}
                 </button>
@@ -89,7 +85,7 @@ export function DashboardTeacherClassroomDetailView({
               {isFormOpen && (
                 <form
                   onSubmit={handleCreateAssignment}
-                  className="flex flex-col gap-3 border-b border-border px-6 py-5"
+                  className="flex flex-col gap-3 rounded-2xl bg-bg px-5 py-4"
                 >
                   <input
                     type="text"
@@ -123,37 +119,17 @@ export function DashboardTeacherClassroomDetailView({
                 </form>
               )}
 
-              {assignments.length === 0 ? (
-                <p className="px-6 py-8 text-center text-[0.85rem] text-text-muted">
-                  Henüz ödev verilmedi.
-                </p>
-              ) : (
-                <ul className="divide-y divide-border">
-                  {assignments.map((assignment) => (
-                    <li key={assignment.id} className="flex items-start justify-between px-6 py-4">
-                      <div>
-                        <p className="text-[0.9rem] font-medium text-text">{assignment.title}</p>
-                        {assignment.description && (
-                          <p className="mt-1 text-[0.8rem] text-text-muted">
-                            {assignment.description}
-                          </p>
-                        )}
-                        {assignment.dueDate && (
-                          <p className="mt-1.5 text-[0.75rem] text-text-muted">
-                            Teslim: {formatDate(assignment.dueDate)}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleRemoveAssignment(assignment.id)}
-                        className="text-[0.8rem] font-medium text-danger underline underline-offset-2 transition-colors duration-150 hover:opacity-80"
-                      >
-                        Kaldır
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <AssignmentList
+                assignments={assignments}
+                renderAction={(assignment) => (
+                  <button
+                    onClick={() => handleRemoveAssignment(assignment.id)}
+                    className="text-[0.8rem] font-medium text-danger underline underline-offset-2 transition-colors duration-150 hover:opacity-80"
+                  >
+                    Kaldır
+                  </button>
+                )}
+              />
             </div>
           }
         />

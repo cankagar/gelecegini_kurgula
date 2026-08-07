@@ -117,8 +117,8 @@ export function DashboardAdminClassroomEditView({
       {isError && <p className="mt-8 text-[0.9rem] text-text-muted">Sınıf yüklenemedi.</p>}
 
       {classroom && (
-        <div className="mt-6 rounded-md border border-border bg-bg">
-          <div className="flex items-start justify-between border-b border-border px-8 py-6">
+        <div className="mt-6 flex flex-col gap-6">
+          <div className="flex items-start justify-between rounded-2xl bg-surface/50 px-6 py-5">
             <div className="flex-1">
               {isEditingName ? (
                 <input
@@ -148,7 +148,7 @@ export function DashboardAdminClassroomEditView({
                   <button
                     onClick={() => setIsEditingName(false)}
                     disabled={update.isPending}
-                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
+                    className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text disabled:opacity-50"
                   >
                     İptal
                   </button>
@@ -157,14 +157,14 @@ export function DashboardAdminClassroomEditView({
                 <>
                   <button
                     onClick={startEditingName}
-                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text"
+                    className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text"
                   >
                     İsmi Düzenle
                   </button>
                   <button
                     onClick={handleToggleClosed}
                     disabled={close.isPending || reopen.isPending}
-                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-150 hover:text-text disabled:opacity-50"
+                    className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text disabled:opacity-50"
                   >
                     {classroom.closed_at ? "Yeniden Aç" : "Kapat"}
                   </button>
@@ -180,9 +180,11 @@ export function DashboardAdminClassroomEditView({
             </div>
           </div>
 
-          <ClassroomInvitationsPanel classroomId={classroomId} />
+          <div className="rounded-2xl bg-surface/50 px-6 py-5">
+            <ClassroomInvitationsPanel classroomId={classroomId} />
+          </div>
 
-          <div className="border-b border-border px-8 py-6">
+          <div className="rounded-2xl bg-surface/50 px-6 py-5">
             <h2 className="text-[0.9rem] font-medium text-text">Öğretmen/Admin Ekle</h2>
             <p className="mt-1 text-[0.8rem] text-text-muted">
               Öğretmen veya admin rolündeki kullanıcıları ekleyebilirsin.
@@ -235,17 +237,17 @@ export function DashboardAdminClassroomEditView({
             )}
           </div>
 
-          <div className="px-8 py-6">
+          <div className="rounded-2xl bg-surface/50 px-6 py-5">
             <h2 className="text-[0.9rem] font-medium text-text">Üyeler</h2>
 
             {classroom.members.length === 0 ? (
               <p className="mt-3 text-[0.85rem] text-text-muted">Henüz üye yok.</p>
             ) : (
-              <ul className="mt-3 divide-y divide-border rounded-md border border-border">
+              <ul className="mt-3 flex flex-col gap-2">
                 {classroom.members.map((member) => (
                   <li
                     key={member.member_id}
-                    className="flex items-center justify-between px-4 py-2.5 text-[0.85rem]"
+                    className="flex items-center justify-between rounded-xl bg-bg px-4 py-3 text-[0.85rem]"
                   >
                     <div>
                       <span className="font-medium text-text">

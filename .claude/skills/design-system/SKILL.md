@@ -29,6 +29,18 @@ Dashboard tarafında bu eksik — `views/dashboard-*` dosyalarında tablo/rozet 
 - Auth sayfaları `widgets/auth-shell` (`AuthShell`) kullanır — dashboard'dan tamamen farklı bir kabuk: ortalanmış, genişliği sınırlı (`max-w-[1240px] mx-auto`), iki panelli (sol tanıtım metni, sağ form kartı). Yeni bir auth sayfası eklerken bu kabuğu kullan, dashboard kabuğunu değil — ikisi birbirinin yerine geçmez.
 - Tipografi: başlıklar `font-heading` + `font-bold` + negatif `tracking`; gövde `text-text-muted`.
 
+## Kartlar: border değil, katmanlı bg kullan
+
+Sınıf tekrar `border border-border` kutu içine kutu (nested border) koyma. Bunun yerine iki bg tonu ile katman ayrımı yap:
+
+- Sayfa bg'si (`bg-bg`/gövde) üstünde bir bölüm/kart: `rounded-2xl bg-surface/50` (border yok).
+- O kartın içindeki satır/alt-öğe (liste satırı, ödev kartı, davet satırı): `rounded-xl` / `rounded-2xl` `bg-bg` — daha açık ton, kart zeminden ayrışır ama çizgiyle değil, renkle ayrışır.
+- Header, tab alanı, form bölümü gibi eş seviyedeki bloklar birbirinden `gap-6` ile ayrılan bağımsız `bg-surface/50` kartlardır — hepsini tek bir dış `border` kutusuna sarmıyoruz.
+- Sekme/tab seçici: `border-b-2` altı çizili tab değil, `bg-surface/50` zemin üstünde `rounded-full` pill butonlar; aktif olan `bg-bg text-text`, pasif `text-text-muted`.
+- İstisna: gerçekten geçici/floating bir öğe (arama dropdown'u, popover) sayfa üstünde yüzüyorsa orada `border-border` + `shadow-sm` kullanılabilir — o an bir "kart üstü kart" değil, bağımsız bir overlay.
+
+Referans örnek: `widgets/classroom-detail/ui/ClassroomDetailShell.tsx` ve `views/dashboard-admin-classroom-edit/ui/DashboardAdminClassroomEditView.tsx` — sınıf detay/düzenle sayfaları bu pattern'e göre yeniden yazıldı, yeni kart/liste yazarken oradaki yapıyı taklit et.
+
 ## Kurallar
 
 1. Renk/spacing/radius için sıfırdan karar vermeden önce `globals.css` + `shared/ui` + bu sayfanın kardeşi olan başka bir `views/dashboard-*` (veya auth sayfasıysa `widgets/auth-shell`) dosyasına bak, oradaki pattern'i tekrar kullan.
@@ -36,3 +48,4 @@ Dashboard tarafında bu eksik — `views/dashboard-*` dosyalarında tablo/rozet 
 3. Hardcoded hex ekleme. İhtiyaç olan renk yoksa önce `globals.css`'e token ekle.
 4. FSD katman kuralları (`AGENTS.md`) geçerli — bu skill sadece görsel tutarlılığı kapsar.
 5. Mevcut, dokunmadığın kodu kullanıcı istemeden proaktif refactor etme — extraction kuralı (madde 2) yalnızca **yeni yazılan/değiştirilen** koda uygulanır. Eski bir sayfadaki tekrarı görüp çıkarmak istersen önce kullanıcıya sor.
+6. Kart/bölüm ayrımı için `border` iç içe kutu yapma — yukarıdaki "Kartlar: border değil, katmanlı bg kullan" bölümündeki `bg-surface/50` + `bg-bg` katman pattern'ini kullan.

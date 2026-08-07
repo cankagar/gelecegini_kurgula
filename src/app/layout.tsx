@@ -49,7 +49,9 @@ export default async function RootLayout({
 
   return (
     <html lang="tr">
-      <body className={`${jakarta.variable} ${outfit.variable} ${newsreader.variable} font-sans`}>
+      <body
+        className={`${jakarta.variable} ${outfit.variable} ${newsreader.variable} bg-bg font-sans`}
+      >
         <QueryProvider dehydratedState={dehydrate(queryClient)}>
           <ClickSpark />
           <SiteChrome>{children}</SiteChrome>

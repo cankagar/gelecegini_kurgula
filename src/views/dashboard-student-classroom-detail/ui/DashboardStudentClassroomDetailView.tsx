@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useClassroomQuery } from "@/entities/classroom";
-import { ClassroomDetailShell } from "@/widgets/classroom-detail";
+import { AssignmentList, ClassroomDetailShell, createMockAssignments } from "@/widgets/classroom-detail";
 import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
@@ -14,6 +15,7 @@ export function DashboardStudentClassroomDetailView({
   classroomId,
 }: DashboardStudentClassroomDetailViewProps) {
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
+  const [assignments] = useState(createMockAssignments);
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
@@ -30,9 +32,7 @@ export function DashboardStudentClassroomDetailView({
       {classroom && (
         <ClassroomDetailShell
           classroom={classroom}
-          assignmentsContent={
-            <p className="text-center text-[0.85rem] text-text-muted">Henüz ödev verilmedi.</p>
-          }
+          assignmentsContent={<AssignmentList assignments={assignments} />}
         />
       )}
     </div>

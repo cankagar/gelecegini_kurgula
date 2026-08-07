@@ -89,7 +89,7 @@ export function ClassroomInvitationsPanel({ classroomId }: ClassroomInvitationsP
   }
 
   return (
-    <div className="border-b border-border px-8 py-6">
+    <div>
       <h2 className="text-[0.9rem] font-medium text-text">Öğrenci Davet Et</h2>
       <p className="mt-1 text-[0.8rem] text-text-muted">
         E-posta zaten öğrenciyse direkt eklenir, değilse davet linki gönderilir.
@@ -124,9 +124,9 @@ export function ClassroomInvitationsPanel({ classroomId }: ClassroomInvitationsP
         )}
 
         {invitations && invitations.length > 0 && (
-          <ul className="divide-y divide-border rounded-md border border-border">
+          <ul className="flex flex-col gap-2">
             {invitations.map((invitation) => (
-              <li key={invitation.id} className="px-4 py-2.5 text-[0.85rem]">
+              <li key={invitation.id} className="rounded-xl bg-bg px-4 py-3 text-[0.85rem]">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <span className="font-medium text-text">{invitation.email}</span>{" "}
