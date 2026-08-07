@@ -13,6 +13,17 @@ export async function getMyDemographics() {
   }
 }
 
+export async function getStudentDemographics(userId: string) {
+  try {
+    const { data } = await httpClient.get<StudentDemographics>(
+      `/v1/students/${userId}/demographics`
+    );
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
 export async function updateMyDemographics(updates: StudentDemographicsUpdate) {
   try {
     const { data } = await httpClient.patch<StudentDemographics>(

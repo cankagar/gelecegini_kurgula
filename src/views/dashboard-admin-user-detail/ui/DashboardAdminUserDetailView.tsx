@@ -2,10 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CalendarClock, CalendarPlus, Fingerprint, History, ShieldCheck, School } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  CalendarClock,
+  CalendarPlus,
+  ChevronDown,
+  Fingerprint,
+  History,
+  ShieldCheck,
+  School,
+} from "lucide-react";
 import { useAdminUserQuery, useUpdateAdminUserMutation, ROLE_LABELS } from "@/entities/user";
 import type { AdminUser, UserRole } from "@/entities/user";
 import { useClassroomsForMemberQuery } from "@/entities/classroom";
+import {
+  GENDER_LABELS,
+  PARENT_RELATION_LABELS,
+  useStudentDemographicsQuery,
+} from "@/entities/student-demographics";
+import { formatDate } from "@/shared/lib/date";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatDateTime } from "@/shared/lib/date";
 import { formatFullName } from "@/shared/lib";
@@ -43,9 +58,15 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
   const { updateFields, addRole, removeRole } = useUpdateAdminUserMutation(userId);
   const { data: classrooms, isLoading: isClassroomsLoading } =
     useClassroomsForMemberQuery(userId);
+  const isStudent = user?.roles.includes("student") ?? false;
+  const { data: demographics, isLoading: isDemographicsLoading } = useStudentDemographicsQuery(
+    userId,
+    isStudent
+  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [isDemographicsOpen, setIsDemographicsOpen] = useState(false);
 
   const isSaving = updateFields.isPending || addRole.isPending || removeRole.isPending;
 
@@ -312,6 +333,99 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
             )}
           </div>
 
+          {isStudent && (
+            <div className="border-t border-border px-8 py-6">
+              <button
+                type="button"
+                onClick={() => setIsDemographicsOpen((v) => !v)}
+                className="flex w-full items-center justify-between gap-4 text-left"
+              >
+                <h2 className="text-[0.9rem] font-medium text-text">Öğrenci Bilgileri</h2>
+                <ChevronDown
+                  size={18}
+                  className={`shrink-0 text-text-muted transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${isDemographicsOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              <AnimatePresence initial={false}>
+                {isDemographicsOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                    className="overflow-hidden"
+                  >
+              {isDemographicsLoading && (
+                <div className="mt-3 flex text-text-muted">
+                  <SpinnerIcon className="animate-spin" size={16} />
+                </div>
+              )}
+
+              {!isDemographicsLoading && demographics && (
+                <div className="mt-3 grid grid-cols-1 gap-4 text-[0.85rem] sm:grid-cols-2">
+                  <DemographicField label="Doğum tarihi" value={demographics.birth_date} isDate />
+                  <DemographicField
+                    label="Cinsiyet"
+                    value={demographics.gender ? GENDER_LABELS[demographics.gender] : null}
+                  />
+                  <DemographicField label="Okulu" value={demographics.school} />
+                  <DemographicField label="Sınıfı" value={demographics.grade} />
+                  <DemographicField label="İl" value={demographics.city} />
+                  <DemographicField label="İlçe" value={demographics.district} />
+                  <DemographicField label="Telefon" value={demographics.phone} />
+                  <DemographicField
+                    label="Daha önce merkeze geldi mi?"
+                    value={
+                      demographics.previously_attended === null
+                        ? null
+                        : demographics.previously_attended
+                          ? "Evet"
+                          : "Hayır"
+                    }
+                  />
+                  <DemographicField label="Veli adı soyadı" value={demographics.parent_name} />
+                  <DemographicField
+                    label="Veli yakınlık derecesi"
+                    value={
+                      demographics.parent_relation
+                        ? PARENT_RELATION_LABELS[demographics.parent_relation]
+                        : null
+                    }
+                  />
+                  <DemographicField label="Veli telefon" value={demographics.parent_phone} />
+                  <DemographicField
+                    label="İkinci veli telefon"
+                    value={demographics.second_parent_phone}
+                  />
+                  <DemographicField label="Anne mesleği" value={demographics.mother_occupation} />
+                  <DemographicField label="Baba mesleği" value={demographics.father_occupation} />
+                  <DemographicField
+                    label="Acil durumda aranacak kişi"
+                    value={demographics.emergency_contact_name}
+                  />
+                  <DemographicField
+                    label="Acil durum telefonu"
+                    value={demographics.emergency_contact_phone}
+                  />
+                  <DemographicField
+                    label="İlgilendiği alanlar"
+                    value={demographics.interest_areas?.join(", ") || null}
+                  />
+                  <DemographicField label="Katıldığı program" value={demographics.program} />
+                  <DemographicField
+                    label="Kayıt tarihi"
+                    value={demographics.registration_date}
+                    isDate
+                  />
+                </div>
+              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
           {(updateFields.isError || addRole.isError || removeRole.isError) && (
             <div className="border-t border-border bg-danger-bg px-8 py-4">
               <p className="text-[0.8rem] text-danger">
@@ -321,6 +435,25 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function DemographicField({
+  label,
+  value,
+  isDate,
+}: {
+  label: string;
+  value: string | null | undefined;
+  isDate?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1 rounded-xl border border-border bg-bg-alt px-4 py-3">
+      <p className="text-text-muted">{label}</p>
+      <p className="font-medium text-text">
+        {value ? (isDate ? formatDate(value) : value) : "—"}
+      </p>
     </div>
   );
 }
