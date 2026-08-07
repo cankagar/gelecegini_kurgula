@@ -20,8 +20,8 @@ import { formatFullName } from "@/shared/lib";
 
 const STORAGE_KEY = "payastem:sidebar-collapsed";
 const EASE = [0.32, 0.72, 0, 1] as const;
-const EXPANDED_WIDTH = 248;
-const COLLAPSED_WIDTH = 76;
+const EXPANDED_WIDTH = 228;
+const COLLAPSED_WIDTH = 64;
 const MOBILE_NAV_PEEK_TOP = "30%";
 
 // Bottom padding a page's <main> needs on mobile so its content clears the
@@ -126,7 +126,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
         />
       </button>
 
-      <div className="h-[65px] flex items-center px-6 border-b border-border overflow-hidden">
+      <div className="h-14 flex items-center px-5 border-b border-border overflow-hidden">
         <Link
           href="/"
           className="font-heading text-[1.1rem] font-bold text-text tracking-[-0.02em] whitespace-nowrap transition-opacity duration-150 hover:opacity-70"
@@ -190,7 +190,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                 <Link
                   href={item.href}
                   title={collapsed ? item.label : undefined}
-                  className={`flex h-10 items-center gap-3 rounded-md px-3 text-[0.85rem] font-medium transition-colors duration-150 ${
+                  className={`flex h-9 items-center rounded-md px-3 text-[0.85rem] font-medium transition-colors duration-150 ${
                     collapsed ? "justify-center" : ""
                   } ${
                     active
@@ -198,10 +198,10 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                       : "text-text-muted hover:bg-surface hover:text-text"
                   }`}
                 >
-                  <Icon size={18} className="shrink-0" />
+                  <Icon size={17} className="shrink-0" />
                   <span
-                    className={`overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                      collapsed ? "max-w-0 opacity-0" : "max-w-[160px] opacity-100"
+                    className={`overflow-hidden whitespace-nowrap transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[160px] opacity-100"
                     }`}
                   >
                     {item.label}
@@ -244,22 +244,22 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
         <button
           onClick={() => setMenuOpen((v) => !v)}
           title={collapsed ? formatFullName(user, user.email ?? "?") : undefined}
-          className={`flex h-10 w-full items-center gap-3 rounded-md px-1.5 transition-colors duration-150 hover:bg-surface ${
+          className={`flex h-9 w-full items-center rounded-md px-1.5 transition-colors duration-150 hover:bg-surface ${
             collapsed ? "justify-center" : ""
           }`}
         >
-          <Avatar name={formatFullName(user, user.email ?? "?")} size={28} />
+          <Avatar name={formatFullName(user, user.email ?? "?")} size={26} />
           <span
-            className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-medium text-text transition-[max-width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-              collapsed ? "max-w-0 opacity-0" : "max-w-[150px] opacity-100"
+            className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-medium text-text transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+              collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[150px] opacity-100"
             }`}
           >
             {formatFullName(user, user.email ?? "?")}
           </span>
           <MoreHorizontalIcon
             size={16}
-            className={`shrink-0 text-text-muted transition-[max-width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-              collapsed ? "max-w-0 opacity-0" : "max-w-[16px] opacity-100"
+            className={`shrink-0 text-text-muted transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+              collapsed ? "ml-0 max-w-0 opacity-0" : "ml-1 max-w-[16px] opacity-100"
             }`}
           />
         </button>
