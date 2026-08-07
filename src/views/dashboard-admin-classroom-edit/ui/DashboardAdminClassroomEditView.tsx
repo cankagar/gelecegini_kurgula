@@ -2,13 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useClassroomMutations, useClassroomQuery } from "@/entities/classroom";
+import {
+  useClassroomMutations,
+  useClassroomQuery,
+  type ClassroomMember,
+} from "@/entities/classroom";
 import { useAdminUsersQuery } from "@/entities/user";
-import { ClassroomInvitationsPanel } from "@/features/classroom-invitations";
+import { useClassroomInvitationsQuery } from "@/entities/classroom-invitation";
+import { ClassroomInvitationsPanel, InvitationRow } from "@/features/classroom-invitations";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatFullName } from "@/shared/lib";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
+import { Modal, ModalTitle, ModalDescription, ModalFooter } from "@/shared/ui/modal";
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
@@ -34,10 +40,18 @@ export function DashboardAdminClassroomEditView({
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
   const { update, remove, addMember, removeMember, close, reopen } =
     useClassroomMutations(classroomId);
+  const { data: invitations } = useClassroomInvitationsQuery(classroomId);
+
+  // Kabul edilmiş davetler artık gerçek üye (classroom.members'ta zaten var),
+  // iptal edilenler ise ölü kayıt — sadece bekleyen/süresi dolmuş davetler üst sırada gösterilir.
+  const pendingInvitations = (invitations ?? []).filter(
+    (invitation) => invitation.status === "pending" || invitation.status === "expired"
+  );
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
   const [memberSearch, setMemberSearch] = useState("");
+  const [memberToRemove, setMemberToRemove] = useState<ClassroomMember | null>(null);
 
   // Rol filtresi vermiyoruz: admin öğrenci, öğretmen veya admin — herhangi bir
   // uygun rolde kullanıcı arayabilmeli. "user" rolü ve mevcut üyeler aşağıda elenir.
@@ -102,6 +116,12 @@ export function DashboardAdminClassroomEditView({
     } catch {
       // hata mesajı mutation state'inden okunuyor
     }
+  }
+
+  async function confirmRemoveMember() {
+    if (!memberToRemove) return;
+    await handleRemoveMember(memberToRemove.member_id);
+    setMemberToRemove(null);
   }
 
   return (
@@ -240,10 +260,17 @@ export function DashboardAdminClassroomEditView({
           <div className="rounded-2xl bg-surface/50 px-6 py-5">
             <h2 className="text-[0.9rem] font-medium text-text">Üyeler</h2>
 
-            {classroom.members.length === 0 ? (
+            {pendingInvitations.length === 0 && classroom.members.length === 0 ? (
               <p className="mt-3 text-[0.85rem] text-text-muted">Henüz üye yok.</p>
             ) : (
               <ul className="mt-3 flex flex-col gap-2">
+                {pendingInvitations.map((invitation) => (
+                  <InvitationRow
+                    key={invitation.id}
+                    classroomId={classroomId}
+                    invitation={invitation}
+                  />
+                ))}
                 {classroom.members.map((member) => (
                   <li
                     key={member.member_id}
@@ -262,9 +289,8 @@ export function DashboardAdminClassroomEditView({
                       </p>
                     </div>
                     <button
-                      onClick={() => handleRemoveMember(member.member_id)}
-                      disabled={removeMember.isPending}
-                      className="text-[0.8rem] font-medium text-danger underline underline-offset-2 transition-colors duration-150 hover:opacity-80 disabled:opacity-50"
+                      onClick={() => setMemberToRemove(member)}
+                      className="rounded-full bg-danger px-3.5 py-1.5 text-[0.8rem] font-medium text-cta-text transition-opacity duration-150 hover:opacity-90"
                     >
                       Çıkar
                     </button>
@@ -275,6 +301,29 @@ export function DashboardAdminClassroomEditView({
           </div>
         </div>
       )}
+
+      <Modal open={memberToRemove !== null} onClose={() => setMemberToRemove(null)}>
+        <ModalTitle>Üyeyi çıkar</ModalTitle>
+        <ModalDescription>
+          {memberToRemove &&
+            `${formatFullName(memberToRemove, "Bu kullanıcı")} sınıftan çıkarılsın mı?`}
+        </ModalDescription>
+        <ModalFooter>
+          <button
+            onClick={() => setMemberToRemove(null)}
+            className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text"
+          >
+            Vazgeç
+          </button>
+          <button
+            onClick={confirmRemoveMember}
+            disabled={removeMember.isPending}
+            className="rounded-full bg-danger px-3.5 py-1.5 text-[0.8rem] font-medium text-cta-text transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
+          >
+            {removeMember.isPending ? "Çıkarılıyor..." : "Çıkar"}
+          </button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }
