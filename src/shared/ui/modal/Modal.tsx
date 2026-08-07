@@ -67,10 +67,10 @@ export function Modal({ open, onClose, children, ariaLabel, variant = "default",
   if (!mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-10">
       <div
         onClick={onClose}
-        className={`absolute inset-0 bg-text/40 backdrop-blur-sm transition-opacity duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+        className={`fixed inset-0 bg-text/40 backdrop-blur-sm transition-opacity duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
           visible ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -81,10 +81,10 @@ export function Modal({ open, onClose, children, ariaLabel, variant = "default",
         aria-label={ariaLabel}
         className={
           variant === "scroll"
-            ? `relative ${SIZE_CLASSES[size]} origin-center rounded-[1.75rem] bg-bg p-8 shadow-xl transition-transform duration-[480ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            ? `relative ${SIZE_CLASSES[size]} max-h-[85vh] origin-top overflow-y-auto rounded-[1.75rem] bg-bg p-8 shadow-xl transition-transform duration-[480ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:origin-center ${
                 visible ? "scale-y-100" : "scale-y-0"
               }`
-            : `relative ${SIZE_CLASSES[size]} rounded-[1.75rem] bg-bg p-6 shadow-xl transition-all duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            : `relative ${SIZE_CLASSES[size]} max-h-[85vh] overflow-y-auto rounded-[1.75rem] bg-bg p-6 shadow-xl transition-all duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
                 visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-3 scale-[0.98] opacity-0"
               }`
         }
