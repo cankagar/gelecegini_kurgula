@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useCurrentUserQuery } from "@/entities/user";
 import { isDashboardRole, getStoredActiveRole, setStoredActiveRole } from "@/entities/dashboard";
@@ -21,7 +21,10 @@ export function useRedirectToRoleHome({ enabled = true }: { enabled?: boolean } 
   const router = useRouter();
   const { data: user, isError } = useCurrentUserQuery();
 
-  const eligibleRoles = (user?.roles.filter(isDashboardRole) ?? []) as DashboardRole[];
+  const eligibleRoles = useMemo(
+    () => (user?.roles.filter(isDashboardRole) ?? []) as DashboardRole[],
+    [user]
+  );
   const stored = getStoredActiveRole();
   const needsRoleChoice = eligibleRoles.length > 1 && !(stored && eligibleRoles.includes(stored));
 

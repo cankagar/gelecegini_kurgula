@@ -23,7 +23,7 @@ type RetryableConfig = AxiosRequestConfig & { _retried?: boolean };
 let refreshPromise: Promise<unknown> | null = null;
 
 function redirectToLogin() {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/login")) {
     window.location.href = "/auth/login";
   }
 }
