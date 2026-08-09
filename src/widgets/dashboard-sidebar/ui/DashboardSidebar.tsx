@@ -70,6 +70,16 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
     });
   }
 
+  function handleProfileTriggerClick() {
+    if (collapsed) {
+      setCollapsed(false);
+      localStorage.setItem(STORAGE_KEY, "0");
+      setMenuOpen(true);
+      return;
+    }
+    setMenuOpen((v) => !v);
+  }
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -128,12 +138,24 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       </button>
 
       <div className="h-14 flex items-center px-5 border-b border-border overflow-hidden">
-        <Link
-          href="/"
-          className="font-heading text-[1.1rem] font-bold text-text tracking-[-0.02em] whitespace-nowrap transition-opacity duration-150 hover:opacity-70"
-        >
-          {collapsed ? "PS" : "PayaSTEM"}
-        </Link>
+        {collapsed ? (
+          <Link
+            href="/"
+            className="font-heading text-[1.1rem] font-bold text-text tracking-[-0.02em] transition-opacity duration-150 hover:opacity-70"
+          >
+            PS
+          </Link>
+        ) : (
+          <Link
+            href="/"
+            className="group relative block h-6 overflow-hidden font-heading text-[1.1rem] font-bold tracking-[-0.02em]"
+          >
+            <span className="flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-6">
+              <span className="h-6 whitespace-nowrap leading-6 text-text">PayaSTEM</span>
+              <span className="h-6 whitespace-nowrap leading-6 text-text">Ana Sayfa</span>
+            </span>
+          </Link>
+        )}
       </div>
 
       {!collapsed && (
@@ -141,15 +163,17 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
           <button
             onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
             disabled={otherRoles.length === 0}
-            className={`flex w-full items-center justify-between rounded-md border border-border px-3 py-2 text-[0.82rem] font-medium text-text transition-colors duration-150 ${
-              otherRoles.length > 0 ? "bg-bg hover:bg-surface cursor-pointer" : "bg-bg-alt cursor-default"
+            className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[0.82rem] font-medium transition-colors duration-150 ${
+              otherRoles.length > 0
+                ? "bg-surface/70 text-text hover:bg-surface cursor-pointer"
+                : "bg-surface/40 text-text-muted cursor-default"
             }`}
           >
             {ROLE_LABELS[role]}
             {otherRoles.length > 0 && (
               <ChevronDown
                 size={14}
-                className={`shrink-0 text-text-muted transition-transform duration-150 ${roleMenuOpen ? "rotate-180" : ""}`}
+                className={`shrink-0 text-text-muted transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] ${roleMenuOpen ? "rotate-180" : ""}`}
               />
             )}
           </button>
@@ -161,16 +185,16 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.15, ease: EASE }}
-                className="absolute left-3 right-3 z-20 mt-1.5 overflow-hidden rounded-md border border-border bg-bg py-1 shadow-lg"
+                className="absolute left-3 right-3 z-20 mt-1.5 overflow-hidden rounded-xl border border-border bg-bg py-1.5 shadow-lg"
               >
-                <p className="px-3 pb-1 pt-1.5 text-[0.68rem] font-medium uppercase tracking-wide text-text-muted opacity-60">
+                <p className="px-3 pb-1 pt-1 text-[0.68rem] font-medium uppercase tracking-wide text-text-muted opacity-60">
                   Panel Değiştir
                 </p>
                 {otherRoles.map((r) => (
                   <button
                     key={r}
                     onClick={() => switchToRole(r)}
-                    className="flex w-full items-center px-3 py-2 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-surface"
+                    className="mx-1 flex w-[calc(100%-0.5rem)] items-center rounded-lg px-2.5 py-2 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-surface"
                   >
                     {ROLE_LABELS[r]}
                   </button>
@@ -191,14 +215,17 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                 <Link
                   href={item.href}
                   title={collapsed ? item.label : undefined}
-                  className={`flex h-9 items-center rounded-md px-3 text-[0.85rem] font-medium transition-colors duration-150 ${
+                  className={`relative flex h-10 items-center rounded-xl px-3 text-[0.85rem] font-medium transition-colors duration-150 ${
                     collapsed ? "justify-center" : ""
                   } ${
                     active
-                      ? "bg-primary text-cta-text"
+                      ? "bg-primary-tint text-primary-hover"
                       : "text-text-muted hover:bg-surface hover:text-text"
                   }`}
                 >
+                  {active && (
+                    <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-primary" />
+                  )}
                   <Icon size={17} className="shrink-0" />
                   <span
                     className={`overflow-hidden whitespace-nowrap transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
@@ -214,7 +241,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
         </ul>
       </nav>
 
-      <div ref={menuRef} className="relative px-3 py-4 border-t border-border">
+      <div ref={menuRef} className="relative px-3 py-3 border-t border-border">
         <AnimatePresence>
           {menuOpen && (
             <motion.div
@@ -222,34 +249,38 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.2, ease: EASE }}
-              className="absolute bottom-full left-3 z-20 mb-2 w-52 overflow-hidden rounded-md border border-border bg-bg py-1.5 shadow-lg"
+              className="absolute bottom-full left-3 right-3 z-20 mb-2 overflow-hidden rounded-xl border border-border bg-bg shadow-lg"
             >
-              <Link
-                href={dashboardProfileRoute(role)}
-                onClick={() => setMenuOpen(false)}
-                className="block px-3.5 py-2 text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
-              >
-                Profilim
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
-              >
-                <LogOutIcon size={16} className="shrink-0" />
-                Çıkış Yap
-              </button>
+ 
+              <div className="p-1.5">
+                <Link
+                  href={dashboardProfileRoute(role)}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
+                >
+                  <UserIcon size={16} className="shrink-0" />
+                  Profilim
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[0.82rem] text-danger transition-colors duration-150 hover:bg-danger-bg"
+                >
+                  <LogOutIcon size={16} className="shrink-0" />
+                  Çıkış Yap
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         <button
-          onClick={() => setMenuOpen((v) => !v)}
+          onClick={handleProfileTriggerClick}
           title={collapsed ? formatFullName(user, user.email ?? "?") : undefined}
-          className={`flex h-9 w-full items-center rounded-md px-1.5 transition-colors duration-150 hover:bg-surface ${
+          className={`flex h-11 w-full items-center rounded-xl px-2 transition-colors duration-150 hover:bg-surface ${
             collapsed ? "justify-center" : ""
           }`}
         >
-          <Avatar name={formatFullName(user, user.email ?? "?")} size={26} />
+          <Avatar name={formatFullName(user, user.email ?? "?")} size={28} />
           <span
             className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-medium text-text transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
               collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[150px] opacity-100"
