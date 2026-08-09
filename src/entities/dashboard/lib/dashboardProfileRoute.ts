@@ -5,6 +5,7 @@ const DASHBOARD_PROFILE_ROUTES: Record<DashboardRole, string> = {
   admin: ROUTES.ADMIN.PROFILE,
   teacher: ROUTES.TEACHER.PROFILE,
   student: ROUTES.STUDENT.PROFILE,
+  author: ROUTES.AUTHOR.PROFILE,
 };
 
 // Self-profile lives inside each role's own dashboard route group, not at

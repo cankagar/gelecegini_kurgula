@@ -33,6 +33,7 @@ const ROLE_LABELS: Record<DashboardRole, string> = {
   admin: "Yönetici",
   teacher: "Öğretmen",
   student: "Öğrenci",
+  author: "Yazar",
 };
 
 type DashboardSidebarProps = {

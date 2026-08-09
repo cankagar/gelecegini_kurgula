@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import {
+  FileTextIcon,
   GraduationCapIcon,
   HomeIcon,
   UsersIcon,
@@ -28,4 +29,5 @@ export const ROLE_NAV_ITEMS: Record<DashboardRole, NavItem[]> = {
     { href: ROUTES.ADMIN.USERS, label: "Kullanıcılar", icon: UsersIcon },
     { href: ROUTES.ADMIN.CLASSROOMS, label: "Sınıflar", icon: GraduationCapIcon },
   ],
+  author: [{ href: ROUTES.AUTHOR.HOME, label: "Yazılarım", icon: FileTextIcon }],
 };

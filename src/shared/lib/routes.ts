@@ -2,11 +2,18 @@ const DASHBOARD = "/dashboard";
 const ADMIN = `${DASHBOARD}/admin`;
 const TEACHER = `${DASHBOARD}/teacher`;
 const STUDENT = `${DASHBOARD}/student`;
+const AUTHOR = `${DASHBOARD}/author`;
 const PROFILE = "/profile";
+const SERBEST_KURSU = "/serbest-kursu";
 
 export const ROUTES = {
   PROFILE: {
     HOME: PROFILE,
+  },
+  SERBEST_KURSU: {
+    HOME: SERBEST_KURSU,
+    ARTICLE_DETAIL: (slug: string) => `${SERBEST_KURSU}/${slug}`,
+    PREVIEW: `${SERBEST_KURSU}/onizleme`,
   },
   ADMIN: {
     HOME: ADMIN,
@@ -28,5 +35,11 @@ export const ROUTES = {
     PROFILE: `${STUDENT}/profile`,
     CLASSROOMS: `${STUDENT}/classrooms`,
     CLASSROOM_DETAIL: (id: string) => `${STUDENT}/classrooms/${id}`,
+  },
+  AUTHOR: {
+    HOME: AUTHOR,
+    PROFILE: `${AUTHOR}/profile`,
+    ARTICLE_NEW: `${AUTHOR}/articles/new`,
+    ARTICLE_EDIT: (id: string) => `${AUTHOR}/articles/${id}`,
   },
 };
