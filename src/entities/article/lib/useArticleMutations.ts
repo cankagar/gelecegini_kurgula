@@ -4,11 +4,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createArticle,
   deleteArticle,
+  getRandomArticle,
   publishArticle,
   unpublishArticle,
   updateArticle,
 } from "@/entities/article/api/articleApi";
 import type { ArticleOwn } from "@/entities/article/model/types";
+
+export function useRandomArticleMutation() {
+  return useMutation({
+    mutationFn: getRandomArticle,
+  });
+}
 
 export function useCreateArticleMutation() {
   const queryClient = useQueryClient();

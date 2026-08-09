@@ -1,5 +1,10 @@
 import { httpClient, toApiError } from "@/shared/api";
-import type { ArticleDetail, ArticleOwn, ArticlePage } from "@/entities/article/model/types";
+import type {
+  ArticleDetail,
+  ArticleOwn,
+  ArticlePage,
+  ArticleRandom,
+} from "@/entities/article/model/types";
 
 // Herkese açık — kayıtlı olsun olmasın tüm kullanıcılar yayındaki makaleleri görebilir.
 export async function listPublishedArticles(skip: number, limit: number) {
@@ -7,6 +12,15 @@ export async function listPublishedArticles(skip: number, limit: number) {
     const { data } = await httpClient.get<ArticlePage>("/v1/articles", {
       params: { skip, limit },
     });
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function getRandomArticle() {
+  try {
+    const { data } = await httpClient.get<ArticleRandom>("/v1/articles/random");
     return data;
   } catch (err) {
     throw toApiError(err);

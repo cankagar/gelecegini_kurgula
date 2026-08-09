@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { ARTICLES_PAGE_SIZE, useArticlesQuery } from "@/entities/article";
+import { ArrowRight, Shuffle } from "lucide-react";
+import { ARTICLES_PAGE_SIZE, useArticlesQuery, useRandomArticleMutation } from "@/entities/article";
 import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { Pagination } from "@/shared/ui/pagination";
@@ -36,12 +37,23 @@ function avatarBg(initial: string) {
 export function SerbestKursuView() {
   const [page, setPage] = useState(1);
   const { data, isLoading, isError } = useArticlesQuery(page);
+  const router = useRouter();
+  const randomArticle = useRandomArticleMutation();
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / ARTICLES_PAGE_SIZE)) : 1;
 
   function handlePageChange(next: number) {
     setPage(next);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function handleRandomArticle() {
+    try {
+      const article = await randomArticle.mutateAsync();
+      router.push(ROUTES.SERBEST_KURSU.ARTICLE_DETAIL(article.slug));
+    } catch {
+      // isError state renders the inline message below
+    }
   }
 
   return (
@@ -53,18 +65,38 @@ export function SerbestKursuView() {
         className="border-b border-[#EAEAEA] bg-[#FBFBFA]"
       >
         <div className="mx-auto max-w-3xl px-6 py-12">
-          <p className="mb-3 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-[#787774]">
-            Serbest Kürsü
-          </p>
-          <h1
-            className="not-italic mb-3 text-[2.4rem] leading-[1.1] tracking-[-0.03em] text-[#111111]"
-            style={{ fontFamily: "'Newsreader', 'Playfair Display', Georgia, serif", fontStyle: "normal" }}
-          >
-            Eğitmenlerden Bilim Yazıları
-          </h1>
-          <p className="text-[0.9rem] leading-relaxed text-[#787774]">
-            Makale okuyun, fikir paylaşın, tartışmalara katılın.
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="mb-3 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-[#787774]">
+                Serbest Kürsü
+              </p>
+              <h1
+                className="not-italic mb-3 text-[2.4rem] leading-[1.1] tracking-[-0.03em] text-[#111111]"
+                style={{ fontFamily: "'Newsreader', 'Playfair Display', Georgia, serif", fontStyle: "normal" }}
+              >
+                Eğitmenlerden Bilim Yazıları
+              </h1>
+              <p className="text-[0.9rem] leading-relaxed text-[#787774]">
+                Makale okuyun, fikir paylaşın, tartışmalara katılın.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleRandomArticle}
+              disabled={randomArticle.isPending}
+              className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-4 py-2 text-[0.8rem] font-medium text-[#2F3437] transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-[#F0EFEA] disabled:opacity-60"
+            >
+              <Shuffle size={14} className={randomArticle.isPending ? "animate-spin" : ""} />
+              Rastgele Makale
+            </button>
+          </div>
+
+          {randomArticle.isError && (
+            <p className="mt-3 text-[0.8rem] text-[#9F2F2D]">
+              Rastgele makale getirilemedi. Lütfen tekrar deneyin.
+            </p>
+          )}
         </div>
       </motion.div>
 

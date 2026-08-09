@@ -28,6 +28,11 @@ export type TiptapNode = {
   marks?: TiptapMark[];
 };
 
+export type ArticleRandom = {
+  id: string;
+  slug: string;
+};
+
 export type ArticleDetail = {
   id: string;
   title: string;
