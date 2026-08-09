@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArticleHeading, renderTiptapContent, useArticleQuery } from "@/entities/article";
 import { ROUTES } from "@/shared/lib/routes";
 import { BackLink } from "@/shared/ui/back-link";
-import { SpinnerIcon } from "@/shared/ui/icons";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR", {
@@ -12,6 +11,33 @@ function formatDate(value: string) {
     month: "long",
     year: "numeric",
   });
+}
+
+function HeadingSkeleton() {
+  return (
+    <div>
+      <div className="mb-4 h-9 w-4/5 animate-pulse rounded-lg bg-[#F0EFEA]" />
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-28 animate-pulse rounded-full bg-[#F0EFEA]" />
+        <div className="h-4 w-24 animate-pulse rounded-full bg-[#F0EFEA]" />
+      </div>
+    </div>
+  );
+}
+
+function ContentSkeleton() {
+  const widths = ["100%", "95%", "88%", "100%", "70%", "100%", "92%", "60%"];
+  return (
+    <div className="flex flex-col gap-3">
+      {widths.map((width, index) => (
+        <div
+          key={index}
+          className="h-4 animate-pulse rounded-full bg-[#F0EFEA]"
+          style={{ width }}
+        />
+      ))}
+    </div>
+  );
 }
 
 type SerbestKursuDetailViewProps = {
@@ -29,11 +55,7 @@ export function SerbestKursuDetailView({ slug }: SerbestKursuDetailViewProps) {
             Serbest Kürsü
           </BackLink>
 
-          {isLoading && (
-            <div className="flex items-center py-2">
-              <SpinnerIcon className="animate-spin text-[#787774]" size={20} />
-            </div>
-          )}
+          {isLoading && <HeadingSkeleton />}
 
           {isError && <p className="text-sm text-[#787774]">Makale bulunamadı.</p>}
 
@@ -52,6 +74,12 @@ export function SerbestKursuDetailView({ slug }: SerbestKursuDetailViewProps) {
           )}
         </div>
       </header>
+
+      {isLoading && (
+        <div className="mx-auto max-w-3xl px-6 py-10">
+          <ContentSkeleton />
+        </div>
+      )}
 
       {!isLoading && !isError && article && (
         <div className="mx-auto max-w-3xl px-6 py-10">
