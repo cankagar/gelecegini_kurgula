@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Home } from "lucide-react";
+import { Check, ChevronDown, Home, Search } from "lucide-react";
 import { useCurrentUser } from "@/entities/user";
 import {
   ROLE_NAV_ITEMS,
@@ -50,12 +50,13 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const logout = useLogout();
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [mobileNavExpanded, setMobileNavExpanded] = useState(false);
+  const [roleModalOpen, setRoleModalOpen] = useState(false);
+  const [roleQuery, setRoleQuery] = useState("");
+  const [roleHighlight, setRoleHighlight] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
-  const roleMenuRef = useRef<HTMLDivElement>(null);
-  const mobileRoleMenuRef = useRef<HTMLDivElement>(null);
+  const roleSearchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "1") {
@@ -86,14 +87,6 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
-      if (
-        roleMenuRef.current &&
-        !roleMenuRef.current.contains(e.target as Node) &&
-        mobileRoleMenuRef.current &&
-        !mobileRoleMenuRef.current.contains(e.target as Node)
-      ) {
-        setRoleMenuOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -120,7 +113,6 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   }
 
   function switchToRole(target: DashboardRole) {
-    setRoleMenuOpen(false);
     closeMobileNav();
     setStoredActiveRole(target);
     router.push(`/dashboard/${target}`);
@@ -128,6 +120,50 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
   const items = ROLE_NAV_ITEMS[role];
   const otherRoles = user.roles.filter(isDashboardRole).filter((r) => r !== role);
+  const allRoles = [role, ...otherRoles];
+  const filteredRoles = allRoles.filter((r) =>
+    ROLE_LABELS[r].toLocaleLowerCase("tr-TR").includes(roleQuery.trim().toLocaleLowerCase("tr-TR")),
+  );
+
+  function openRoleModal() {
+    if (otherRoles.length === 0) return;
+    setRoleQuery("");
+    setRoleHighlight(0);
+    setRoleModalOpen(true);
+  }
+
+  function closeRoleModal() {
+    setRoleModalOpen(false);
+  }
+
+  function selectRole(target: DashboardRole) {
+    closeRoleModal();
+    if (target !== role) {
+      switchToRole(target);
+    }
+  }
+
+  function handleRoleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape") {
+      closeRoleModal();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setRoleHighlight((h) => Math.min(h + 1, filteredRoles.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setRoleHighlight((h) => Math.max(h - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const target = filteredRoles[roleHighlight];
+      if (target) selectRole(target);
+    }
+  }
+
+  useEffect(() => {
+    if (roleModalOpen) {
+      roleSearchInputRef.current?.focus();
+    }
+  }, [roleModalOpen]);
 
   return (
     <>
@@ -196,11 +232,11 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
           </button>
 
           {!collapsed && (
-            <div ref={roleMenuRef} className="relative z-10 px-3 pb-1">
+            <div className="relative z-10 px-3 pb-1">
               <button
-                onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
+                onClick={openRoleModal}
                 disabled={otherRoles.length === 0}
-                className={`flex w-full items-center justify-between rounded-2xl px-3.5 py-2.5 text-[0.8rem] font-semibold transition-all duration-200 ${
+                className={`flex w-full items-center justify-between rounded-2xl px-3.5 py-2.5 text-[0.8rem] font-semibold transition-colors duration-200 ${
                   otherRoles.length > 0
                     ? "bg-bg text-text ring-1 ring-border hover:ring-primary-border cursor-pointer"
                     : "bg-bg/60 text-text-muted cursor-default"
@@ -210,38 +246,8 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                   <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                   {ROLE_LABELS[role]}
                 </span>
-                {otherRoles.length > 0 && (
-                  <ChevronDown
-                    size={13}
-                    className={`shrink-0 text-text-muted transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] ${roleMenuOpen ? "rotate-180" : ""}`}
-                  />
-                )}
+                {otherRoles.length > 0 && <ChevronDown size={13} className="shrink-0 text-text-muted" />}
               </button>
-
-              <AnimatePresence>
-                {roleMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                    transition={{ duration: 0.18, ease: EASE }}
-                    className="absolute left-3 right-3 z-30 mt-1.5 overflow-hidden rounded-2xl bg-bg p-1.5 ring-1 ring-border shadow-[0_12px_32px_rgba(31,31,27,0.12)]"
-                  >
-                    <p className="px-2.5 pb-1 pt-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-text-muted/70">
-                      Panel Değiştir
-                    </p>
-                    {otherRoles.map((r) => (
-                      <button
-                        key={r}
-                        onClick={() => switchToRole(r)}
-                        className="flex w-full items-center rounded-xl px-2.5 py-2 text-left text-[0.85rem] font-medium text-text transition-colors duration-150 hover:bg-surface"
-                      >
-                        {ROLE_LABELS[r]}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           )}
 
@@ -430,48 +436,16 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                   </Link>
                 </div>
 
-                <div ref={mobileRoleMenuRef} className="relative shrink-0">
-                  <button
-                    onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
-                    disabled={otherRoles.length === 0}
-                    className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 ${
-                      otherRoles.length > 0 ? "bg-bg/5 hover:bg-bg/10" : "bg-bg/5 opacity-70"
-                    }`}
-                  >
-                    {ROLE_LABELS[role]}
-                    {otherRoles.length > 0 && (
-                      <ChevronDown
-                        size={14}
-                        className={`shrink-0 text-bg/60 transition-transform duration-150 ${roleMenuOpen ? "rotate-180" : ""}`}
-                      />
-                    )}
-                  </button>
-
-                  <AnimatePresence>
-                    {roleMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.15, ease: EASE }}
-                        className="absolute right-0 z-20 mt-1.5 w-44 overflow-hidden rounded-xl bg-text py-1 ring-1 ring-bg/15 shadow-lg"
-                      >
-                        <p className="px-3 pb-1 pt-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-bg/40">
-                          Panel Değiştir
-                        </p>
-                        {otherRoles.map((r) => (
-                          <button
-                            key={r}
-                            onClick={() => switchToRole(r)}
-                            className="flex w-full items-center px-3 py-2 text-left text-[0.85rem] text-bg/80 transition-colors duration-150 hover:bg-bg/10 hover:text-bg"
-                          >
-                            {ROLE_LABELS[r]}
-                          </button>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <button
+                  onClick={openRoleModal}
+                  disabled={otherRoles.length === 0}
+                  className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 ${
+                    otherRoles.length > 0 ? "bg-bg/5 hover:bg-bg/10 cursor-pointer" : "bg-bg/5 opacity-70"
+                  }`}
+                >
+                  {ROLE_LABELS[role]}
+                  {otherRoles.length > 0 && <ChevronDown size={14} className="shrink-0 text-bg/60" />}
+                </button>
               </div>
 
               <div className="my-4 border-t border-bg/10" />
@@ -524,6 +498,73 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               </button>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Rol değiştirme — arama kutulu komut paleti */}
+      <AnimatePresence>
+        {roleModalOpen && (
+          <>
+            <motion.div
+              key="role-modal-scrim"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={closeRoleModal}
+              className="fixed inset-0 z-[110] bg-text/40 backdrop-blur-sm"
+            />
+            <motion.div
+              key="role-modal-panel"
+              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.2, ease: EASE }}
+              className="fixed left-1/2 top-1/2 z-[111] w-[min(320px,90vw)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-text p-3 shadow-[0_20px_48px_rgba(31,31,27,0.18)] ring-1 ring-bg/10 md:bg-bg md:ring-0"
+            >
+              <div className="flex items-center gap-2 rounded-xl px-3 py-2 ring-1 ring-bg/15 md:ring-border">
+                <Search size={15} className="shrink-0 text-bg/50 md:text-text-muted" />
+                <input
+                  ref={roleSearchInputRef}
+                  value={roleQuery}
+                  onChange={(e) => {
+                    setRoleQuery(e.target.value);
+                    setRoleHighlight(0);
+                  }}
+                  onKeyDown={handleRoleSearchKeyDown}
+                  placeholder="Rol ara..."
+                  className="w-full bg-transparent text-[0.82rem] text-bg placeholder:text-bg/45 focus:outline-none md:text-text md:placeholder:text-text-muted"
+                />
+              </div>
+
+              <div className="mt-2 max-h-60 overflow-y-auto">
+                {filteredRoles.length === 0 ? (
+                  <p className="px-3 py-6 text-center text-[0.8rem] text-bg/50 md:text-text-muted">Eşleşen rol yok</p>
+                ) : (
+                  filteredRoles.map((r, i) => {
+                    const active = r === role;
+                    return (
+                      <button
+                        key={r}
+                        onMouseEnter={() => setRoleHighlight(i)}
+                        onClick={() => selectRole(r)}
+                        className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[0.85rem] font-medium transition-colors duration-150 ${
+                          active
+                            ? "bg-bg/15 text-bg md:bg-primary-tint md:text-primary-hover"
+                            : i === roleHighlight
+                              ? "bg-bg/10 text-bg md:bg-surface md:text-text"
+                              : "text-bg/75 hover:bg-bg/10 md:text-text md:hover:bg-surface"
+                        }`}
+                      >
+                        {ROLE_LABELS[r]}
+                        {active && <Check size={14} className="ml-auto shrink-0" />}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
