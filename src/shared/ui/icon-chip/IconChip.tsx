@@ -1,7 +1,7 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 type IconChipProps = {
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string; size?: number }>;
   size?: number;
   className?: string;
 };

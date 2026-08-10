@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Home } from "lucide-react";
 import { useCurrentUser } from "@/entities/user";
 import {
   ROLE_NAV_ITEMS,
@@ -15,6 +15,7 @@ import {
 } from "@/entities/dashboard";
 import { useLogout } from "@/features/auth";
 import { ChevronsLeftIcon, LogOutIcon, MoreHorizontalIcon, UserIcon } from "@/shared/ui/icons";
+import { IconChip } from "@/shared/ui/icon-chip";
 import { Avatar } from "@/shared/ui/avatar";
 import { formatFullName } from "@/shared/lib";
 
@@ -25,7 +26,7 @@ const COLLAPSED_WIDTH = 64;
 const MOBILE_NAV_PEEK_TOP = "30%";
 
 // Bottom padding a page's <main> needs on mobile so its content clears the
-// floating trigger button below (bottom-6 h-12) — unneeded once this sidebar
+// floating trigger button below (bottom-6 h-14) — unneeded once this sidebar
 // takes over as a fixed column on md+.
 export const DASHBOARD_MOBILE_MAIN_CLEARANCE_CLASS = "pb-24 md:pb-0";
 
@@ -103,6 +104,15 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
     setMobileNavExpanded(false);
   }
 
+  function toggleMobileNav() {
+    if (mobileNavOpen) {
+      closeMobileNav();
+    } else {
+      setMobileNavExpanded(false);
+      setMobileNavOpen(true);
+    }
+  }
+
   async function handleLogout() {
     setMenuOpen(false);
     closeMobileNav();
@@ -121,329 +131,401 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
   return (
     <>
-    <motion.aside
-      animate={{ width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
-      transition={{ duration: 0.35, ease: EASE }}
-      className="sticky top-0 hidden h-screen shrink-0 flex-col border-r border-border bg-bg-alt md:flex"
-    >
-      <button
-        onClick={toggleCollapsed}
-        aria-label={collapsed ? "Menüyü genişlet" : "Menüyü daralt"}
-        className="group absolute -right-3.5 top-1/2 -translate-y-1/2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-bg text-text-muted ring-1 ring-border shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-primary hover:ring-primary-border hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-90"
+      {/* ─ Desktop: floating island sidebar ─ */}
+      <motion.aside
+        animate={{ width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
+        transition={{ duration: 0.35, ease: EASE }}
+        className="sticky top-4 z-10 ml-4 hidden h-[calc(100dvh-2rem)] shrink-0 flex-col md:flex"
       >
-        <ChevronsLeftIcon
-          size={14}
-          className={`transition-transform duration-[350ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-x-0.5 ${collapsed ? "rotate-180" : ""}`}
-        />
-      </button>
+        <motion.div
+          initial={{ opacity: 0, x: -10, filter: "blur(4px)" }}
+          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="relative flex h-full flex-col rounded-[1.75rem] bg-surface/60 ring-1 ring-border/70 backdrop-blur-xl"
+        >
+          {/* Ambient glow */}
+          <div
+            className="absolute inset-0 rounded-[1.75rem] pointer-events-none select-none overflow-hidden"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 45% at 10% 0%, rgba(207,162,77,0.10) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(184,115,66,0.07) 0%, transparent 65%)",
+            }}
+          />
 
-      <div className="h-14 flex items-center px-5 border-b border-border overflow-hidden">
-        {collapsed ? (
-          <Link
-            href="/"
-            className="font-heading text-[1.1rem] font-bold text-text tracking-[-0.02em] transition-opacity duration-150 hover:opacity-70"
-          >
-            PS
-          </Link>
-        ) : (
-          <Link
-            href="/"
-            className="group relative block h-6 overflow-hidden font-heading text-[1.1rem] font-bold tracking-[-0.02em]"
-          >
-            <span className="flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-6">
-              <span className="h-6 whitespace-nowrap leading-6 text-text">PayaSTEM</span>
-              <span className="h-6 whitespace-nowrap leading-6 text-text">Ana Sayfa</span>
-            </span>
-          </Link>
-        )}
-      </div>
+          {/* Logo */}
+          <div className={`relative z-10 flex h-16 shrink-0 items-center ${collapsed ? "justify-center px-0" : "px-4"}`}>
+            <Link href="/" aria-label="Ana Sayfa" className={`group flex items-center ${collapsed ? "gap-0" : "gap-3"}`}>
+              <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-2xl bg-text">
+                <span className="flex h-20 flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-10">
+                  <span className="flex h-10 w-10 items-center justify-center font-heading text-[0.85rem] font-bold text-bg">
+                    PS
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center text-bg">
+                    <Home size={17} />
+                  </span>
+                </span>
+              </span>
 
-      {!collapsed && (
-        <div ref={roleMenuRef} className="relative px-3 pt-3">
+              <span
+                className={`relative block h-6 overflow-hidden transition-[max-width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  collapsed ? "max-w-0 opacity-0" : "max-w-[140px] opacity-100"
+                }`}
+              >
+                <span className="flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-y-6">
+                  <span className="h-6 whitespace-nowrap font-heading text-[0.95rem] font-bold leading-6 tracking-[-0.02em] text-text">
+                    PayaSTEM
+                  </span>
+                  <span className="h-6 whitespace-nowrap font-heading text-[0.95rem] font-bold leading-6 tracking-[-0.02em] text-text">
+                    Ana Sayfa
+                  </span>
+                </span>
+              </span>
+            </Link>
+          </div>
+
+          {/* Collapse toggle — magnetic chip, vertically centered on the full sidebar height */}
           <button
-            onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
-            disabled={otherRoles.length === 0}
-            className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[0.82rem] font-medium transition-colors duration-150 ${
-              otherRoles.length > 0
-                ? "bg-surface/70 text-text hover:bg-surface cursor-pointer"
-                : "bg-surface/40 text-text-muted cursor-default"
-            }`}
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? "Menüyü genişlet" : "Menüyü daralt"}
+            className="group absolute -right-3.5 top-1/2 z-20 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-bg text-text-muted ring-1 ring-border shadow-[0_2px_10px_rgba(31,31,27,0.08)] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-primary hover:ring-primary-border active:scale-90"
           >
-            {ROLE_LABELS[role]}
-            {otherRoles.length > 0 && (
-              <ChevronDown
-                size={14}
-                className={`shrink-0 text-text-muted transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] ${roleMenuOpen ? "rotate-180" : ""}`}
-              />
-            )}
+            <ChevronsLeftIcon
+              size={13}
+              className={`transition-transform duration-[350ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:-translate-x-0.5 ${collapsed ? "rotate-180" : ""}`}
+            />
           </button>
 
-          <AnimatePresence>
-            {roleMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.15, ease: EASE }}
-                className="absolute left-3 right-3 z-20 mt-1.5 overflow-hidden rounded-xl border border-border bg-bg py-1.5 shadow-lg"
+          {!collapsed && (
+            <div ref={roleMenuRef} className="relative z-10 px-3 pb-1">
+              <button
+                onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
+                disabled={otherRoles.length === 0}
+                className={`flex w-full items-center justify-between rounded-2xl px-3.5 py-2.5 text-[0.8rem] font-semibold transition-all duration-200 ${
+                  otherRoles.length > 0
+                    ? "bg-bg text-text ring-1 ring-border hover:ring-primary-border cursor-pointer"
+                    : "bg-bg/60 text-text-muted cursor-default"
+                }`}
               >
-                <p className="px-3 pb-1 pt-1 text-[0.68rem] font-medium uppercase tracking-wide text-text-muted opacity-60">
-                  Panel Değiştir
-                </p>
-                {otherRoles.map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => switchToRole(r)}
-                    className="mx-1 flex w-[calc(100%-0.5rem)] items-center rounded-lg px-2.5 py-2 text-left text-[0.85rem] text-text transition-colors duration-150 hover:bg-surface"
-                  >
-                    {ROLE_LABELS[r]}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <ul className="flex flex-col gap-1">
-          {items.map((item) => {
-            const active = pathname === item.href;
-            const Icon = item.icon;
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  title={collapsed ? item.label : undefined}
-                  className={`relative flex h-10 items-center rounded-xl px-3 text-[0.85rem] font-medium transition-colors duration-150 ${
-                    collapsed ? "justify-center" : ""
-                  } ${
-                    active
-                      ? "bg-primary-tint text-primary-hover"
-                      : "text-text-muted hover:bg-surface hover:text-text"
-                  }`}
-                >
-                  {active && (
-                    <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-primary" />
-                  )}
-                  <Icon size={17} className="shrink-0" />
-                  <span
-                    className={`overflow-hidden whitespace-nowrap transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                      collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[160px] opacity-100"
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      <div ref={menuRef} className="relative px-3 py-3 border-t border-border">
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.2, ease: EASE }}
-              className="absolute bottom-full left-3 right-3 z-20 mb-2 overflow-hidden rounded-xl border border-border bg-bg shadow-lg"
-            >
- 
-              <div className="p-1.5">
-                <Link
-                  href={dashboardProfileRoute(role)}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.82rem] text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
-                >
-                  <UserIcon size={16} className="shrink-0" />
-                  Profilim
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[0.82rem] text-danger transition-colors duration-150 hover:bg-danger-bg"
-                >
-                  <LogOutIcon size={16} className="shrink-0" />
-                  Çıkış Yap
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <button
-          onClick={handleProfileTriggerClick}
-          title={collapsed ? formatFullName(user, user.email ?? "?") : undefined}
-          className={`flex h-11 w-full items-center rounded-xl px-2 transition-colors duration-150 hover:bg-surface ${
-            collapsed ? "justify-center" : ""
-          }`}
-        >
-          <Avatar name={formatFullName(user, user.email ?? "?")} size={28} />
-          <span
-            className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-medium text-text transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-              collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[150px] opacity-100"
-            }`}
-          >
-            {formatFullName(user, user.email ?? "?")}
-          </span>
-          <MoreHorizontalIcon
-            size={16}
-            className={`shrink-0 text-text-muted transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-              collapsed ? "ml-0 max-w-0 opacity-0" : "ml-1 max-w-[16px] opacity-100"
-            }`}
-          />
-        </button>
-      </div>
-    </motion.aside>
-
-    {/* Mobile trigger — floating pill, replaces the sidebar on small screens */}
-    {!mobileNavOpen && (
-      <button
-        onClick={() => {
-          setMobileNavExpanded(false);
-          setMobileNavOpen(true);
-        }}
-        aria-label="Menüyü aç"
-        className="md:hidden fixed bottom-6 left-1/2 z-40 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-text text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition-transform duration-150 active:scale-95"
-      >
-        <Menu size={20} />
-      </button>
-    )}
-
-    {/* Mobile nav scrim — blurs the page peeking above the sheet */}
-    <AnimatePresence>
-      {mobileNavOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={closeMobileNav}
-          className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-        />
-      )}
-    </AnimatePresence>
-
-    {/* Mobile nav modal — full-screen, mirrors the desktop sidebar's items */}
-    <AnimatePresence>
-      {mobileNavOpen && (
-        <motion.div
-          initial={{ opacity: 0, top: MOBILE_NAV_PEEK_TOP }}
-          animate={{ opacity: 1, top: mobileNavExpanded ? 0 : MOBILE_NAV_PEEK_TOP }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: EASE }}
-          className={`md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-[#0a0a0a]/97 backdrop-blur-sm transition-[border-radius] duration-300 ${
-            mobileNavExpanded ? "rounded-none" : "rounded-t-3xl"
-          }`}
-        >
-          <div
-            className="flex-1 overflow-y-auto px-5 pb-28 pt-10"
-            onScroll={(e) => {
-              if (!mobileNavExpanded && e.currentTarget.scrollTop > 4) {
-                setMobileNavExpanded(true);
-              }
-            }}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <Link
-                href={dashboardProfileRoute(role)}
-                onClick={closeMobileNav}
-                className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-white transition-colors duration-150 hover:bg-white/10"
-              >
-                <UserIcon size={16} className="shrink-0 text-white/70" />
-                Profilim
-              </Link>
-
-              <div ref={mobileRoleMenuRef} className="relative shrink-0">
-                <button
-                  onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
-                  disabled={otherRoles.length === 0}
-                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-white/15 px-3.5 py-2.5 text-[0.85rem] font-medium text-white transition-colors duration-150 ${
-                    otherRoles.length > 0 ? "bg-white/5 hover:bg-white/10" : "bg-white/5 opacity-70"
-                  }`}
-                >
+                <span className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                   {ROLE_LABELS[role]}
-                  {otherRoles.length > 0 && (
-                    <ChevronDown
-                      size={14}
-                      className={`shrink-0 text-white/60 transition-transform duration-150 ${roleMenuOpen ? "rotate-180" : ""}`}
-                    />
-                  )}
-                </button>
+                </span>
+                {otherRoles.length > 0 && (
+                  <ChevronDown
+                    size={13}
+                    className={`shrink-0 text-text-muted transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] ${roleMenuOpen ? "rotate-180" : ""}`}
+                  />
+                )}
+              </button>
 
-                <AnimatePresence>
-                  {roleMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={{ duration: 0.15, ease: EASE }}
-                      className="absolute right-0 z-20 mt-1.5 w-44 overflow-hidden rounded-xl border border-white/15 bg-[#161616] py-1 shadow-lg"
-                    >
-                      <p className="px-3 pb-1 pt-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-white/40">
-                        Panel Değiştir
-                      </p>
-                      {otherRoles.map((r) => (
-                        <button
-                          key={r}
-                          onClick={() => switchToRole(r)}
-                          className="flex w-full items-center px-3 py-2 text-left text-[0.85rem] text-white/80 transition-colors duration-150 hover:bg-white/10 hover:text-white"
-                        >
-                          {ROLE_LABELS[r]}
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <AnimatePresence>
+                {roleMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.18, ease: EASE }}
+                    className="absolute left-3 right-3 z-30 mt-1.5 overflow-hidden rounded-2xl bg-bg p-1.5 ring-1 ring-border shadow-[0_12px_32px_rgba(31,31,27,0.12)]"
+                  >
+                    <p className="px-2.5 pb-1 pt-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-text-muted/70">
+                      Panel Değiştir
+                    </p>
+                    {otherRoles.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => switchToRole(r)}
+                        className="flex w-full items-center rounded-xl px-2.5 py-2 text-left text-[0.85rem] font-medium text-text transition-colors duration-150 hover:bg-surface"
+                      >
+                        {ROLE_LABELS[r]}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+          )}
 
-            <div className="my-4 border-t border-white/10" />
-
+          <nav className="relative z-10 flex-1 overflow-y-auto px-3 py-3">
             <ul className="flex flex-col gap-1">
-              {items.map((item) => {
+              {items.map((item, i) => {
                 const active = pathname === item.href;
                 const Icon = item.icon;
                 return (
-                  <li key={item.href}>
+                  <motion.li
+                    key={item.href}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, ease: EASE, delay: 0.05 + i * 0.04 }}
+                  >
                     <Link
                       href={item.href}
-                      onClick={closeMobileNav}
-                      className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-[0.95rem] font-medium transition-colors duration-150 ${
-                        active ? "bg-white/10 text-white" : "text-white/80 hover:bg-white/5 hover:text-white"
-                      }`}
+                      title={collapsed ? item.label : undefined}
+                      className={`group relative flex h-11 items-center rounded-2xl px-2.5 text-[0.85rem] font-medium transition-colors duration-150 ${
+                        collapsed ? "justify-center" : ""
+                      } ${active ? "text-primary-hover" : "text-text-muted hover:text-text"}`}
                     >
-                      <Icon size={18} className="shrink-0" />
-                      {item.label}
+                      {active && (
+                        <motion.span
+                          layoutId="dashboard-sidebar-active-desktop"
+                          transition={{ duration: 0.35, ease: EASE }}
+                          className="absolute inset-0 rounded-2xl bg-primary-tint"
+                        />
+                      )}
+                      <IconChip
+                        icon={Icon}
+                        size={15}
+                        className={`relative z-10 h-8 w-8 ${active ? "border-primary-border bg-bg text-primary" : "bg-bg/70"}`}
+                      />
+                      <span
+                        className={`relative z-10 overflow-hidden whitespace-nowrap transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                          collapsed ? "ml-0 max-w-0 opacity-0" : "ml-2.5 max-w-[150px] opacity-100"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
                     </Link>
-                  </li>
+                  </motion.li>
                 );
               })}
             </ul>
+          </nav>
 
-            <div className="my-4 border-t border-white/10" />
+          <div ref={menuRef} className="relative z-10 shrink-0 px-3 py-3">
+            <AnimatePresence>
+              {menuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                  transition={{ duration: 0.2, ease: EASE }}
+                  className="absolute bottom-full left-3 right-3 z-30 mb-2 overflow-hidden rounded-2xl bg-bg p-1.5 ring-1 ring-border shadow-[0_12px_32px_rgba(31,31,27,0.12)]"
+                >
+                  <Link
+                    href={dashboardProfileRoute(role)}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[0.82rem] font-medium text-text-muted transition-colors duration-150 hover:bg-surface hover:text-text"
+                  >
+                    <UserIcon size={16} className="shrink-0" />
+                    Profilim
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-[0.82rem] font-medium text-danger transition-colors duration-150 hover:bg-danger-bg"
+                  >
+                    <LogOutIcon size={16} className="shrink-0" />
+                    Çıkış Yap
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <button
-              onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-[0.95rem] font-medium text-white/80 transition-colors duration-150 hover:bg-white/5 hover:text-white"
+              onClick={handleProfileTriggerClick}
+              title={collapsed ? formatFullName(user, user.email ?? "?") : undefined}
+              className={`flex h-12 w-full items-center rounded-2xl px-2 ring-1 ring-transparent transition-all duration-200 hover:bg-bg hover:ring-border ${
+                collapsed ? "justify-center" : ""
+              }`}
             >
-              <LogOutIcon size={18} className="shrink-0" />
-              Çıkış Yap
+              <Avatar name={formatFullName(user, user.email ?? "?")} size={30} />
+              <span
+                className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-semibold text-text transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[150px] opacity-100"
+                }`}
+              >
+                {formatFullName(user, user.email ?? "?")}
+              </span>
+              <MoreHorizontalIcon
+                size={16}
+                className={`shrink-0 text-text-muted transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  collapsed ? "ml-0 max-w-0 opacity-0" : "ml-1 max-w-[16px] opacity-100"
+                }`}
+              />
             </button>
           </div>
-
-          <button
-            onClick={closeMobileNav}
-            aria-label="Menüyü kapat"
-            className="fixed bottom-6 left-1/2 z-50 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/15 backdrop-blur transition-transform duration-150 active:scale-95"
-          >
-            <X size={20} />
-          </button>
         </motion.div>
-      )}
-    </AnimatePresence>
+      </motion.aside>
+
+      {/* ─ Mobile: floating morphing trigger, replaces the sidebar on small screens ─ */}
+      <button
+        onClick={toggleMobileNav}
+        aria-label={mobileNavOpen ? "Menüyü kapat" : "Menüyü aç"}
+        className={`md:hidden fixed bottom-6 left-1/2 z-50 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full shadow-[0_8px_28px_rgba(31,31,27,0.25)] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-90 ${
+          mobileNavOpen ? "bg-bg text-text ring-1 ring-border" : "bg-text text-bg"
+        }`}
+      >
+        <span className="relative flex h-4 w-5 items-center justify-center">
+          <motion.span
+            animate={mobileNavOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -3 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className="absolute h-[1.5px] w-5 rounded-full bg-current"
+          />
+          <motion.span
+            animate={mobileNavOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 3 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className="absolute h-[1.5px] w-5 rounded-full bg-current"
+          />
+        </span>
+      </button>
+
+      {/* Mobile nav scrim — blurs the page peeking above the sheet */}
+      <AnimatePresence>
+        {mobileNavOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={closeMobileNav}
+            className="md:hidden fixed inset-0 z-40 bg-text/40 backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile nav modal — full-screen, mirrors the desktop sidebar's items */}
+      <AnimatePresence>
+        {mobileNavOpen && (
+          <motion.div
+            initial={{ opacity: 0, top: MOBILE_NAV_PEEK_TOP }}
+            animate={{ opacity: 1, top: mobileNavExpanded ? 0 : MOBILE_NAV_PEEK_TOP }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className={`md:hidden fixed inset-x-0 bottom-0 z-40 flex flex-col bg-text/95 backdrop-blur-2xl transition-[border-radius] duration-300 ${
+              mobileNavExpanded ? "rounded-none" : "rounded-t-[2rem]"
+            }`}
+          >
+            <div className="flex shrink-0 justify-center pt-3">
+              <span className="h-1 w-10 rounded-full bg-bg/20" />
+            </div>
+
+            <div
+              className="flex-1 overflow-y-auto px-5 pb-28 pt-6"
+              onScroll={(e) => {
+                if (!mobileNavExpanded && e.currentTarget.scrollTop > 4) {
+                  setMobileNavExpanded(true);
+                }
+              }}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/"
+                    onClick={closeMobileNav}
+                    className="flex items-center gap-2 rounded-xl bg-bg/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 hover:bg-bg/10"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bg/10">
+                      <Home size={13} className="text-bg/80" />
+                    </span>
+                    Ana Sayfa
+                  </Link>
+
+                  <Link
+                    href={dashboardProfileRoute(role)}
+                    onClick={closeMobileNav}
+                    className="flex items-center gap-2 rounded-xl bg-bg/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 hover:bg-bg/10"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bg/10">
+                      <UserIcon size={13} className="text-bg/80" />
+                    </span>
+                    Profilim
+                  </Link>
+                </div>
+
+                <div ref={mobileRoleMenuRef} className="relative shrink-0">
+                  <button
+                    onClick={() => otherRoles.length > 0 && setRoleMenuOpen((v) => !v)}
+                    disabled={otherRoles.length === 0}
+                    className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 ${
+                      otherRoles.length > 0 ? "bg-bg/5 hover:bg-bg/10" : "bg-bg/5 opacity-70"
+                    }`}
+                  >
+                    {ROLE_LABELS[role]}
+                    {otherRoles.length > 0 && (
+                      <ChevronDown
+                        size={14}
+                        className={`shrink-0 text-bg/60 transition-transform duration-150 ${roleMenuOpen ? "rotate-180" : ""}`}
+                      />
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {roleMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.15, ease: EASE }}
+                        className="absolute right-0 z-20 mt-1.5 w-44 overflow-hidden rounded-xl bg-text py-1 ring-1 ring-bg/15 shadow-lg"
+                      >
+                        <p className="px-3 pb-1 pt-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-bg/40">
+                          Panel Değiştir
+                        </p>
+                        {otherRoles.map((r) => (
+                          <button
+                            key={r}
+                            onClick={() => switchToRole(r)}
+                            className="flex w-full items-center px-3 py-2 text-left text-[0.85rem] text-bg/80 transition-colors duration-150 hover:bg-bg/10 hover:text-bg"
+                          >
+                            {ROLE_LABELS[r]}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              <div className="my-4 border-t border-bg/10" />
+
+              <ul className="flex flex-col gap-1">
+                {items.map((item, i) => {
+                  const active = pathname === item.href;
+                  const Icon = item.icon;
+                  return (
+                    <motion.li
+                      key={item.href}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, ease: EASE, delay: 0.04 + i * 0.035 }}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={closeMobileNav}
+                        className={`relative flex items-center gap-3 rounded-2xl px-3 py-3 text-[0.95rem] font-medium transition-colors duration-150 ${
+                          active ? "text-bg" : "text-bg/75 hover:text-bg"
+                        }`}
+                      >
+                        {active && (
+                          <motion.span
+                            layoutId="dashboard-sidebar-active-mobile"
+                            transition={{ duration: 0.35, ease: EASE }}
+                            className="absolute inset-0 rounded-2xl bg-bg/10"
+                          />
+                        )}
+                        <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg/10">
+                          <Icon size={16} />
+                        </span>
+                        <span className="relative z-10">{item.label}</span>
+                      </Link>
+                    </motion.li>
+                  );
+                })}
+              </ul>
+
+              <div className="my-4 border-t border-bg/10" />
+
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-[0.95rem] font-medium text-bg/75 transition-colors duration-150 hover:text-bg"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg/10">
+                  <LogOutIcon size={16} className="shrink-0" />
+                </span>
+                Çıkış Yap
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
