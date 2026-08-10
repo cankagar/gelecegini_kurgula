@@ -1,8 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
+import { Home } from "lucide-react";
 import { FlaskIcon, CpuIcon, CompassIcon, CalculatorIcon, CheckCircleIcon } from "@/shared/ui/icons";
+import { IconChip } from "@/shared/ui/icon-chip";
 
 const SPRING = [0.16, 1, 0.3, 1] as const;
 
@@ -50,9 +53,19 @@ export function AuthShell({
       />
 
       <div className="relative z-10 max-w-[1240px] mx-auto px-6 md:px-10 xl:px-16 py-14 lg:py-20">
+        <motion.div {...fadeUp(0)} className="relative mb-8 lg:mb-10">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-3 rounded-full bg-surface/60 hover:bg-surface pl-2 pr-4 py-2 sm:pr-5 sm:py-2.5 transition-colors duration-200"
+          >
+            <IconChip icon={Home} size={18} className="h-9 w-9 sm:h-10 sm:w-10 group-hover:-translate-x-0.5" />
+            <span className="text-base sm:text-lg font-bold text-text">Ana Sayfa</span>
+          </Link>
+        </motion.div>
+
         <div className="flex flex-col lg:flex-row lg:items-center gap-14 lg:gap-8">
           {/* ─ Left: Editorial brand panel ─ */}
-          <div className="flex-1 lg:max-w-[480px] relative">
+          <div className="hidden lg:block flex-1 lg:max-w-[480px] relative">
             <div className="hidden lg:block absolute inset-0 pointer-events-none select-none opacity-[0.16]" aria-hidden="true">
               {ORBIT_ICONS.map(({ Icon, color, pos, size }, i) => (
                 <span key={i} className={`absolute ${pos}`} style={{ color }}>
