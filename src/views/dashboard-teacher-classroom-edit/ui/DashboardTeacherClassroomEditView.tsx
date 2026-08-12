@@ -1,5 +1,6 @@
 "use client";
 
+import { AddMemberSearch } from "@/features/classroom-members";
 import { ClassroomEditPanel } from "@/widgets/classroom-edit";
 import { ROUTES } from "@/shared/lib/routes";
 
@@ -15,6 +16,15 @@ export function DashboardTeacherClassroomEditView({
       classroomId={classroomId}
       backHref={ROUTES.TEACHER.CLASSROOM_DETAIL(classroomId)}
       classroomsHref={ROUTES.TEACHER.CLASSROOMS}
+      extraSection={
+        <AddMemberSearch
+          classroomId={classroomId}
+          title="Öğrenci Ekle"
+          description="Sistemde zaten kayıtlı olan bir öğrenciyi direkt sınıfa ekleyebilirsin."
+          eligibleRoles={["student"]}
+          searchRole="student"
+        />
+      }
     />
   );
 }

@@ -7,7 +7,7 @@ import type { UserRole } from "@/entities/user/model/types";
 export function useAdminUsersQuery(search: string, role?: UserRole, enabled = true) {
   return useQuery({
     queryKey: ["adminUsers", search, role],
-    queryFn: () => listUsers({ search: search || undefined, role: search ? undefined : role }),
+    queryFn: () => listUsers({ search: search || undefined, role }),
     staleTime: 30 * 1000,
     enabled,
   });

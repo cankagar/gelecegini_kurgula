@@ -14,7 +14,8 @@ export async function getMe() {
   }
 }
 
-// Admin-only — backend rejects with 403 for non-admins.
+// Admin veya öğretmen — backend öğretmen için `role` param'ını STUDENT'a
+// sabitler, diğer roller için 403 döner.
 export async function listUsers(params: { search?: string; role?: UserRole } = {}) {
   try {
     const { data } = await httpClient.get<AdminUser[]>("/v1/users", { params });
