@@ -29,6 +29,7 @@ export const ROUTES = {
     PROFILE: `${TEACHER}/profile`,
     CLASSROOMS: `${TEACHER}/classrooms`,
     CLASSROOM_DETAIL: (id: string) => `${TEACHER}/classrooms/${id}`,
+    CLASSROOM_EDIT: (id: string) => `${TEACHER}/classrooms/${id}/edit`,
   },
   STUDENT: {
     HOME: STUDENT,

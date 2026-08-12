@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useClassroomQuery } from "@/entities/classroom";
 import {
   AssignmentList,
@@ -8,7 +9,7 @@ import {
   createMockAssignments,
   type Assignment,
 } from "@/widgets/classroom-detail";
-import { SpinnerIcon } from "@/shared/ui/icons";
+import { SpinnerIcon, PenIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 import { ROUTES } from "@/shared/lib/routes";
 
@@ -19,6 +20,7 @@ type DashboardTeacherClassroomDetailViewProps = {
 export function DashboardTeacherClassroomDetailView({
   classroomId,
 }: DashboardTeacherClassroomDetailViewProps) {
+  const router = useRouter();
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
 
   const [assignments, setAssignments] = useState<Assignment[]>(createMockAssignments);
@@ -70,6 +72,15 @@ export function DashboardTeacherClassroomDetailView({
       {classroom && (
         <ClassroomDetailShell
           classroom={classroom}
+          headerActions={
+            <button
+              onClick={() => router.push(ROUTES.TEACHER.CLASSROOM_EDIT(classroomId))}
+              className="flex items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text"
+            >
+              <PenIcon size={14} />
+              Düzenle
+            </button>
+          }
           assignmentsContent={
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
