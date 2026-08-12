@@ -9,6 +9,7 @@ import {
   createMockAssignments,
   type Assignment,
 } from "@/widgets/classroom-detail";
+import { AttendanceTab } from "@/widgets/classroom-attendance";
 import { SpinnerIcon, PenIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
 import { ROUTES } from "@/shared/lib/routes";
@@ -143,6 +144,7 @@ export function DashboardTeacherClassroomDetailView({
               />
             </div>
           }
+          attendanceContent={<AttendanceTab classroom={classroom} classroomId={classroomId} />}
         />
       )}
     </div>

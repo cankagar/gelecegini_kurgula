@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useClassroomQuery } from "@/entities/classroom";
 import { AssignmentList, ClassroomDetailShell, createMockAssignments } from "@/widgets/classroom-detail";
+import { AttendanceTab } from "@/widgets/classroom-attendance";
 import { ROUTES } from "@/shared/lib/routes";
 import { PenIcon, SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
@@ -42,6 +43,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
             </button>
           }
           assignmentsContent={<AssignmentList assignments={assignments} />}
+          attendanceContent={<AttendanceTab classroom={classroom} classroomId={classroomId} />}
         />
       )}
     </div>

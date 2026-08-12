@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import {
+  ClipboardListIcon,
   FileTextIcon,
   GraduationCapIcon,
   HomeIcon,
@@ -19,6 +20,7 @@ export const ROLE_NAV_ITEMS: Record<DashboardRole, NavItem[]> = {
   student: [
     { href: ROUTES.STUDENT.HOME, label: "Panelim", icon: HomeIcon },
     { href: ROUTES.STUDENT.CLASSROOMS, label: "Sınıflarım", icon: GraduationCapIcon },
+    { href: ROUTES.STUDENT.ATTENDANCE, label: "Yoklamalarım", icon: ClipboardListIcon },
   ],
   teacher: [
     { href: ROUTES.TEACHER.HOME, label: "Panelim", icon: HomeIcon },

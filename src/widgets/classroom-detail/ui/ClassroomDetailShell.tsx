@@ -6,18 +6,21 @@ import { ROLE_LABELS } from "@/entities/user";
 import { formatDateTime } from "@/shared/lib/date";
 import { formatFullName } from "@/shared/lib";
 
-type Tab = "assignments" | "members";
+type Tab = "assignments" | "members" | "attendance";
 
 type ClassroomDetailShellProps = {
   classroom: ClassroomWithMembers;
   headerActions?: ReactNode;
   assignmentsContent: ReactNode;
+  /** Sadece öğretmen/admin view'leri geçer — verilmezse "Yoklama" tabı hiç görünmez. */
+  attendanceContent?: ReactNode;
 };
 
 export function ClassroomDetailShell({
   classroom,
   headerActions,
   assignmentsContent,
+  attendanceContent,
 }: ClassroomDetailShellProps) {
   const [tab, setTab] = useState<Tab>("assignments");
 
@@ -52,9 +55,23 @@ export function ClassroomDetailShell({
           >
             Üyeler
           </button>
+          {attendanceContent && (
+            <button
+              onClick={() => setTab("attendance")}
+              className={`rounded-full px-4 py-2 text-[0.85rem] font-medium transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                tab === "attendance" ? "bg-bg text-text" : "text-text-muted hover:text-text"
+              }`}
+            >
+              Yoklama
+            </button>
+          )}
         </div>
 
         {tab === "assignments" && <div className="px-6 pb-6">{assignmentsContent}</div>}
+
+        {tab === "attendance" && attendanceContent && (
+          <div className="px-6 pb-6">{attendanceContent}</div>
+        )}
 
         {tab === "members" && (
           <div className="px-6 pb-6">
