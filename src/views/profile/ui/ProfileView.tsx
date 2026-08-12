@@ -18,7 +18,7 @@ const fadeUp = {
 const fieldClass =
   "rounded-xl border border-border bg-bg-alt px-3.5 py-2.5 text-[0.9rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20";
 
-type Draft = { firstName: string; lastName: string; email: string };
+type Draft = { firstName: string; lastName: string };
 
 export function ProfileView() {
   const user = useRequireAuth();
@@ -33,7 +33,6 @@ export function ProfileView() {
     setDraft({
       firstName: user!.first_name ?? "",
       lastName: user!.last_name ?? "",
-      email: user!.email ?? "",
     });
     setIsEditing(true);
   }
@@ -47,10 +46,9 @@ export function ProfileView() {
   async function save() {
     if (!draft) return;
 
-    const changes: { email?: string; first_name?: string; last_name?: string } = {};
+    const changes: { first_name?: string; last_name?: string } = {};
     if (draft.firstName !== (user!.first_name ?? "")) changes.first_name = draft.firstName.trim();
     if (draft.lastName !== (user!.last_name ?? "")) changes.last_name = draft.lastName.trim();
-    if (draft.email !== (user!.email ?? "")) changes.email = draft.email.trim();
 
     if (Object.keys(changes).length === 0) {
       setIsEditing(false);
@@ -119,13 +117,7 @@ export function ProfileView() {
                             className={`${fieldClass} font-medium`}
                           />
                         </div>
-                        <input
-                          type="email"
-                          value={draft.email}
-                          onChange={(e) => setDraft({ ...draft, email: e.target.value })}
-                          placeholder="E-posta"
-                          className={fieldClass}
-                        />
+                        <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
                       </div>
                     ) : (
                       <>
@@ -170,7 +162,7 @@ export function ProfileView() {
 
               {updateMe.isError && (
                 <p className="mt-4 text-[0.8rem] text-danger">
-                  Kaydedilemedi. E-posta başka bir kullanıcıda olabilir.
+                  Kaydedilemedi. Lütfen tekrar deneyin.
                 </p>
               )}
             </div>

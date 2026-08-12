@@ -51,7 +51,7 @@ export async function updateUser(
   }
 }
 
-export async function updateMe(updates: { email?: string; first_name?: string; last_name?: string }) {
+export async function updateMe(updates: { first_name?: string; last_name?: string }) {
   try {
     const { data } = await httpClient.patch<User>("/v1/users/me", updates);
     return data;

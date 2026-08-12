@@ -9,7 +9,7 @@ import { IconChip } from "@/shared/ui/icon-chip";
 import { formatFullName } from "@/shared/lib";
 import { StudentDemographicsForm } from "./StudentDemographicsForm";
 
-type Draft = { firstName: string; lastName: string; email: string };
+type Draft = { firstName: string; lastName: string };
 
 // Self-profile as seen from inside a dashboard (admin/teacher/student) — same
 // page shell and header pattern as viewing any other record in the
@@ -28,7 +28,6 @@ export function DashboardProfileView() {
     setDraft({
       firstName: user!.first_name ?? "",
       lastName: user!.last_name ?? "",
-      email: user!.email ?? "",
     });
     setIsEditing(true);
   }
@@ -42,10 +41,9 @@ export function DashboardProfileView() {
   async function save() {
     if (!draft) return;
 
-    const changes: { email?: string; first_name?: string; last_name?: string } = {};
+    const changes: { first_name?: string; last_name?: string } = {};
     if (draft.firstName !== (user!.first_name ?? "")) changes.first_name = draft.firstName.trim();
     if (draft.lastName !== (user!.last_name ?? "")) changes.last_name = draft.lastName.trim();
-    if (draft.email !== (user!.email ?? "")) changes.email = draft.email.trim();
 
     if (Object.keys(changes).length === 0) {
       setIsEditing(false);
@@ -87,13 +85,7 @@ export function DashboardProfileView() {
                     className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
-                <input
-                  type="email"
-                  value={draft.email}
-                  onChange={(e) => setDraft({ ...draft, email: e.target.value })}
-                  placeholder="E-posta"
-                  className="rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+                <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
               </div>
             ) : (
               <>
@@ -137,7 +129,7 @@ export function DashboardProfileView() {
 
       {updateMe.isError && (
         <p className="px-8 pt-4 text-[0.8rem] text-danger">
-          Kaydedilemedi. E-posta başka bir kullanıcıda olabilir.
+          Kaydedilemedi. Lütfen tekrar deneyin.
         </p>
       )}
 

@@ -7,8 +7,7 @@ export function useUpdateMeMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (updates: { email?: string; first_name?: string; last_name?: string }) =>
-      updateMe(updates),
+    mutationFn: (updates: { first_name?: string; last_name?: string }) => updateMe(updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
