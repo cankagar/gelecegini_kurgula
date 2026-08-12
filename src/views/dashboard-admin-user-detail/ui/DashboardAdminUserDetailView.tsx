@@ -20,6 +20,7 @@ import {
   PARENT_RELATION_LABELS,
   useStudentDemographicsQuery,
 } from "@/entities/student-demographics";
+import { ATTENDANCE_STATUS_LABELS, useStudentAttendanceQuery } from "@/entities/attendance";
 import { formatDate } from "@/shared/lib/date";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatDateTime } from "@/shared/lib/date";
@@ -56,17 +57,26 @@ type DashboardAdminUserDetailViewProps = {
 export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetailViewProps) {
   const { data: user, isLoading, isError } = useAdminUserQuery(userId);
   const { updateFields, addRole, removeRole } = useUpdateAdminUserMutation(userId);
-  const { data: classrooms, isLoading: isClassroomsLoading } =
-    useClassroomsForMemberQuery(userId);
   const isStudent = user?.roles.includes("student") ?? false;
-  const { data: demographics, isLoading: isDemographicsLoading } = useStudentDemographicsQuery(
-    userId,
-    isStudent
-  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [isClassroomsOpen, setIsClassroomsOpen] = useState(false);
   const [isDemographicsOpen, setIsDemographicsOpen] = useState(false);
+  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
+
+  const { data: classrooms, isLoading: isClassroomsLoading } = useClassroomsForMemberQuery(
+    userId,
+    isClassroomsOpen
+  );
+  const { data: demographics, isLoading: isDemographicsLoading } = useStudentDemographicsQuery(
+    userId,
+    isStudent && isDemographicsOpen
+  );
+  const { data: attendance, isLoading: isAttendanceLoading } = useStudentAttendanceQuery(
+    userId,
+    isStudent && isAttendanceOpen
+  );
 
   const isSaving = updateFields.isPending || addRole.isPending || removeRole.isPending;
 
@@ -302,35 +312,57 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
           </div>
 
           <div className="border-t border-border px-8 py-6">
-            <h2 className="text-[0.9rem] font-medium text-text">Sınıfları</h2>
+            <button
+              type="button"
+              onClick={() => setIsClassroomsOpen((v) => !v)}
+              className="flex w-full items-center justify-between gap-4 text-left"
+            >
+              <h2 className="text-[0.9rem] font-medium text-text">Sınıfları</h2>
+              <ChevronDown
+                size={18}
+                className={`shrink-0 text-text-muted transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${isClassroomsOpen ? "rotate-180" : ""}`}
+              />
+            </button>
 
-            {isClassroomsLoading && (
-              <div className="mt-3 flex text-text-muted">
-                <SpinnerIcon className="animate-spin" size={16} />
-              </div>
-            )}
+            <AnimatePresence initial={false}>
+              {isClassroomsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                  className="overflow-hidden"
+                >
+                  {isClassroomsLoading && (
+                    <div className="mt-3 flex text-text-muted">
+                      <SpinnerIcon className="animate-spin" size={16} />
+                    </div>
+                  )}
 
-            {!isClassroomsLoading && classrooms?.length === 0 && (
-              <p className="mt-3 text-[0.85rem] text-text-muted">
-                Bu kullanıcı henüz bir sınıfa dahil değil.
-              </p>
-            )}
+                  {!isClassroomsLoading && classrooms?.length === 0 && (
+                    <p className="mt-3 text-[0.85rem] text-text-muted">
+                      Bu kullanıcı henüz bir sınıfa dahil değil.
+                    </p>
+                  )}
 
-            {!isClassroomsLoading && classrooms && classrooms.length > 0 && (
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {classrooms.map((classroom) => (
-                  <li key={classroom.id}>
-                    <Link
-                      href={`/dashboard/admin/classrooms/${classroom.id}`}
-                      className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text transition-colors duration-150 hover:border-primary-border hover:bg-primary-tint"
-                    >
-                      <School size={13} className="text-text-muted" />
-                      {classroom.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+                  {!isClassroomsLoading && classrooms && classrooms.length > 0 && (
+                    <ul className="mt-3 flex flex-wrap gap-2">
+                      {classrooms.map((classroom) => (
+                        <li key={classroom.id}>
+                          <Link
+                            href={`/dashboard/admin/classrooms/${classroom.id}`}
+                            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[0.8rem] font-medium text-text transition-colors duration-150 hover:border-primary-border hover:bg-primary-tint"
+                          >
+                            <School size={13} className="text-text-muted" />
+                            {classroom.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {isStudent && (
@@ -420,6 +452,74 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                   />
                 </div>
               )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {isStudent && (
+            <div className="border-t border-border px-8 py-6">
+              <button
+                type="button"
+                onClick={() => setIsAttendanceOpen((v) => !v)}
+                className="flex w-full items-center justify-between gap-4 text-left"
+              >
+                <h2 className="text-[0.9rem] font-medium text-text">Devamsızlık</h2>
+                <ChevronDown
+                  size={18}
+                  className={`shrink-0 text-text-muted transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${isAttendanceOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              <AnimatePresence initial={false}>
+                {isAttendanceOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                    className="overflow-hidden"
+                  >
+                    {isAttendanceLoading && (
+                      <div className="mt-3 flex text-text-muted">
+                        <SpinnerIcon className="animate-spin" size={16} />
+                      </div>
+                    )}
+
+                    {!isAttendanceLoading && attendance?.length === 0 && (
+                      <p className="mt-3 text-[0.85rem] text-text-muted">
+                        Bu öğrenci için henüz devamsızlık kaydı yok.
+                      </p>
+                    )}
+
+                    {!isAttendanceLoading && attendance && attendance.length > 0 && (
+                      <ul className="mt-3 flex flex-col gap-2">
+                        {attendance.map((record, i) => (
+                          <li
+                            key={`${record.classroom_id}-${record.session_date}-${i}`}
+                            className="flex items-center justify-between gap-4 rounded-xl bg-bg px-4 py-3 text-[0.85rem]"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-text">{record.classroom_name}</p>
+                              <p className="mt-0.5 text-text-muted">
+                                {formatDate(record.session_date)}
+                                {record.note ? ` — ${record.note}` : ""}
+                              </p>
+                            </div>
+                            <span
+                              className={`shrink-0 rounded-full px-2 py-0.5 text-[0.75rem] font-medium ${
+                                record.status === "present"
+                                  ? "bg-success-bg text-success"
+                                  : "bg-danger-bg text-danger"
+                              }`}
+                            >
+                              {ATTENDANCE_STATUS_LABELS[record.status]}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

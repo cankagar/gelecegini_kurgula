@@ -42,3 +42,14 @@ export async function getMyAttendance() {
     throw toApiError(err);
   }
 }
+
+export async function getStudentAttendance(userId: string) {
+  try {
+    const { data } = await httpClient.get<MyAttendanceRecord[]>(
+      `/v1/students/${userId}/attendance`
+    );
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}

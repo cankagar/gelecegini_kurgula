@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMyClassroomsQuery, useCreateClassroomMutation } from "@/entities/classroom";
+import { useMyClassroomsQuery } from "@/entities/classroom";
+import { CreateClassroomModal } from "@/features/create-classroom";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatDate } from "@/shared/lib/date";
@@ -13,23 +14,6 @@ export function DashboardTeacherClassroomsView() {
   const { data: classrooms, isLoading, isError } = useMyClassroomsQuery();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [name, setName] = useState("");
-  const createClassroom = useCreateClassroomMutation();
-
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed) return;
-
-    try {
-      const classroom = await createClassroom.mutateAsync(trimmed);
-      setName("");
-      setIsCreateOpen(false);
-      router.push(ROUTES.TEACHER.CLASSROOM_EDIT(classroom.id));
-    } catch {
-      // hata mesajı mutation state'inden okunuyor
-    }
-  }
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
@@ -39,42 +23,22 @@ export function DashboardTeacherClassroomsView() {
           <p className="mt-1.5 text-[0.9rem] text-text-muted">Dahil olduğun sınıflar burada listelenir.</p>
         </div>
 
-        <div className="relative shrink-0">
-          <button
-            onClick={() => setIsCreateOpen((open) => !open)}
-            className="rounded-full bg-primary px-5 py-2.5 text-[0.85rem] font-semibold text-cta-text transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover active:scale-[0.98]"
-          >
-            {isCreateOpen ? "Vazgeç" : "Sınıf Oluştur"}
-          </button>
-
-          {isCreateOpen && (
-            <form
-              onSubmit={handleCreate}
-              className="absolute right-0 z-10 mt-2 w-72 rounded-md border border-border bg-bg p-4 shadow-sm"
-            >
-              <label className="text-[0.8rem] font-medium text-text">Sınıf adı</label>
-              <input
-                autoFocus
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="ör. 10-A Matematik"
-                className="mt-1.5 w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-              <button
-                type="submit"
-                disabled={createClassroom.isPending || !name.trim()}
-                className="mt-3 w-full rounded-md bg-primary px-3.5 py-2 text-[0.85rem] font-semibold text-cta-text transition-opacity duration-150 hover:bg-primary-hover disabled:opacity-50"
-              >
-                {createClassroom.isPending ? "Oluşturuluyor..." : "Sınıfı Oluştur"}
-              </button>
-              {createClassroom.isError && (
-                <p className="mt-2 text-[0.8rem] text-danger">Sınıf oluşturulamadı.</p>
-              )}
-            </form>
-          )}
-        </div>
+        <button
+          onClick={() => setIsCreateOpen(true)}
+          className="shrink-0 rounded-full bg-primary px-5 py-2.5 text-[0.85rem] font-semibold text-cta-text transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover active:scale-[0.98]"
+        >
+          Sınıf Oluştur
+        </button>
       </div>
+
+      <CreateClassroomModal
+        open={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onCreated={(classroom) => {
+          setIsCreateOpen(false);
+          router.push(ROUTES.TEACHER.CLASSROOM_EDIT(classroom.id));
+        }}
+      />
 
       {isLoading && (
         <div className="mt-8 flex justify-center text-text-muted">
