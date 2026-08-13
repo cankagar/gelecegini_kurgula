@@ -22,12 +22,6 @@ type RetryableConfig = AxiosRequestConfig & { _retried?: boolean };
 
 let refreshPromise: Promise<unknown> | null = null;
 
-function redirectToLogin() {
-  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/login")) {
-    window.location.href = "/auth/login";
-  }
-}
-
 // Supabase rotates the refresh token on every use — two concurrent refresh
 // calls with the same (stale) token would race: one succeeds and rotates it,
 // the other fails and the failure handler clears the (now valid) cookies.
@@ -64,7 +58,10 @@ httpClient.interceptors.response.use(
     try {
       await refreshSession();
     } catch {
-      redirectToLogin();
+      // Refresh failed — genuinely logged out. Don't navigate here: this
+      // client is used on public pages too (e.g. navbar's silent user
+      // check), which must never force a redirect. Callers that require a
+      // session (useRequireAuth/useRequireRole) redirect on their own.
       throw error;
     }
 

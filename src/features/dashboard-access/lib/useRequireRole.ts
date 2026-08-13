@@ -19,7 +19,9 @@ export function useRequireRole(role: DashboardRole) {
 
   useEffect(() => {
     if (isError) {
-      router.replace("/auth/login");
+      // Never force an unauthenticated visitor onto the login page — dashboard
+      // pages just aren't reachable without a session, so send them home.
+      router.replace("/");
     } else if (user && !hasRole) {
       router.replace("/dashboard");
     } else if (hasRole) {

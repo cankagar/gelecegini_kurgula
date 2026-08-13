@@ -13,7 +13,9 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (isError) {
-      router.replace("/auth/login");
+      // Never force an unauthenticated visitor onto the login page — dashboard
+      // pages just aren't reachable without a session, so send them home.
+      router.replace("/");
     }
   }, [isError, router]);
 
