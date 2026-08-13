@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { EditorContent, useEditor, type Editor, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { CharacterCount } from "@tiptap/extensions";
 import {
   Bold,
   Code,
@@ -22,6 +23,8 @@ import {
   Undo,
 } from "lucide-react";
 import { Modal, ModalFooter, ModalTitle } from "@/shared/ui/modal";
+
+export const ARTICLE_CONTENT_MAX_LENGTH = 5000;
 
 type TiptapEditorProps = {
   content: JSONContent;
@@ -132,9 +135,11 @@ function LinkModal({ editor, open, onClose }: LinkModalProps) {
 
 export function TiptapEditor({ content, onChange, editable = true }: TiptapEditorProps) {
   const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [stuck, setStuck] = useState(false);
+  const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, CharacterCount.configure({ limit: ARTICLE_CONTENT_MAX_LENGTH })],
     content,
     editable,
     immediatelyRender: false,
@@ -144,119 +149,147 @@ export function TiptapEditor({ content, onChange, editable = true }: TiptapEdito
     },
   });
 
+  useEffect(() => {
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting), {
+      threshold: 1,
+    });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [sentinel]);
+
   if (!editor) return null;
 
   return (
     <div className="rounded-2xl bg-surface/50">
       {editable && (
-        <div className="flex flex-wrap items-center gap-1 border-b border-border px-3 py-2">
-          <ToolbarButton
-            label="Kalın"
-            active={editor.isActive("bold")}
-            onClick={() => editor.chain().focus().toggleBold().run()}
+        <>
+          <div ref={setSentinel} className="h-0" />
+          <div
+            className={`sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-2xl border-b border-border px-3 py-2 transition-colors duration-150 ${
+              stuck ? "bg-bg" : "bg-transparent"
+            }`}
           >
-            <Bold size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="İtalik"
-            active={editor.isActive("italic")}
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-          >
-            <Italic size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Altı çizili"
-            active={editor.isActive("underline")}
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-          >
-            <UnderlineIcon size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Üstü çizili"
-            active={editor.isActive("strike")}
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-          >
-            <Strikethrough size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Başlık 1"
-            active={editor.isActive("heading", { level: 1 })}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          >
-            <Heading1 size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Başlık 2"
-            active={editor.isActive("heading", { level: 2 })}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          >
-            <Heading2 size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Başlık 3"
-            active={editor.isActive("heading", { level: 3 })}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          >
-            <Heading3 size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Madde işaretli liste"
-            active={editor.isActive("bulletList")}
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-          >
-            <List size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Numaralı liste"
-            active={editor.isActive("orderedList")}
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          >
-            <ListOrdered size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Alıntı"
-            active={editor.isActive("blockquote")}
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          >
-            <Quote size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Satır içi kod"
-            active={editor.isActive("code")}
-            onClick={() => editor.chain().focus().toggleCode().run()}
-          >
-            <Code size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Kod bloğu"
-            active={editor.isActive("codeBlock")}
-            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          >
-            <SquareCode size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Bağlantı"
-            active={editor.isActive("link")}
-            onClick={() => setLinkModalOpen(true)}
-          >
-            <LinkIcon size={16} />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Ayırıcı çizgi"
-            active={false}
-            onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          >
-            <Minus size={16} />
-          </ToolbarButton>
-          <ToolbarButton label="Geri al" active={false} onClick={() => editor.chain().focus().undo().run()}>
-            <Undo size={16} />
-          </ToolbarButton>
-          <ToolbarButton label="Yinele" active={false} onClick={() => editor.chain().focus().redo().run()}>
-            <Redo size={16} />
-          </ToolbarButton>
-        </div>
+            <ToolbarButton
+              label="Kalın"
+              active={editor.isActive("bold")}
+              onClick={() => editor.chain().focus().toggleBold().run()}
+            >
+              <Bold size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="İtalik"
+              active={editor.isActive("italic")}
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+            >
+              <Italic size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Altı çizili"
+              active={editor.isActive("underline")}
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+            >
+              <UnderlineIcon size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Üstü çizili"
+              active={editor.isActive("strike")}
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+            >
+              <Strikethrough size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Başlık 1"
+              active={editor.isActive("heading", { level: 1 })}
+              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            >
+              <Heading1 size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Başlık 2"
+              active={editor.isActive("heading", { level: 2 })}
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            >
+              <Heading2 size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Başlık 3"
+              active={editor.isActive("heading", { level: 3 })}
+              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            >
+              <Heading3 size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Madde işaretli liste"
+              active={editor.isActive("bulletList")}
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+            >
+              <List size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Numaralı liste"
+              active={editor.isActive("orderedList")}
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            >
+              <ListOrdered size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Alıntı"
+              active={editor.isActive("blockquote")}
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            >
+              <Quote size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Satır içi kod"
+              active={editor.isActive("code")}
+              onClick={() => editor.chain().focus().toggleCode().run()}
+            >
+              <Code size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Kod bloğu"
+              active={editor.isActive("codeBlock")}
+              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            >
+              <SquareCode size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Bağlantı"
+              active={editor.isActive("link")}
+              onClick={() => setLinkModalOpen(true)}
+            >
+              <LinkIcon size={16} />
+            </ToolbarButton>
+            <ToolbarButton
+              label="Ayırıcı çizgi"
+              active={false}
+              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+            >
+              <Minus size={16} />
+            </ToolbarButton>
+            <ToolbarButton label="Geri al" active={false} onClick={() => editor.chain().focus().undo().run()}>
+              <Undo size={16} />
+            </ToolbarButton>
+            <ToolbarButton label="Yinele" active={false} onClick={() => editor.chain().focus().redo().run()}>
+              <Redo size={16} />
+            </ToolbarButton>
+          </div>
+        </>
       )}
       <EditorContent editor={editor} />
+      {editable && (
+        <p
+          className={`px-4 pb-3 text-right text-[0.75rem] ${
+            editor.storage.characterCount.characters() >= ARTICLE_CONTENT_MAX_LENGTH
+              ? "text-danger"
+              : "text-text-muted"
+          }`}
+        >
+          {editor.storage.characterCount.characters()}/{ARTICLE_CONTENT_MAX_LENGTH}
+        </p>
+      )}
       <LinkModal editor={editor} open={linkModalOpen} onClose={() => setLinkModalOpen(false)} />
     </div>
   );
