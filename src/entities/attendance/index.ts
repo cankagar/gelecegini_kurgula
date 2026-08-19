@@ -6,6 +6,7 @@ export type {
   MyAttendanceRecord,
 } from "./model/types";
 export { ATTENDANCE_STATUS_LABELS } from "./model/labels";
+export { AttendanceStatusBadge } from "./ui/AttendanceStatusBadge";
 export {
   getAttendanceSessionByDate,
   getMyAttendance,

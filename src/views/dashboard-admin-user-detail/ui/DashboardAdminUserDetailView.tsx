@@ -20,7 +20,8 @@ import {
   PARENT_RELATION_LABELS,
   useStudentDemographicsQuery,
 } from "@/entities/student-demographics";
-import { ATTENDANCE_STATUS_LABELS, useStudentAttendanceQuery } from "@/entities/attendance";
+import { useStudentAttendanceQuery } from "@/entities/attendance";
+import { AttendanceHistoryPanel } from "@/widgets/attendance-history";
 import { formatDate } from "@/shared/lib/date";
 import { ROUTES } from "@/shared/lib/routes";
 import { formatDateTime } from "@/shared/lib/date";
@@ -73,10 +74,11 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
     userId,
     isStudent && isDemographicsOpen
   );
-  const { data: attendance, isLoading: isAttendanceLoading } = useStudentAttendanceQuery(
-    userId,
-    isStudent && isAttendanceOpen
-  );
+  const {
+    data: attendance,
+    isLoading: isAttendanceLoading,
+    isError: isAttendanceError,
+  } = useStudentAttendanceQuery(userId, isStudent && isAttendanceOpen);
 
   const isSaving = updateFields.isPending || addRole.isPending || removeRole.isPending;
 
@@ -481,45 +483,14 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                     transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                     className="overflow-hidden"
                   >
-                    {isAttendanceLoading && (
-                      <div className="mt-3 flex text-text-muted">
-                        <SpinnerIcon className="animate-spin" size={16} />
-                      </div>
-                    )}
-
-                    {!isAttendanceLoading && attendance?.length === 0 && (
-                      <p className="mt-3 text-[0.85rem] text-text-muted">
-                        Bu öğrenci için henüz devamsızlık kaydı yok.
-                      </p>
-                    )}
-
-                    {!isAttendanceLoading && attendance && attendance.length > 0 && (
-                      <ul className="mt-3 flex flex-col gap-2">
-                        {attendance.map((record, i) => (
-                          <li
-                            key={`${record.classroom_id}-${record.session_date}-${i}`}
-                            className="flex items-center justify-between gap-4 rounded-xl bg-bg px-4 py-3 text-[0.85rem]"
-                          >
-                            <div className="min-w-0 flex-1">
-                              <p className="font-medium text-text">{record.classroom_name}</p>
-                              <p className="mt-0.5 text-text-muted">
-                                {formatDate(record.session_date)}
-                                {record.note ? ` — ${record.note}` : ""}
-                              </p>
-                            </div>
-                            <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-[0.75rem] font-medium ${
-                                record.status === "present"
-                                  ? "bg-success-bg text-success"
-                                  : "bg-danger-bg text-danger"
-                              }`}
-                            >
-                              {ATTENDANCE_STATUS_LABELS[record.status]}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <div className="mt-3">
+                      <AttendanceHistoryPanel
+                        records={attendance}
+                        isLoading={isAttendanceLoading}
+                        isError={isAttendanceError}
+                        emptyMessage="Bu öğrenci için henüz devamsızlık kaydı yok."
+                      />
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
