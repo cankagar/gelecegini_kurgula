@@ -3,13 +3,13 @@
 import { useState, type ReactNode } from "react";
 import { Modal, ModalTitle } from "@/shared/ui/modal";
 import { formatDate, formatRemainingTime } from "@/shared/lib/date";
-import type { Assignment } from "../model/types";
+import type { Homework } from "@/entities/homework";
 import { AssignmentCard } from "./AssignmentCard";
 
 type AssignmentListProps = {
-  assignments: Assignment[];
+  assignments: Homework[];
   emptyLabel?: string;
-  renderAction?: (assignment: Assignment) => ReactNode;
+  renderAction?: (assignment: Homework) => ReactNode;
 };
 
 export function AssignmentList({
@@ -17,8 +17,8 @@ export function AssignmentList({
   emptyLabel = "Henüz ödev verilmedi.",
   renderAction,
 }: AssignmentListProps) {
-  const [selected, setSelected] = useState<Assignment | null>(null);
-  const remaining = selected?.dueDate ? formatRemainingTime(selected.dueDate) : null;
+  const [selected, setSelected] = useState<Homework | null>(null);
+  const remaining = selected?.due_date ? formatRemainingTime(selected.due_date) : null;
 
   if (assignments.length === 0) {
     return <p className="py-8 text-center text-[0.85rem] text-text-muted">{emptyLabel}</p>;
@@ -56,9 +56,9 @@ export function AssignmentList({
               </p>
             )}
 
-            {selected.dueDate && (
+            {selected.due_date && (
               <div className="flex items-center gap-2 text-[0.8rem]">
-                <span className="text-text-muted">Teslim: {formatDate(selected.dueDate)}</span>
+                <span className="text-text-muted">Teslim: {formatDate(selected.due_date)}</span>
                 <span
                   className={`rounded-full px-2 py-0.5 font-medium ${
                     remaining === "Süresi doldu" ? "bg-danger-bg text-danger" : "bg-primary-tint text-primary"

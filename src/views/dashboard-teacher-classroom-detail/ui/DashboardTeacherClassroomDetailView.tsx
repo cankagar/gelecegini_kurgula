@@ -3,15 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useClassroomQuery } from "@/entities/classroom";
-import {
-  AssignmentList,
-  ClassroomDetailShell,
-  createMockAssignments,
-  type Assignment,
-} from "@/widgets/classroom-detail";
+import { useHomeworkQuery, useHomeworkMutations, type Homework } from "@/entities/homework";
+import { AssignmentList, ClassroomDetailShell } from "@/widgets/classroom-detail";
 import { AttendanceTab } from "@/widgets/classroom-attendance";
 import { SpinnerIcon, PenIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { ROUTES } from "@/shared/lib/routes";
 
 type DashboardTeacherClassroomDetailViewProps = {
@@ -23,12 +20,15 @@ export function DashboardTeacherClassroomDetailView({
 }: DashboardTeacherClassroomDetailViewProps) {
   const router = useRouter();
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
+  const { data: homework = [] } = useHomeworkQuery(classroomId);
+  const { create: createHomework, remove: removeHomework } =
+    useHomeworkMutations(classroomId);
 
-  const [assignments, setAssignments] = useState<Assignment[]>(createMockAssignments);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [homeworkToRemove, setHomeworkToRemove] = useState<Homework | null>(null);
 
   function resetForm() {
     setTitle("");
@@ -37,25 +37,31 @@ export function DashboardTeacherClassroomDetailView({
     setIsFormOpen(false);
   }
 
-  function handleCreateAssignment(e: React.FormEvent) {
+  async function handleCreateHomework(e: React.FormEvent) {
     e.preventDefault();
     const trimmedTitle = title.trim();
-    if (!trimmedTitle) return;
+    if (!trimmedTitle || !dueDate) return;
 
-    setAssignments((prev) => [
-      {
-        id: crypto.randomUUID(),
+    try {
+      await createHomework.mutateAsync({
         title: trimmedTitle,
         description: description.trim(),
-        dueDate,
-      },
-      ...prev,
-    ]);
-    resetForm();
+        due_date: dueDate,
+      });
+      resetForm();
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
   }
 
-  function handleRemoveAssignment(id: string) {
-    setAssignments((prev) => prev.filter((a) => a.id !== id));
+  async function confirmRemoveHomework() {
+    if (!homeworkToRemove) return;
+    try {
+      await removeHomework.mutateAsync(homeworkToRemove.id);
+      setHomeworkToRemove(null);
+    } catch {
+      // hata mesajı mutation state'inden okunuyor
+    }
   }
 
   return (
@@ -67,7 +73,6 @@ export function DashboardTeacherClassroomDetailView({
           <SpinnerIcon className="animate-spin" size={20} />
         </div>
       )}
-
       {isError && <p className="mt-8 text-[0.9rem] text-text-muted">Sınıf yüklenemedi.</p>}
 
       {classroom && (
@@ -96,7 +101,7 @@ export function DashboardTeacherClassroomDetailView({
 
               {isFormOpen && (
                 <form
-                  onSubmit={handleCreateAssignment}
+                  onSubmit={handleCreateHomework}
                   className="flex flex-col gap-3 rounded-2xl bg-bg px-5 py-4"
                 >
                   <input
@@ -113,29 +118,37 @@ export function DashboardTeacherClassroomDetailView({
                     rows={3}
                     className="rounded-md border border-border px-3 py-2 text-[0.85rem] text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="date"
-                      value={dueDate}
-                      onChange={(e) => setDueDate(e.target.value)}
-                      className="rounded-md border border-border px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                  <div className="flex items-end gap-3">
+                    <label className="flex flex-col gap-1">
+                      <span className="text-[0.75rem] font-medium text-text-muted">
+                        Son teslim tarihi
+                      </span>
+                      <input
+                        type="date"
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
+                        className="rounded-md border border-border px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    </label>
                     <button
                       type="submit"
-                      disabled={!title.trim()}
+                      disabled={!title.trim() || !dueDate || createHomework.isPending}
                       className="rounded-md bg-text px-3.5 py-2 text-[0.8rem] font-medium text-white transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
                     >
-                      Oluştur
+                      {createHomework.isPending ? "Oluşturuluyor..." : "Oluştur"}
                     </button>
                   </div>
+                  {createHomework.isError && (
+                    <p className="text-[0.8rem] text-danger">Ödev oluşturulamadı.</p>
+                  )}
                 </form>
               )}
 
               <AssignmentList
-                assignments={assignments}
+                assignments={homework}
                 renderAction={(assignment) => (
                   <button
-                    onClick={() => handleRemoveAssignment(assignment.id)}
+                    onClick={() => setHomeworkToRemove(assignment)}
                     className="text-[0.8rem] font-medium text-danger underline underline-offset-2 transition-colors duration-150 hover:opacity-80"
                   >
                     Kaldır
@@ -147,6 +160,21 @@ export function DashboardTeacherClassroomDetailView({
           attendanceContent={<AttendanceTab classroom={classroom} classroomId={classroomId} />}
         />
       )}
+
+      <ConfirmDialog
+        open={homeworkToRemove !== null}
+        onClose={() => setHomeworkToRemove(null)}
+        onConfirm={confirmRemoveHomework}
+        title="Ödevi kaldır"
+        description={
+          homeworkToRemove
+            ? `"${homeworkToRemove.title}" ödevi kaldırılsın mı? Bu işlem geri alınamaz.`
+            : undefined
+        }
+        confirmLabel="Kaldır"
+        pendingLabel="Kaldırılıyor..."
+        isPending={removeHomework.isPending}
+      />
     </div>
   );
 }

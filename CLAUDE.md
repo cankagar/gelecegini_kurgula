@@ -23,3 +23,12 @@ Tüm sayfa path'leri **tek kaynaktan**: `src/shared/lib/routes.ts` (`ROUTES` obj
 - Her `views/dashboard-<role>-...` dosyası ince kalır: veri çeker (`entities/*` query hook'u), widget'ı render eder, sadece role'e özel slot'ları doldurur.
 - Tekrarlayan küçük yardımcılar (`formatDate`, `ROLE_LABELS` gibi) ait olduğu layer'a taşınır: generic date/format yardımcıları `shared/lib/`, domain'e ait sabitler (`ROLE_LABELS` gibi) ilgili `entities/<slice>` altına. Bir view içinde ikinci kez yazılan bir sabit/fonksiyon görürsen, kopyalama — mevcut olanı import et.
 - `entities` katmanında slice'lar birbirini import edemez (örn. `entities/classroom` → `entities/user` yasak) — ortak noktaları `widgets` katmanında birleştir, çünkü widget her iki entity'den de aşağı yönlü import edebilir.
+
+# Silme/yıkıcı işlemlerde onay (mandatory)
+
+Geri alınamaz veya yıkıcı her aksiyon (silme, kaldırma, iptal etme, üyeyi çıkarma vb.) butona tıklanır tıklanmaz mutation'ı ateşlememeli — kullanıcıdan önce "emin misiniz?" onayı alınmalı.
+
+- Ortak bileşen: `src/shared/ui/confirm-dialog` (`ConfirmDialog`) — `Modal` üzerine kurulu, `title`/`description`/`confirmLabel`/`isPending` alır. Yeni bir silme aksiyonu yazarken bunu kullan, elle `Modal`+`ModalTitle`+`ModalFooter` kopyalama.
+- Tarayıcının native `window.confirm(...)`'i **kullanma** — tasarım sistemine uymaz, `ConfirmDialog` kullan.
+- Akış: buton tıklanınca silinecek öğeyi bir state'e koy (`useState<T | null>`) → `ConfirmDialog open={item !== null}` → `onConfirm` içinde gerçek `mutateAsync` çağrısı yapılır, başarılıysa state `null`'a döner.
+- Örnek: `src/views/dashboard-teacher-classroom-detail/ui/DashboardTeacherClassroomDetailView.tsx` (ödev kaldırma).

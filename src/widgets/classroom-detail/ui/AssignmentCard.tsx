@@ -2,16 +2,16 @@ import type { ReactNode } from "react";
 import { FileText } from "lucide-react";
 import { IconChip } from "@/shared/ui/icon-chip";
 import { formatDate, formatRemainingTime } from "@/shared/lib/date";
-import type { Assignment } from "../model/types";
+import type { Homework } from "@/entities/homework";
 
 type AssignmentCardProps = {
-  assignment: Assignment;
+  assignment: Homework;
   action?: ReactNode;
   onOpen?: () => void;
 };
 
 export function AssignmentCard({ assignment, action, onOpen }: AssignmentCardProps) {
-  const remaining = assignment.dueDate ? formatRemainingTime(assignment.dueDate) : null;
+  const remaining = assignment.due_date ? formatRemainingTime(assignment.due_date) : null;
   const isExpired = remaining === "Süresi doldu";
 
   return (
@@ -40,9 +40,9 @@ export function AssignmentCard({ assignment, action, onOpen }: AssignmentCardPro
         )}
       </div>
 
-      {assignment.dueDate && (
+      {assignment.due_date && (
         <div className="mt-3 flex items-center gap-2 pl-10 text-[0.75rem]">
-          <span className="text-text-muted">Teslim: {formatDate(assignment.dueDate)}</span>
+          <span className="text-text-muted">Teslim: {formatDate(assignment.due_date)}</span>
           <span
             className={`rounded-full px-2 py-0.5 font-medium ${
               isExpired ? "bg-danger-bg text-danger" : "bg-primary-tint text-primary"

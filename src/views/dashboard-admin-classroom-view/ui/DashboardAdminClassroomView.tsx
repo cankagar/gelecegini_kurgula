@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useClassroomQuery } from "@/entities/classroom";
-import { AssignmentList, ClassroomDetailShell, createMockAssignments } from "@/widgets/classroom-detail";
+import { useHomeworkQuery } from "@/entities/homework";
+import { AssignmentList, ClassroomDetailShell } from "@/widgets/classroom-detail";
 import { AttendanceTab } from "@/widgets/classroom-attendance";
 import { ROUTES } from "@/shared/lib/routes";
 import { PenIcon, SpinnerIcon } from "@/shared/ui/icons";
@@ -16,7 +16,7 @@ type DashboardAdminClassroomViewProps = {
 export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClassroomViewProps) {
   const router = useRouter();
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
-  const [assignments] = useState(createMockAssignments);
+  const { data: homework = [] } = useHomeworkQuery(classroomId);
 
   return (
     <div className="w-full px-8 py-10 lg:px-12">
@@ -42,7 +42,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
               Düzenle
             </button>
           }
-          assignmentsContent={<AssignmentList assignments={assignments} />}
+          assignmentsContent={<AssignmentList assignments={homework} />}
           attendanceContent={<AttendanceTab classroom={classroom} classroomId={classroomId} />}
         />
       )}
