@@ -17,3 +17,4 @@ export { useClassroomQuery } from "./lib/useClassroomQuery";
 export { useMyClassroomsQuery } from "./lib/useMyClassroomsQuery";
 export { useClassroomsForMemberQuery } from "./lib/useClassroomsForMemberQuery";
 export { useCreateClassroomMutation, useClassroomMutations } from "./lib/useClassroomMutations";
+export { ClassroomGrid } from "./ui/ClassroomGrid";

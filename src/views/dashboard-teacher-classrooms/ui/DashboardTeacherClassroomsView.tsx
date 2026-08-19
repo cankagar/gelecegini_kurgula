@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMyClassroomsQuery } from "@/entities/classroom";
+import { ClassroomGrid, useMyClassroomsQuery } from "@/entities/classroom";
 import { CreateClassroomModal } from "@/features/create-classroom";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { ROUTES } from "@/shared/lib/routes";
-import { formatDate } from "@/shared/lib/date";
 
 export function DashboardTeacherClassroomsView() {
   const router = useRouter();
@@ -53,19 +51,8 @@ export function DashboardTeacherClassroomsView() {
       )}
 
       {classrooms && classrooms.length > 0 && (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {classrooms.map((classroom) => (
-            <Link
-              key={classroom.id}
-              href={ROUTES.TEACHER.CLASSROOM_DETAIL(classroom.id)}
-              className="group flex aspect-[2/1] flex-col justify-between rounded-2xl border border-border bg-bg p-5 transition-colors duration-150 hover:border-primary-border hover:bg-surface"
-            >
-              <span className="font-heading text-[1.05rem] font-bold text-text tracking-[-0.02em] group-hover:text-primary">
-                {classroom.name}
-              </span>
-              <span className="text-[0.78rem] text-text-muted">{formatDate(classroom.created_at)}</span>
-            </Link>
-          ))}
+        <div className="mt-6">
+          <ClassroomGrid classrooms={classrooms} getHref={ROUTES.TEACHER.CLASSROOM_DETAIL} />
         </div>
       )}
     </div>
