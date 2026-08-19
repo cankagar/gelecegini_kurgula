@@ -36,7 +36,6 @@ const ROLE_OPTIONS: UserRole[] = ["user", "student", "teacher", "admin", "author
 type Draft = {
   firstName: string;
   lastName: string;
-  email: string;
   roles: UserRole[];
   isActive: boolean;
 };
@@ -45,7 +44,6 @@ function draftFromUser(user: AdminUser): Draft {
   return {
     firstName: user.first_name ?? "",
     lastName: user.last_name ?? "",
-    email: user.email ?? "",
     roles: user.roles,
     isActive: user.is_active,
   };
@@ -113,7 +111,6 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
     if (!user || !draft) return;
 
     const fieldChanges: {
-      email?: string;
       first_name?: string;
       last_name?: string;
       is_active?: boolean;
@@ -122,7 +119,6 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
       fieldChanges.first_name = draft.firstName.trim();
     if (draft.lastName !== (user.last_name ?? ""))
       fieldChanges.last_name = draft.lastName.trim();
-    if (draft.email !== (user.email ?? "")) fieldChanges.email = draft.email.trim();
     if (draft.isActive !== user.is_active) fieldChanges.is_active = draft.isActive;
 
     const rolesToAdd = draft.roles.filter((r) => !user.roles.includes(r));
@@ -181,13 +177,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                         className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
-                    <input
-                      type="email"
-                      value={draft.email}
-                      onChange={(e) => patch({ email: e.target.value })}
-                      placeholder="E-posta"
-                      className="rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                    <p className="text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
                   </div>
                 ) : (
                   <>
@@ -499,9 +489,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
 
           {(updateFields.isError || addRole.isError || removeRole.isError) && (
             <div className="border-t border-border bg-danger-bg px-8 py-4">
-              <p className="text-[0.8rem] text-danger">
-                Kaydedilemedi. E-posta başka bir kullanıcıda olabilir.
-              </p>
+              <p className="text-[0.8rem] text-danger">Kaydedilemedi.</p>
             </div>
           )}
         </div>

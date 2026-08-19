@@ -12,6 +12,7 @@ import { formatFullName } from "@/shared/lib";
 
 const TABS: { label: string; role: UserRole | undefined }[] = [
   { label: "Tümü", role: undefined },
+  { label: "Yazarlar", role: "author" },
   { label: "Öğrenciler", role: "student" },
   { label: "Öğretmenler", role: "teacher" },
   { label: "Adminler", role: "admin" },

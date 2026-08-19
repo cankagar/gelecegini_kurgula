@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Modal, ModalTitle } from "@/shared/ui/modal";
 import { formatDate, formatRemainingTime } from "@/shared/lib/date";
+import { formatFullName } from "@/shared/lib";
 import type { Homework } from "@/entities/homework";
 import { AssignmentCard } from "./AssignmentCard";
 
@@ -50,14 +51,22 @@ export function AssignmentList({
               <ModalTitle>{selected.title}</ModalTitle>
             </div>
 
+            <p className="text-[0.8rem] text-text-muted">
+              Veren:{" "}
+              {formatFullName({
+                first_name: selected.created_by_first_name,
+                last_name: selected.created_by_last_name,
+              })}
+            </p>
+
             {selected.description && (
-              <p className="whitespace-pre-line font-heading text-[1.05rem] font-medium leading-relaxed text-text">
+              <p className="whitespace-pre-line break-words font-heading text-[1.05rem] font-medium leading-relaxed text-text">
                 {selected.description}
               </p>
             )}
 
             {selected.due_date && (
-              <div className="flex items-center gap-2 text-[0.8rem]">
+              <div className="flex flex-wrap items-center gap-2 text-[0.8rem]">
                 <span className="text-text-muted">Teslim: {formatDate(selected.due_date)}</span>
                 <span
                   className={`rounded-full px-2 py-0.5 font-medium ${

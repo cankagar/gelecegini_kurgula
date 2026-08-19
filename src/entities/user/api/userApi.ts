@@ -37,7 +37,6 @@ export async function getUserById(id: string) {
 export async function updateUser(
   id: string,
   updates: {
-    email?: string;
     first_name?: string;
     last_name?: string;
     is_active?: boolean;
