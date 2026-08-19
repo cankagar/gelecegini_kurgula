@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import type { ClassroomMember, ClassroomWithMembers } from "@/entities/classroom";
 import { formatFullName } from "@/shared/lib";
+import { Avatar } from "@/shared/ui/avatar";
 
 type Tab = "assignments" | "members" | "attendance";
 
@@ -84,10 +85,11 @@ export function ClassroomDetailShell({
                   <li
                     key={member.member_id}
                     onClick={onMemberClick ? () => onMemberClick(member) : undefined}
-                    className={`rounded-xl bg-bg px-4 py-3 text-[0.85rem] font-medium text-text ${
+                    className={`flex items-center gap-3 rounded-xl bg-bg px-4 py-3 text-[0.85rem] font-medium text-text ${
                       onMemberClick ? "cursor-pointer transition-colors duration-150 hover:bg-surface" : ""
                     }`}
                   >
+                    <Avatar name={formatFullName(member, "İsimsiz")} size={32} />
                     {formatFullName(member, "İsimsiz")}
                   </li>
                 ))}

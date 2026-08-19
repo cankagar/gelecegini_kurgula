@@ -10,9 +10,10 @@ import {
 import { useClassroomInvitationsQuery } from "@/entities/classroom-invitation";
 import { ClassroomInvitationsPanel, InvitationRow } from "@/features/classroom-invitations";
 import { formatFullName } from "@/shared/lib";
+import { Avatar } from "@/shared/ui/avatar";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
-import { Modal, ModalTitle, ModalDescription, ModalFooter } from "@/shared/ui/modal";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 const ROLE_LABELS: Record<string, string> = {
   admin: "Yönetici",
@@ -52,6 +53,8 @@ export function ClassroomEditPanel({
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState("");
   const [memberToRemove, setMemberToRemove] = useState<ClassroomMember | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
 
   function startEditingName() {
     if (!classroom) return;
@@ -70,20 +73,20 @@ export function ClassroomEditPanel({
     }
   }
 
-  async function handleToggleClosed() {
+  async function confirmToggleClosed() {
     try {
       if (classroom?.closed_at) {
         await reopen.mutateAsync();
       } else {
         await close.mutateAsync();
       }
+      setIsCloseConfirmOpen(false);
     } catch {
       // hata mesajı mutation state'inden okunuyor
     }
   }
 
-  async function handleDeleteClassroom() {
-    if (!window.confirm("Bu sınıfı silmek istediğine emin misin? Bu işlem geri alınamaz.")) return;
+  async function confirmDeleteClassroom() {
     try {
       await remove.mutateAsync();
       router.push(classroomsHref);
@@ -164,14 +167,14 @@ export function ClassroomEditPanel({
                     İsmi Düzenle
                   </button>
                   <button
-                    onClick={handleToggleClosed}
+                    onClick={() => setIsCloseConfirmOpen(true)}
                     disabled={close.isPending || reopen.isPending}
                     className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text disabled:opacity-50"
                   >
                     {classroom.closed_at ? "Yeniden Aç" : "Kapat"}
                   </button>
                   <button
-                    onClick={handleDeleteClassroom}
+                    onClick={() => setIsDeleteConfirmOpen(true)}
                     disabled={remove.isPending}
                     className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-danger transition-colors duration-150 hover:bg-danger-bg disabled:opacity-50"
                   >
@@ -207,17 +210,20 @@ export function ClassroomEditPanel({
                     key={member.member_id}
                     className="flex items-center justify-between rounded-xl bg-bg px-4 py-3 text-[0.85rem]"
                   >
-                    <div>
-                      <span className="font-medium text-text">
-                        {formatFullName(member, "İsimsiz")}
-                      </span>{" "}
-                      <span className="text-text-muted">{member.email}</span>{" "}
-                      <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
-                        {member.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
-                      </span>
-                      <p className="mt-0.5 text-[0.75rem] text-text-muted">
-                        Katılım: {formatDate(member.joined_at)}
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <Avatar name={formatFullName(member, "İsimsiz")} size={32} />
+                      <div>
+                        <span className="font-medium text-text">
+                          {formatFullName(member, "İsimsiz")}
+                        </span>{" "}
+                        <span className="text-text-muted">{member.email}</span>{" "}
+                        <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
+                          {member.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
+                        </span>
+                        <p className="mt-0.5 text-[0.75rem] text-text-muted">
+                          Katılım: {formatDate(member.joined_at)}
+                        </p>
+                      </div>
                     </div>
                     <button
                       onClick={() => setMemberToRemove(member)}
@@ -233,28 +239,47 @@ export function ClassroomEditPanel({
         </div>
       )}
 
-      <Modal open={memberToRemove !== null} onClose={() => setMemberToRemove(null)}>
-        <ModalTitle>Üyeyi çıkar</ModalTitle>
-        <ModalDescription>
-          {memberToRemove &&
-            `${formatFullName(memberToRemove, "Bu kullanıcı")} sınıftan çıkarılsın mı?`}
-        </ModalDescription>
-        <ModalFooter>
-          <button
-            onClick={() => setMemberToRemove(null)}
-            className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text"
-          >
-            Vazgeç
-          </button>
-          <button
-            onClick={confirmRemoveMember}
-            disabled={removeMember.isPending}
-            className="rounded-full bg-danger px-3.5 py-1.5 text-[0.8rem] font-medium text-cta-text transition-opacity duration-150 hover:opacity-90 disabled:opacity-50"
-          >
-            {removeMember.isPending ? "Çıkarılıyor..." : "Çıkar"}
-          </button>
-        </ModalFooter>
-      </Modal>
+      <ConfirmDialog
+        open={memberToRemove !== null}
+        onClose={() => setMemberToRemove(null)}
+        onConfirm={confirmRemoveMember}
+        title="Üyeyi çıkar"
+        description={
+          memberToRemove
+            ? `${formatFullName(memberToRemove, "Bu kullanıcı")} sınıftan çıkarılsın mı?`
+            : undefined
+        }
+        confirmLabel="Çıkar"
+        pendingLabel="Çıkarılıyor..."
+        isPending={removeMember.isPending}
+      />
+
+      <ConfirmDialog
+        open={isCloseConfirmOpen}
+        onClose={() => setIsCloseConfirmOpen(false)}
+        onConfirm={confirmToggleClosed}
+        title={classroom?.closed_at ? "Sınıfı yeniden aç" : "Sınıfı kapat"}
+        description={
+          classroom?.closed_at
+            ? "Sınıf yeniden açılsın mı?"
+            : "Sınıf kapatılsın mı? Öğrenciler kapalı sınıfa yeni işlem yapamaz."
+        }
+        confirmLabel={classroom?.closed_at ? "Yeniden Aç" : "Kapat"}
+        pendingLabel="İşleniyor..."
+        isPending={close.isPending || reopen.isPending}
+        variant="default"
+      />
+
+      <ConfirmDialog
+        open={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={confirmDeleteClassroom}
+        title="Sınıfı sil"
+        description="Bu sınıfı silmek istediğine emin misin? Bu işlem geri alınamaz."
+        confirmLabel="Sil"
+        pendingLabel="Siliniyor..."
+        isPending={remove.isPending}
+      />
     </div>
   );
 }
