@@ -37,6 +37,8 @@ const ROLE_LABELS: Record<DashboardRole, string> = {
   author: "Yazar",
 };
 
+const ROLE_ORDER: DashboardRole[] = ["admin", "teacher", "student", "author"];
+
 type DashboardSidebarProps = {
   // Which role's dashboard this sidebar belongs to — passed by the layout,
   // not derived from the user, since a user can hold several roles at once.
@@ -120,7 +122,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
   const items = ROLE_NAV_ITEMS[role];
   const otherRoles = user.roles.filter(isDashboardRole).filter((r) => r !== role);
-  const allRoles = [role, ...otherRoles];
+  const allRoles = ROLE_ORDER.filter((r) => r === role || otherRoles.includes(r));
   const filteredRoles = allRoles.filter((r) =>
     ROLE_LABELS[r].toLocaleLowerCase("tr-TR").includes(roleQuery.trim().toLocaleLowerCase("tr-TR")),
   );
