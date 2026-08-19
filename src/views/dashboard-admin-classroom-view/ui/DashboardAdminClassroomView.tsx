@@ -44,6 +44,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
           }
           assignmentsContent={<AssignmentList assignments={homework} />}
           attendanceContent={<AttendanceTab classroom={classroom} classroomId={classroomId} />}
+          onMemberClick={(member) => router.push(ROUTES.ADMIN.USER_DETAIL(member.member_id))}
         />
       )}
     </div>

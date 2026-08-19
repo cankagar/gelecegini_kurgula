@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import type { ClassroomWithMembers } from "@/entities/classroom";
-import { ROLE_LABELS } from "@/entities/user";
-import { formatDateTime } from "@/shared/lib/date";
+import type { ClassroomMember, ClassroomWithMembers } from "@/entities/classroom";
 import { formatFullName } from "@/shared/lib";
 
 type Tab = "assignments" | "members" | "attendance";
@@ -14,6 +12,8 @@ type ClassroomDetailShellProps = {
   assignmentsContent: ReactNode;
   /** Sadece öğretmen/admin view'leri geçer — verilmezse "Yoklama" tabı hiç görünmez. */
   attendanceContent?: ReactNode;
+  /** Verilirse üye satırları tıklanabilir olur (örn. admin'de öğrenci detayına gitmek için). */
+  onMemberClick?: (member: ClassroomMember) => void;
 };
 
 export function ClassroomDetailShell({
@@ -21,6 +21,7 @@ export function ClassroomDetailShell({
   headerActions,
   assignmentsContent,
   attendanceContent,
+  onMemberClick,
 }: ClassroomDetailShellProps) {
   const [tab, setTab] = useState<Tab>("assignments");
 
@@ -80,15 +81,14 @@ export function ClassroomDetailShell({
             ) : (
               <ul className="flex flex-col gap-2">
                 {classroom.members.map((member) => (
-                  <li key={member.member_id} className="rounded-xl bg-bg px-4 py-3 text-[0.85rem]">
-                    <span className="font-medium text-text">{formatFullName(member, "İsimsiz")}</span>{" "}
-                    <span className="text-text-muted">{member.email}</span>{" "}
-                    <span className="rounded-full bg-surface px-2 py-0.5 text-[0.75rem] font-medium text-text-muted">
-                      {member.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
-                    </span>
-                    <p className="mt-0.5 text-[0.75rem] text-text-muted">
-                      Katılım: {formatDateTime(member.joined_at)}
-                    </p>
+                  <li
+                    key={member.member_id}
+                    onClick={onMemberClick ? () => onMemberClick(member) : undefined}
+                    className={`rounded-xl bg-bg px-4 py-3 text-[0.85rem] font-medium text-text ${
+                      onMemberClick ? "cursor-pointer transition-colors duration-150 hover:bg-surface" : ""
+                    }`}
+                  >
+                    {formatFullName(member, "İsimsiz")}
                   </li>
                 ))}
               </ul>
