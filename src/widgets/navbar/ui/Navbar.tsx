@@ -92,15 +92,15 @@ export default function Navbar() {
                 transition={SLIDE_TRANSITION}
                 className="flex items-center gap-2.5"
               >
-                <span className="text-[0.82rem] font-medium text-[#111111] max-w-[140px] truncate">
-                  {formatFullName(user, user.email ?? "")}
-                </span>
-                <div className="relative" ref={profileRef}>
+              <div className="relative" ref={profileRef}>
                   <button
                     onClick={() => setIsProfileOpen((v) => !v)}
                     aria-label="Profil menüsü"
                     className="flex items-center gap-1.5 pl-1 pr-2.5 py-1.5 rounded-md hover:bg-[#F7F6F3] transition-colors duration-150"
                   >
+                    <span className="text-[0.82rem] font-medium text-[#111111] max-w-[140px] truncate">
+                      {formatFullName(user, user.email ?? "")}
+                    </span>
                     <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#111111] text-white">
                       <UserIcon size={16} />
                     </span>
