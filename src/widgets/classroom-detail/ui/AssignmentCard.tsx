@@ -25,7 +25,7 @@ export function AssignmentCard({ assignment, isExpanded, onToggle, action }: Ass
     // olursa tarayıcı sticky'yi o ata'nın kutusuna hapseder, header artık sayfa
     // scroll'una göre üstte sabit kalamaz. Köşe yuvarlaklığı header/panel'in kendi
     // `rounded-t-2xl`/`rounded-b-2xl` sınıflarıyla (aynı `bg-bg` rengiyle) sağlanıyor.
-    <li className="rounded-2xl bg-bg transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]">
+    <li className="group rounded-2xl bg-bg transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]">
       <div
         onClick={onToggle}
         role="button"
@@ -44,18 +44,22 @@ export function AssignmentCard({ assignment, isExpanded, onToggle, action }: Ass
           <IconChip icon={FileText} />
           <div className="min-w-0">
             <p
-              className={`font-medium text-text ${isExpanded ? "break-words" : "truncate text-[0.9rem]"}`}
+              className={`font-heading font-semibold tracking-[-0.01em] text-text ${
+                isExpanded ? "break-words text-[1.1rem]" : "truncate text-[0.95rem]"
+              }`}
             >
               {assignment.title}
             </p>
             {!isExpanded && assignment.description && (
-              <p className="mt-1 line-clamp-2 break-words text-[0.8rem] text-text-muted">
+              <p className="mt-1 line-clamp-2 break-words font-sans text-[0.8rem] leading-relaxed text-text-muted">
                 {assignment.description}
               </p>
             )}
             {!isExpanded && assignment.due_date && (
-              <div className="mt-2 flex items-center gap-2 text-[0.75rem]">
-                <span className="text-text-muted">Teslim: {formatDate(assignment.due_date)}</span>
+              <div className="mt-2.5 flex items-center gap-2 text-[0.75rem]">
+                <span className="font-medium text-text-muted">
+                  Teslim: {formatDate(assignment.due_date)}
+                </span>
                 <span
                   className={`rounded-full px-2 py-0.5 font-medium ${
                     isExpired ? "bg-danger-bg text-danger" : "bg-primary-tint text-primary"
@@ -95,13 +99,12 @@ export function AssignmentCard({ assignment, isExpanded, onToggle, action }: Ass
       >
         <div className="min-h-0 overflow-hidden">
           <div className="flex flex-col gap-4 rounded-b-2xl px-5 pb-5 pl-[3.25rem]">
-            <div className="flex flex-wrap items-center gap-2 text-[0.8rem]">
-              <span className="text-text-muted">Ödevi veren: {givenBy}</span>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8rem] font-medium text-text-muted">
+              <span>Ödevi veren: {givenBy}</span>
               {assignment.due_date && (
                 <>
-                  <span className="text-text-muted">
-                    Teslim: {formatDate(assignment.due_date)}
-                  </span>
+                  <span className="text-text-muted/40">•</span>
+                  <span>Teslim: {formatDate(assignment.due_date)}</span>
                   <span
                     className={`rounded-full px-2 py-0.5 font-medium ${
                       isExpired ? "bg-danger-bg text-danger" : "bg-primary-tint text-primary"
@@ -114,7 +117,7 @@ export function AssignmentCard({ assignment, isExpanded, onToggle, action }: Ass
             </div>
 
             {assignment.description && (
-              <p className="whitespace-pre-line break-words text-[0.9rem] leading-relaxed text-text">
+              <p className="whitespace-pre-line break-words font-sans text-[0.9rem] leading-[1.7] text-text">
                 {assignment.description}
               </p>
             )}
