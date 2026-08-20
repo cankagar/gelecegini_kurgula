@@ -2,14 +2,28 @@ import { httpClient, toApiError } from "@/shared/api";
 import type {
   Classroom,
   ClassroomMember,
+  ClassroomPage,
   ClassroomWithMembers,
 } from "@/entities/classroom/model/types";
 
+export type ListClassroomsParams = {
+  skip?: number;
+  limit?: number;
+  search?: string;
+  isClosed?: boolean;
+};
+
 // Admin-only — backend rejects with 403 for non-admins.
-export async function listClassrooms(search?: string) {
+export async function listClassrooms(params: ListClassroomsParams = {}) {
   try {
-    const { data } = await httpClient.get<Classroom[]>("/v1/classrooms", {
-      params: search ? { search } : undefined,
+    const { skip, limit, search, isClosed } = params;
+    const { data } = await httpClient.get<ClassroomPage>("/v1/classrooms", {
+      params: {
+        skip,
+        limit,
+        search: search || undefined,
+        is_closed: isClosed,
+      },
     });
     return data;
   } catch (err) {

@@ -1,4 +1,10 @@
-export type { Classroom, ClassroomMember, ClassroomMemberRole, ClassroomWithMembers } from "./model/types";
+export type {
+  Classroom,
+  ClassroomMember,
+  ClassroomMemberRole,
+  ClassroomPage,
+  ClassroomWithMembers,
+} from "./model/types";
 export {
   addMemberToClassroom,
   closeClassroom,
@@ -12,7 +18,7 @@ export {
   reopenClassroom,
   updateClassroom,
 } from "./api/classroomApi";
-export { useClassroomsQuery } from "./lib/useClassroomsQuery";
+export { useClassroomsQuery, CLASSROOMS_PAGE_SIZE } from "./lib/useClassroomsQuery";
 export { useClassroomQuery } from "./lib/useClassroomQuery";
 export { useMyClassroomsQuery } from "./lib/useMyClassroomsQuery";
 export { useClassroomsForMemberQuery } from "./lib/useClassroomsForMemberQuery";

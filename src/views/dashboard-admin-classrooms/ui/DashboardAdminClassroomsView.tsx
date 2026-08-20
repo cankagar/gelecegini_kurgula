@@ -2,28 +2,46 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useClassroomsQuery } from "@/entities/classroom";
+import { CLASSROOMS_PAGE_SIZE, useClassroomsQuery } from "@/entities/classroom";
 import { CreateClassroomModal } from "@/features/create-classroom";
 import { ROUTES } from "@/shared/lib/routes";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { SearchInput } from "@/shared/ui/search-input";
+import { Pagination } from "@/shared/ui/pagination";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR");
 }
+
+const TABS: { label: string; isClosed: boolean | undefined }[] = [
+  { label: "Tümü", isClosed: undefined },
+  { label: "Açık", isClosed: false },
+  { label: "Kapalı", isClosed: true },
+];
 
 export function DashboardAdminClassroomsView() {
   const router = useRouter();
 
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
-  const { data: classrooms, isLoading, isError } = useClassroomsQuery(search);
+  const [activeTab, setActiveTab] = useState<boolean | undefined>(undefined);
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, isError } = useClassroomsQuery(page, search, activeTab);
+  const classrooms = data?.items;
+  const totalPages = data ? Math.max(1, Math.ceil(data.total / CLASSROOMS_PAGE_SIZE)) : 1;
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setSearch(searchInput.trim());
+    setPage(1);
+  }
+
+  function handleTabChange(isClosed: boolean | undefined) {
+    setActiveTab(isClosed);
+    setPage(1);
   }
 
   return (
@@ -50,6 +68,23 @@ export function DashboardAdminClassroomsView() {
         >
           Oluştur
         </button>
+      </div>
+
+      <div className="mt-4 flex gap-1 border-b border-border">
+        {TABS.map((tab) => {
+          const active = activeTab === tab.isClosed;
+          return (
+            <button
+              key={tab.label}
+              onClick={() => handleTabChange(tab.isClosed)}
+              className={`-mb-px border-b-2 px-3 py-2 text-[0.85rem] font-medium transition-colors duration-150 ${
+                active ? "border-primary text-text" : "border-transparent text-text-muted hover:text-text"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       <CreateClassroomModal
@@ -116,6 +151,10 @@ export function DashboardAdminClassroomsView() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-6">
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
     </div>
   );

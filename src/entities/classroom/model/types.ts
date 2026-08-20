@@ -23,3 +23,10 @@ export type ClassroomMember = {
 export type ClassroomWithMembers = Classroom & {
   members: ClassroomMember[];
 };
+
+export type ClassroomPage = {
+  items: Classroom[];
+  total: number;
+  skip: number;
+  limit: number;
+};
