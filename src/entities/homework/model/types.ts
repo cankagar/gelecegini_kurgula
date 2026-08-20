@@ -16,3 +16,9 @@ export type HomeworkCreateInput = {
   description?: string;
   due_date: string;
 };
+
+export type HomeworkUpdateInput = {
+  title?: string;
+  description?: string;
+  due_date?: string;
+};

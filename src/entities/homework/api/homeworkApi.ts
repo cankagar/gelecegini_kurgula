@@ -1,5 +1,9 @@
 import { httpClient, toApiError } from "@/shared/api";
-import type { Homework, HomeworkCreateInput } from "@/entities/homework/model/types";
+import type {
+  Homework,
+  HomeworkCreateInput,
+  HomeworkUpdateInput,
+} from "@/entities/homework/model/types";
 
 export async function listHomework(classroomId: string) {
   try {
@@ -16,6 +20,22 @@ export async function createHomework(classroomId: string, input: HomeworkCreateI
   try {
     const { data } = await httpClient.post<Homework>(
       `/v1/classrooms/${classroomId}/homework`,
+      input
+    );
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function updateHomework(
+  classroomId: string,
+  homeworkId: string,
+  input: HomeworkUpdateInput
+) {
+  try {
+    const { data } = await httpClient.patch<Homework>(
+      `/v1/classrooms/${classroomId}/homework/${homeworkId}`,
       input
     );
     return data;

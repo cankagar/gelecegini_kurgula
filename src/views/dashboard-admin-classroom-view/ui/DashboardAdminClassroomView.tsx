@@ -19,7 +19,7 @@ export function DashboardAdminClassroomView({ classroomId }: DashboardAdminClass
   const { data: homework = [] } = useHomeworkQuery(classroomId);
 
   return (
-    <div className="w-full px-8 py-10 lg:px-12">
+    <div className="w-full px-4 py-6 sm:px-8 sm:py-10 lg:px-12">
       <BackLink href={ROUTES.ADMIN.CLASSROOMS}>Sınıflar</BackLink>
 
       {isLoading && (
