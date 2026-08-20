@@ -31,6 +31,9 @@ type ClassroomEditPanelProps = {
   // Rol'e özel ek bölüm (örn. admin'in öğretmen/admin arama paneli) — widget
   // içine role kontrolü yazmak yerine dışarıdan slot olarak geçiliyor.
   extraSection?: ReactNode;
+  // Sınıfı kapatma/yeniden açma/silme yalnızca admin yetkisinde (backend de
+  // aynı kısıtı uyguluyor) — widget'a role kontrolü yazmak yerine dışarıdan geçiliyor.
+  canManageLifecycle?: boolean;
 };
 
 export function ClassroomEditPanel({
@@ -38,6 +41,7 @@ export function ClassroomEditPanel({
   backHref,
   classroomsHref,
   extraSection,
+  canManageLifecycle = false,
 }: ClassroomEditPanelProps) {
   const router = useRouter();
   const { data: classroom, isLoading, isError } = useClassroomQuery(classroomId);
@@ -166,20 +170,24 @@ export function ClassroomEditPanel({
                   >
                     İsmi Düzenle
                   </button>
-                  <button
-                    onClick={() => setIsCloseConfirmOpen(true)}
-                    disabled={close.isPending || reopen.isPending}
-                    className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text disabled:opacity-50"
-                  >
-                    {classroom.closed_at ? "Yeniden Aç" : "Kapat"}
-                  </button>
-                  <button
-                    onClick={() => setIsDeleteConfirmOpen(true)}
-                    disabled={remove.isPending}
-                    className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-danger transition-colors duration-150 hover:bg-danger-bg disabled:opacity-50"
-                  >
-                    Sil
-                  </button>
+                  {canManageLifecycle && (
+                    <>
+                      <button
+                        onClick={() => setIsCloseConfirmOpen(true)}
+                        disabled={close.isPending || reopen.isPending}
+                        className="rounded-full border border-border px-3.5 py-1.5 text-[0.8rem] font-medium text-text-muted transition-colors duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-text hover:bg-text hover:text-cta-text disabled:opacity-50"
+                      >
+                        {classroom.closed_at ? "Yeniden Aç" : "Kapat"}
+                      </button>
+                      <button
+                        onClick={() => setIsDeleteConfirmOpen(true)}
+                        disabled={remove.isPending}
+                        className="rounded-md border border-border px-3 py-1.5 text-[0.8rem] font-medium text-danger transition-colors duration-150 hover:bg-danger-bg disabled:opacity-50"
+                      >
+                        Sil
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </div>

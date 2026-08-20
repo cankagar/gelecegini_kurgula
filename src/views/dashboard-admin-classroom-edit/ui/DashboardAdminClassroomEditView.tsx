@@ -16,6 +16,7 @@ export function DashboardAdminClassroomEditView({
       classroomId={classroomId}
       backHref={ROUTES.ADMIN.CLASSROOM_DETAIL(classroomId)}
       classroomsHref={ROUTES.ADMIN.CLASSROOMS}
+      canManageLifecycle
       extraSection={
         <div className="flex flex-col gap-6">
           <AddMemberSearch
