@@ -6,6 +6,7 @@ import "./globals.css";
 import { SiteChrome } from "@/widgets/site-chrome/SiteChrome";
 import { ClickSpark } from "@/shared/ui/click-spark";
 import { getMeServer } from "@/entities/user";
+import { hasValidAccessToken } from "@/shared/lib/auth-token";
 import { QueryProvider } from "./query-provider";
 
 const outfit = Outfit({
@@ -40,7 +41,7 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const queryClient = new QueryClient();
 
-  if (cookieStore.has("access_token")) {
+  if (hasValidAccessToken(cookieStore.get("access_token")?.value)) {
     await queryClient.prefetchQuery({
       queryKey: ["currentUser"],
       queryFn: () => getMeServer(cookieStore.toString()),

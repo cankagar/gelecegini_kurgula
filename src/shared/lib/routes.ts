@@ -7,6 +7,9 @@ const PROFILE = "/profile";
 const SERBEST_KURSU = "/serbest-kursu";
 
 export const ROUTES = {
+  DASHBOARD: {
+    HOME: DASHBOARD,
+  },
   PROFILE: {
     HOME: PROFILE,
   },

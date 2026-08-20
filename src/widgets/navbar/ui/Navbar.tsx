@@ -117,7 +117,7 @@ export default function Navbar() {
                       </p>
                       {!isOnlyUserRole && (
                         <Link
-                          href="/dashboard"
+                          href={ROUTES.DASHBOARD.HOME}
                           onClick={() => setIsProfileOpen(false)}
                           className="block px-3.5 py-2 text-[0.82rem] text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] transition-colors duration-150"
                         >

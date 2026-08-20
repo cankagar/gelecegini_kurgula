@@ -8,6 +8,7 @@ import { AuthFormError, AuthSubmitButton } from "@/shared/ui/auth-form";
 import { AuthTextInput, AuthPasswordInput } from "@/shared/ui/auth-input";
 import { login } from "@/features/auth/api/authApi";
 import { ApiError } from "@/shared/api";
+import { ROUTES } from "@/shared/lib/routes";
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export function LoginForm() {
     setLoading(true);
     try {
       await login({ email, password });
-      router.push("/dashboard");
+      router.push(ROUTES.DASHBOARD.HOME);
       router.refresh();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Giriş yapılamadı. Lütfen tekrar deneyin.");

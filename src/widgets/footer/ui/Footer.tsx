@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ROUTES } from "@/shared/lib/routes";
 
 export default function Footer() {
   return (
@@ -34,7 +35,7 @@ export default function Footer() {
             {[
               { href: "/auth/login", label: "Giriş Yap" },
               { href: "/auth/register", label: "Kayıt Ol" },
-              { href: "/dashboard", label: "Panelim" },
+              { href: ROUTES.DASHBOARD.HOME, label: "Panelim" },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="text-sm text-white/50 hover:text-primary transition-colors duration-200">
                 {l.label}
