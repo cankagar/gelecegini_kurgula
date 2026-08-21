@@ -6,3 +6,4 @@ export { SECTION_FLOW_STOPS, buildLinearGradient, buildLoopingGradient, buildDia
 export type { ColorStop } from "./colorFlow";
 export { formatFullName } from "./name";
 export { useDebouncedValue } from "./useDebouncedValue";
+export { convertImageToWebp } from "./image";

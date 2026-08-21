@@ -59,6 +59,37 @@ export async function updateMe(updates: { first_name?: string; last_name?: strin
   }
 }
 
+export async function getAvatarUploadUrl(userId: string, sizeBytes: number) {
+  try {
+    const { data } = await httpClient.post<{ upload_url: string }>(
+      `/v1/users/${userId}/avatar/upload-url`,
+      { size_bytes: sizeBytes }
+    );
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+export async function confirmAvatarUpload(userId: string) {
+  try {
+    const { data } = await httpClient.post<User>(`/v1/users/${userId}/avatar/confirm`);
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
+// Admin-only — backend 403 döner, kullanıcı kendi avatarını bile kaldıramaz.
+export async function removeAvatar(userId: string) {
+  try {
+    const { data } = await httpClient.delete<AdminUser>(`/v1/users/${userId}/avatar`);
+    return data;
+  } catch (err) {
+    throw toApiError(err);
+  }
+}
+
 export async function addUserRole(id: string, role: UserRole) {
   try {
     const { data } = await httpClient.post<AdminUser>(`/v1/users/${id}/roles`, { role });

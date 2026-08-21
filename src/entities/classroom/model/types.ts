@@ -16,6 +16,7 @@ export type ClassroomMember = {
   email: string;
   first_name: string | null;
   last_name: string | null;
+  avatar_url: string | null;
   roles: ClassroomMemberRole[];
   joined_at: string;
 };

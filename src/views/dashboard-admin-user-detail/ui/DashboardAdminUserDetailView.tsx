@@ -28,7 +28,7 @@ import { formatDateTime } from "@/shared/lib/date";
 import { formatFullName } from "@/shared/lib";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { BackLink } from "@/shared/ui/back-link";
-import { Avatar } from "@/shared/ui/avatar";
+import { AvatarUpload } from "@/widgets/avatar-upload";
 import { IconChip } from "@/shared/ui/icon-chip";
 
 const ROLE_OPTIONS: UserRole[] = ["user", "student", "teacher", "admin", "author"];
@@ -156,7 +156,14 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
         <div className="mt-8">
           <div className="flex items-start justify-between gap-4 border-b border-border pb-6">
             <div className="flex flex-1 items-start gap-4">
-              <Avatar name={formatFullName(user, user.email ?? "?")} size={48} className="mt-0.5" />
+              <AvatarUpload
+                userId={user.id}
+                name={formatFullName(user, user.email ?? "?")}
+                avatarUrl={user.avatar_url}
+                size={48}
+                canRemove
+                className="mt-0.5"
+              />
 
               <div className="flex-1">
                 {isEditing && draft ? (

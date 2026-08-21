@@ -219,7 +219,7 @@ export function ClassroomEditPanel({
                     className="flex items-center justify-between rounded-xl bg-bg px-4 py-3 text-[0.85rem]"
                   >
                     <div className="flex items-center gap-3">
-                      <Avatar name={formatFullName(member, "İsimsiz")} size={32} />
+                      <Avatar name={formatFullName(member, "İsimsiz")} src={member.avatar_url} size={32} />
                       <div>
                         <span className="font-medium text-text">
                           {formatFullName(member, "İsimsiz")}

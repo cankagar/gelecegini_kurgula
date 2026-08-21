@@ -136,7 +136,7 @@ export function DashboardAdminUsersView() {
               >
                 <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <Avatar name={formatFullName(user, user.email ?? "?")} size={28} />
+                    <Avatar name={formatFullName(user, user.email ?? "?")} src={user.avatar_url} size={28} />
                     <span className="font-medium">{formatFullName(user, "—")}</span>
                   </div>
                 </td>

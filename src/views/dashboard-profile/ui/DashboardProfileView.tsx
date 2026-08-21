@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ShieldCheck } from "lucide-react";
 import { useRequireAuth } from "@/features/auth";
 import { useUpdateMeMutation, ROLE_LABELS } from "@/entities/user";
-import { Avatar } from "@/shared/ui/avatar";
+import { AvatarUpload } from "@/widgets/avatar-upload";
 import { IconChip } from "@/shared/ui/icon-chip";
 import { formatFullName } from "@/shared/lib";
 import { StudentDemographicsForm } from "./StudentDemographicsForm";
@@ -64,7 +64,13 @@ export function DashboardProfileView() {
     <div className="w-full px-8 py-10 lg:px-12">
       <div className="flex items-start justify-between gap-4 border-b border-border pb-6">
         <div className="flex flex-1 items-start gap-4">
-          <Avatar name={formatFullName(user, user.email ?? "?")} size={48} className="mt-0.5" />
+          <AvatarUpload
+            userId={user.id}
+            name={formatFullName(user, user.email ?? "?")}
+            avatarUrl={user.avatar_url}
+            size={48}
+            className="mt-0.5"
+          />
 
           <div className="flex-1">
             {isEditing && draft ? (

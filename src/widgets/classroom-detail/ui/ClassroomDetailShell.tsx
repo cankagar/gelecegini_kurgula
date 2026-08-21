@@ -57,7 +57,7 @@ export function ClassroomDetailShell({
                   onMemberClick ? "cursor-pointer transition-colors duration-150 hover:bg-surface" : ""
                 }`}
               >
-                <Avatar name={formatFullName(member, "İsimsiz")} size={32} />
+                <Avatar name={formatFullName(member, "İsimsiz")} src={member.avatar_url} size={32} />
                 {formatFullName(member, "İsimsiz")}
               </li>
             ))}

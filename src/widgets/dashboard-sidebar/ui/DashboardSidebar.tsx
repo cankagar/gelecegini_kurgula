@@ -334,7 +334,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                 collapsed ? "justify-center" : ""
               }`}
             >
-              <Avatar name={formatFullName(user, user.email ?? "?")} size={30} />
+              <Avatar name={formatFullName(user, user.email ?? "?")} src={user.avatar_url} size={30} />
               <span
                 className={`flex-1 overflow-hidden whitespace-nowrap text-left text-[0.82rem] font-semibold text-text transition-[max-width,margin-left,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
                   collapsed ? "ml-0 max-w-0 opacity-0" : "ml-3 max-w-[150px] opacity-100"

@@ -5,10 +5,11 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrolledPast, NAV_HIDE_THRESHOLD, formatFullName } from "@/shared/lib";
-import { UserIcon, ChevronDownIcon } from "@/shared/ui/icons";
+import { ChevronDownIcon } from "@/shared/ui/icons";
 import { useSyncCurrentUser } from "@/entities/user";
 import { useLogout } from "@/features/auth";
 import { ROUTES } from "@/shared/lib/routes";
+import { Avatar } from "@/shared/ui/avatar";
 
 type NavLink = { href: string; label: string };
 
@@ -101,9 +102,7 @@ export default function Navbar() {
                     <span className="text-[0.82rem] font-medium text-[#111111] max-w-[140px] truncate">
                       {formatFullName(user, user.email ?? "")}
                     </span>
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#111111] text-white">
-                      <UserIcon size={16} />
-                    </span>
+                    <Avatar name={formatFullName(user, user.email ?? "?")} src={user.avatar_url} size={32} />
                     <ChevronDownIcon
                       size={14}
                       className={`text-[#787774] transition-transform duration-150 ${isProfileOpen ? "rotate-180" : ""}`}

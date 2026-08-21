@@ -8,6 +8,9 @@ export {
   updateMe,
   addUserRole,
   removeUserRole,
+  getAvatarUploadUrl,
+  confirmAvatarUpload,
+  removeAvatar,
 } from "./api/userApi";
 export { getMeServer } from "./api/userApi.server";
 export { useCurrentUserQuery, hasSessionFlag } from "./lib/useCurrentUserQuery";
@@ -17,3 +20,5 @@ export { useAdminUsersQuery } from "./lib/useAdminUsersQuery";
 export { useAdminUserQuery } from "./lib/useAdminUserQuery";
 export { useUpdateAdminUserMutation } from "./lib/useUpdateAdminUserMutation";
 export { useUpdateMeMutation } from "./lib/useUpdateMeMutation";
+export { useAvatarUploadMutation } from "./lib/useAvatarUploadMutation";
+export { useRemoveAvatarMutation } from "./lib/useRemoveAvatarMutation";
