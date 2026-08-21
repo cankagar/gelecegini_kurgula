@@ -27,6 +27,7 @@ export const ROUTES = {
     USERS: `${ADMIN}/users`,
     USER_DETAIL: (id: string) => `${ADMIN}/users/${id}`,
     AUDIT_LOG: `${ADMIN}/audit-log`,
+    ANNOUNCEMENTS: `${ADMIN}/announcements`,
   },
   TEACHER: {
     HOME: TEACHER,

@@ -1,5 +1,6 @@
 import type { User } from "@/entities/user";
 import { formatFullName } from "@/shared/lib";
+import { AnnouncementBannerSlot } from "@/widgets/announcement-banner";
 
 type DashboardStudentViewProps = {
   user: User;
@@ -12,6 +13,7 @@ export function DashboardStudentView({ user }: DashboardStudentViewProps) {
         Merhaba, {formatFullName(user, user.email ?? "")}
       </h1>
       <p className="mt-1.5 text-[0.9rem] text-text-muted">Öğrenci panelin burada.</p>
+      <AnnouncementBannerSlot />
     </div>
   );
 }
