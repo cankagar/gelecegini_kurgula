@@ -4,6 +4,7 @@ import {
   FileTextIcon,
   GraduationCapIcon,
   HomeIcon,
+  LockIcon,
   UsersIcon,
 } from "@/shared/ui/icons";
 import type { DashboardRole } from "@/entities/dashboard/model/types";
@@ -30,6 +31,7 @@ export const ROLE_NAV_ITEMS: Record<DashboardRole, NavItem[]> = {
     { href: ROUTES.ADMIN.HOME, label: "Panelim", icon: HomeIcon },
     { href: ROUTES.ADMIN.USERS, label: "Kullanıcılar", icon: UsersIcon },
     { href: ROUTES.ADMIN.CLASSROOMS, label: "Sınıflar", icon: GraduationCapIcon },
+    { href: ROUTES.ADMIN.AUDIT_LOG, label: "Denetim Kaydı", icon: LockIcon },
   ],
   author: [{ href: ROUTES.AUTHOR.HOME, label: "Yazılarım", icon: FileTextIcon }],
 };

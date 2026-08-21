@@ -26,6 +26,7 @@ export const ROUTES = {
     CLASSROOM_EDIT: (id: string) => `${ADMIN}/classrooms/${id}/edit`,
     USERS: `${ADMIN}/users`,
     USER_DETAIL: (id: string) => `${ADMIN}/users/${id}`,
+    AUDIT_LOG: `${ADMIN}/audit-log`,
   },
   TEACHER: {
     HOME: TEACHER,
