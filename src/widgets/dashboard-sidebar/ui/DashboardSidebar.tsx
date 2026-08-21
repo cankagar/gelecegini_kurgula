@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, animate, motion, useMotionValue } from "framer-motion";
 import { Check, ChevronDown, Home, Search } from "lucide-react";
 import { useCurrentUser } from "@/entities/user";
 import {
@@ -23,7 +23,6 @@ const STORAGE_KEY = "payastem:sidebar-collapsed";
 const EASE = [0.32, 0.72, 0, 1] as const;
 const EXPANDED_WIDTH = 228;
 const COLLAPSED_WIDTH = 64;
-const MOBILE_NAV_PEEK_TOP = "30%";
 
 // Bottom padding a page's <main> needs on mobile so its content clears the
 // floating trigger button below (bottom-6 h-14) — unneeded once this sidebar
@@ -53,12 +52,16 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [mobileNavExpanded, setMobileNavExpanded] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const [roleQuery, setRoleQuery] = useState("");
   const [roleHighlight, setRoleHighlight] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
   const roleSearchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSheetRef = useRef<HTMLDivElement>(null);
+  const mobileSheetPanStartHeight = useRef(0);
+  const [mobileSheetDragActive, setMobileSheetDragActive] = useState(false);
+  const mobileSheetHeight = useMotionValue<number | string>("auto");
+  const mobileSheetY = useMotionValue(0);
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "1") {
@@ -96,16 +99,49 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
   function closeMobileNav() {
     setMobileNavOpen(false);
-    setMobileNavExpanded(false);
+    setMobileSheetDragActive(false);
+    mobileSheetY.set(0);
   }
 
   function toggleMobileNav() {
-    if (mobileNavOpen) {
-      closeMobileNav();
-    } else {
-      setMobileNavExpanded(false);
-      setMobileNavOpen(true);
+    setMobileNavOpen((v) => !v);
+  }
+
+  function handleMobileSheetPanStart() {
+    if (mobileSheetRef.current) {
+      mobileSheetPanStartHeight.current = mobileSheetRef.current.getBoundingClientRect().height;
+      mobileSheetHeight.set(mobileSheetPanStartHeight.current);
+      setMobileSheetDragActive(true);
     }
+  }
+
+  function handleMobileSheetPan(_: unknown, info: { offset: { y: number } }) {
+    const dy = info.offset.y;
+    if (dy < 0) {
+      // Pulling the handle up grows the sheet upward — the bottom edge never moves.
+      const maxHeight = window.innerHeight - 40;
+      mobileSheetHeight.set(Math.min(mobileSheetPanStartHeight.current - dy, maxHeight));
+      mobileSheetY.set(0);
+    } else {
+      // Pulling down rubber-bands the whole sheet toward dismissal instead.
+      mobileSheetHeight.set(mobileSheetPanStartHeight.current);
+      mobileSheetY.set(Math.min(dy, 200));
+    }
+  }
+
+  function handleMobileSheetPanEnd(_: unknown, info: { offset: { y: number }; velocity: { y: number } }) {
+    if (info.offset.y > 80 || info.velocity.y > 600) {
+      closeMobileNav();
+      return;
+    }
+    if (info.offset.y < -60 || info.velocity.y < -600) {
+      // Pulled up decisively — snap open and stay expanded instead of springing back.
+      const maxHeight = window.innerHeight - 40;
+      animate(mobileSheetHeight, maxHeight, { type: "spring", stiffness: 300, damping: 32 });
+      return;
+    }
+    animate(mobileSheetY, 0, { type: "spring", stiffness: 400, damping: 40 });
+    animate(mobileSheetHeight, mobileSheetPanStartHeight.current, { type: "spring", stiffness: 300, damping: 32 });
   }
 
   async function handleLogout() {
@@ -357,8 +393,8 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       <button
         onClick={toggleMobileNav}
         aria-label={mobileNavOpen ? "Menüyü kapat" : "Menüyü aç"}
-        className={`md:hidden fixed bottom-6 left-1/2 z-50 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full shadow-[0_8px_28px_rgba(31,31,27,0.25)] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-90 ${
-          mobileNavOpen ? "bg-bg text-text ring-1 ring-border" : "bg-text text-bg"
+        className={`md:hidden fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center justify-center rounded-full shadow-[0_8px_28px_rgba(31,31,27,0.25)] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-90 ${
+          mobileNavOpen ? "h-11 w-11 bg-bg text-text ring-1 ring-border" : "h-12 w-12 bg-text text-bg"
         }`}
       >
         <span className="relative flex h-4 w-5 items-center justify-center">
@@ -389,70 +425,65 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
         )}
       </AnimatePresence>
 
-      {/* Mobile nav modal — full-screen, mirrors the desktop sidebar's items */}
+      {/* Mobile nav modal — sized to its content, drag-to-dismiss from the handle */}
       <AnimatePresence>
         {mobileNavOpen && (
           <motion.div
-            initial={{ opacity: 0, top: MOBILE_NAV_PEEK_TOP }}
-            animate={{ opacity: 1, top: mobileNavExpanded ? 0 : MOBILE_NAV_PEEK_TOP }}
+            ref={mobileSheetRef}
+            style={{ y: mobileSheetY, height: mobileSheetDragActive ? mobileSheetHeight : "auto" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: EASE }}
-            className={`md:hidden fixed inset-x-0 bottom-0 z-40 flex flex-col bg-text/95 backdrop-blur-2xl transition-[border-radius] duration-300 ${
-              mobileNavExpanded ? "rounded-none" : "rounded-t-[2rem]"
+            className={`md:hidden fixed inset-x-0 bottom-3 z-40 flex flex-col rounded-[2rem] bg-text/95 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl ${
+              mobileSheetDragActive ? "" : "max-h-[75dvh]"
             }`}
           >
-            <div className="flex shrink-0 justify-center pt-3">
-              <span className="h-1 w-10 rounded-full bg-bg/20" />
-            </div>
-
-            <div
-              className="flex-1 overflow-y-auto px-5 pb-28 pt-6"
-              onScroll={(e) => {
-                if (!mobileNavExpanded && e.currentTarget.scrollTop > 4) {
-                  setMobileNavExpanded(true);
-                }
-              }}
+            <motion.div
+              onPanStart={handleMobileSheetPanStart}
+              onPan={handleMobileSheetPan}
+              onPanEnd={handleMobileSheetPanEnd}
+              className="flex shrink-0 touch-none justify-center pb-2 pt-3"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Link
-                    href="/"
-                    onClick={closeMobileNav}
-                    className="flex items-center gap-2 rounded-xl bg-bg/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 hover:bg-bg/10"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bg/10">
-                      <Home size={13} className="text-bg/80" />
-                    </span>
-                    Ana Sayfa
-                  </Link>
+              <span className="h-1 w-10 rounded-full bg-bg/20" />
+            </motion.div>
 
-                  <Link
-                    href={dashboardProfileRoute(role)}
-                    onClick={closeMobileNav}
-                    className="flex items-center gap-2 rounded-xl bg-bg/5 px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 hover:bg-bg/10"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bg/10">
-                      <UserIcon size={13} className="text-bg/80" />
-                    </span>
-                    Profilim
-                  </Link>
-                </div>
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-1">
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/"
+                  onClick={closeMobileNav}
+                  aria-label="Ana Sayfa"
+                  title="Ana Sayfa"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-bg/5 ring-1 ring-bg/15 transition-colors duration-150 hover:bg-bg/10"
+                >
+                  <Home size={17} className="text-bg/85" />
+                </Link>
+
+                <Link
+                  href={dashboardProfileRoute(role)}
+                  onClick={closeMobileNav}
+                  className="flex h-11 items-center gap-2 rounded-xl bg-bg/5 px-3.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 hover:bg-bg/10"
+                >
+                  <UserIcon size={15} className="shrink-0 text-bg/80" />
+                  Profilim
+                </Link>
 
                 <button
                   onClick={openRoleModal}
                   disabled={otherRoles.length === 0}
-                  className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 ${
+                  className={`flex h-11 min-w-0 flex-1 items-center justify-between gap-1.5 truncate rounded-xl px-3.5 text-[0.85rem] font-medium text-bg ring-1 ring-bg/15 transition-colors duration-150 ${
                     otherRoles.length > 0 ? "bg-bg/5 hover:bg-bg/10 cursor-pointer" : "bg-bg/5 opacity-70"
                   }`}
                 >
-                  {ROLE_LABELS[role]}
+                  <span className="truncate">{ROLE_LABELS[role]}</span>
                   {otherRoles.length > 0 && <ChevronDown size={14} className="shrink-0 text-bg/60" />}
                 </button>
               </div>
 
               <div className="my-4 border-t border-bg/10" />
 
-              <ul className="flex flex-col gap-1">
+              <ul className="flex flex-col gap-1 rounded-2xl bg-bg/5 p-1.5 ring-1 ring-bg/10">
                 {items.map((item, i) => {
                   const active = pathname === item.href;
                   const Icon = item.icon;
@@ -466,7 +497,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                       <Link
                         href={item.href}
                         onClick={closeMobileNav}
-                        className={`relative flex items-center gap-3 rounded-2xl px-3 py-3 text-[0.95rem] font-medium transition-colors duration-150 ${
+                        className={`relative flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[0.9rem] font-medium transition-colors duration-150 ${
                           active ? "text-bg" : "text-bg/75 hover:text-bg"
                         }`}
                       >
@@ -474,11 +505,11 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                           <motion.span
                             layoutId="dashboard-sidebar-active-mobile"
                             transition={{ duration: 0.35, ease: EASE }}
-                            className="absolute inset-0 rounded-2xl bg-bg/10"
+                            className="absolute inset-0 rounded-xl bg-bg/10"
                           />
                         )}
-                        <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg/10">
-                          <Icon size={16} />
+                        <span className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bg/10">
+                          <Icon size={14} />
                         </span>
                         <span className="relative z-10">{item.label}</span>
                       </Link>
@@ -486,15 +517,15 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
                   );
                 })}
               </ul>
+            </div>
 
-              <div className="my-4 border-t border-bg/10" />
-
+            <div className="shrink-0 border-t border-bg/10 px-5 pb-8 pt-4">
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-[0.95rem] font-medium text-bg/75 transition-colors duration-150 hover:text-bg"
+                className="flex w-full items-center gap-3 rounded-2xl px-2.5 py-2.5 text-left text-[0.9rem] font-medium text-bg/75 transition-colors duration-150 hover:text-bg"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg/10">
-                  <LogOutIcon size={16} className="shrink-0" />
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bg/10">
+                  <LogOutIcon size={14} className="shrink-0" />
                 </span>
                 Çıkış Yap
               </button>
