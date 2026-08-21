@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, animate, motion, useMotionValue } from "framer-motion";
-import { Check, ChevronDown, Home, Search } from "lucide-react";
+import { Check, ChevronDown, Home } from "lucide-react";
 import { useCurrentUser } from "@/entities/user";
 import {
   ROLE_NAV_ITEMS,
@@ -53,10 +53,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(false);
-  const [roleQuery, setRoleQuery] = useState("");
-  const [roleHighlight, setRoleHighlight] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
-  const roleSearchInputRef = useRef<HTMLInputElement>(null);
   const mobileSheetRef = useRef<HTMLDivElement>(null);
   const mobileSheetPanStartHeight = useRef(0);
   const [mobileSheetDragActive, setMobileSheetDragActive] = useState(false);
@@ -159,14 +156,9 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const items = ROLE_NAV_ITEMS[role];
   const otherRoles = user.roles.filter(isDashboardRole).filter((r) => r !== role);
   const allRoles = ROLE_ORDER.filter((r) => r === role || otherRoles.includes(r));
-  const filteredRoles = allRoles.filter((r) =>
-    ROLE_LABELS[r].toLocaleLowerCase("tr-TR").includes(roleQuery.trim().toLocaleLowerCase("tr-TR")),
-  );
 
   function openRoleModal() {
     if (otherRoles.length === 0) return;
-    setRoleQuery("");
-    setRoleHighlight(0);
     setRoleModalOpen(true);
   }
 
@@ -180,28 +172,6 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
       switchToRole(target);
     }
   }
-
-  function handleRoleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Escape") {
-      closeRoleModal();
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setRoleHighlight((h) => Math.min(h + 1, filteredRoles.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setRoleHighlight((h) => Math.max(h - 1, 0));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      const target = filteredRoles[roleHighlight];
-      if (target) selectRole(target);
-    }
-  }
-
-  useEffect(() => {
-    if (roleModalOpen) {
-      roleSearchInputRef.current?.focus();
-    }
-  }, [roleModalOpen]);
 
   return (
     <>
@@ -534,7 +504,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
         )}
       </AnimatePresence>
 
-      {/* Rol değiştirme — arama kutulu komut paleti */}
+      {/* Rol değiştirme — küçük seçim paneli */}
       <AnimatePresence>
         {roleModalOpen && (
           <>
@@ -555,46 +525,24 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
               transition={{ duration: 0.2, ease: EASE }}
               className="fixed left-1/2 top-1/2 z-[111] w-[min(320px,90vw)] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-text p-3 shadow-[0_20px_48px_rgba(31,31,27,0.18)] ring-1 ring-bg/10 md:bg-bg md:ring-0"
             >
-              <div className="flex items-center gap-2 rounded-xl px-3 py-2 ring-1 ring-bg/15 md:ring-border">
-                <Search size={15} className="shrink-0 text-bg/50 md:text-text-muted" />
-                <input
-                  ref={roleSearchInputRef}
-                  value={roleQuery}
-                  onChange={(e) => {
-                    setRoleQuery(e.target.value);
-                    setRoleHighlight(0);
-                  }}
-                  onKeyDown={handleRoleSearchKeyDown}
-                  placeholder="Rol ara..."
-                  className="w-full bg-transparent text-[0.82rem] text-bg placeholder:text-bg/45 focus:outline-none md:text-text md:placeholder:text-text-muted"
-                />
-              </div>
-
-              <div className="mt-2 max-h-60 overflow-y-auto">
-                {filteredRoles.length === 0 ? (
-                  <p className="px-3 py-6 text-center text-[0.8rem] text-bg/50 md:text-text-muted">Eşleşen rol yok</p>
-                ) : (
-                  filteredRoles.map((r, i) => {
-                    const active = r === role;
-                    return (
-                      <button
-                        key={r}
-                        onMouseEnter={() => setRoleHighlight(i)}
-                        onClick={() => selectRole(r)}
-                        className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[0.85rem] font-medium transition-colors duration-150 ${
-                          active
-                            ? "bg-bg/15 text-bg md:bg-primary-tint md:text-primary-hover"
-                            : i === roleHighlight
-                              ? "bg-bg/10 text-bg md:bg-surface md:text-text"
-                              : "text-bg/75 hover:bg-bg/10 md:text-text md:hover:bg-surface"
-                        }`}
-                      >
-                        {ROLE_LABELS[r]}
-                        {active && <Check size={14} className="ml-auto shrink-0" />}
-                      </button>
-                    );
-                  })
-                )}
+              <div className="max-h-60 overflow-y-auto">
+                {allRoles.map((r) => {
+                  const active = r === role;
+                  return (
+                    <button
+                      key={r}
+                      onClick={() => selectRole(r)}
+                      className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[0.85rem] font-medium transition-colors duration-150 ${
+                        active
+                          ? "bg-bg/15 text-bg md:bg-primary-tint md:text-primary-hover"
+                          : "text-bg/75 hover:bg-bg/10 md:text-text md:hover:bg-surface"
+                      }`}
+                    >
+                      {ROLE_LABELS[r]}
+                      {active && <Check size={14} className="ml-auto shrink-0" />}
+                    </button>
+                  );
+                })}
               </div>
             </motion.div>
           </>
