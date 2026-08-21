@@ -11,8 +11,8 @@ export function useAvatarUploadMutation(userId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (file: File) => {
-      const webp = await convertImageToWebp(file, AVATAR_MAX_BYTES);
+    mutationFn: async (croppedBlob: Blob) => {
+      const webp = await convertImageToWebp(croppedBlob, AVATAR_MAX_BYTES);
       const { upload_url } = await getAvatarUploadUrl(userId, webp.size);
       // S3'e direkt PUT — backend'in httpClient'ı değil, presigned URL zaten
       // yetkilendirme taşıyor, cookie/baseURL karışmasın.

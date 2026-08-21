@@ -18,8 +18,8 @@ async function encodeAtQuality(
  * bu blob'un byte boyutuna göre imzalanır, bu yüzden backend'e bu adımdan
  * SONRAKİ boyut gönderilmeli.
  */
-export async function convertImageToWebp(file: File, maxBytes: number): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
+export async function convertImageToWebp(source: Blob, maxBytes: number): Promise<Blob> {
+  const bitmap = await createImageBitmap(source);
   let width = bitmap.width;
   let height = bitmap.height;
   const initialScale = Math.min(1, MAX_DIMENSION / Math.max(width, height));

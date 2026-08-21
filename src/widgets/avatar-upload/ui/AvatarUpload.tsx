@@ -6,6 +6,7 @@ import { useAvatarUploadMutation, useRemoveAvatarMutation } from "@/entities/use
 import { Avatar } from "@/shared/ui/avatar";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { SpinnerIcon } from "@/shared/ui/icons";
+import { AvatarCropModal } from "./AvatarCropModal";
 
 type AvatarUploadProps = {
   userId: string;
@@ -29,6 +30,10 @@ export function AvatarUpload({
   className = "",
 }: AvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  // Her yeni dosya seçiminde artar — AvatarCropModal'ı bu `key` ile yeniden
+  // mount ettirip zoom/pan/naturalSize'ı sıfırdan başlatmak için.
+  const [cropToken, setCropToken] = useState(0);
   const [isConfirmingRemove, setIsConfirmingRemove] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -42,16 +47,27 @@ export function AvatarUpload({
     inputRef.current?.click();
   }
 
-  async function onFileSelected(e: ChangeEvent<HTMLInputElement>) {
+  function onFileSelected(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-
     setLocalError(null);
+    setCropToken((t) => t + 1);
+    setPendingFile(file);
+  }
+
+  function cancelCrop() {
+    setPendingFile(null);
+    upload.reset();
+  }
+
+  async function confirmCrop(croppedBlob: Blob) {
     try {
-      await upload.mutateAsync(file);
+      await upload.mutateAsync(croppedBlob);
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Fotoğraf yüklenemedi.");
+    } finally {
+      setPendingFile(null);
     }
   }
 
@@ -121,6 +137,15 @@ export function AvatarUpload({
         confirmLabel="Kaldır"
         pendingLabel="Kaldırılıyor..."
         isPending={remove.isPending}
+      />
+
+      <AvatarCropModal
+        key={cropToken}
+        open={pendingFile !== null}
+        file={pendingFile}
+        onCancel={cancelCrop}
+        onConfirm={confirmCrop}
+        isSubmitting={upload.isPending}
       />
     </div>
   );
