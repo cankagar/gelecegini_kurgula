@@ -61,9 +61,9 @@ export function DashboardProfileView() {
   }
 
   return (
-    <div className="w-full px-8 py-10 lg:px-12">
-      <div className="flex items-start justify-between gap-4 border-b border-border pb-6">
-        <div className="flex flex-1 items-start gap-4">
+    <div className="w-full px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
+      <div className="flex flex-col items-start justify-between gap-4 border-b border-border pb-6 sm:flex-row">
+        <div className="flex min-w-0 flex-1 items-start gap-4">
           <AvatarUpload
             userId={user.id}
             name={formatFullName(user, user.email ?? "?")}
@@ -73,10 +73,10 @@ export function DashboardProfileView() {
             className="mt-0.5"
           />
 
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {isEditing && draft ? (
               <div className="flex max-w-md flex-col gap-2">
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <input
                     type="text"
                     value={draft.firstName}
@@ -92,20 +92,20 @@ export function DashboardProfileView() {
                     className="w-full rounded-md border border-border bg-bg px-3 py-2 text-[0.95rem] font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
-                <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
+                <p className="mt-0.5 truncate text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
               </div>
             ) : (
               <>
-                <h1 className="font-heading text-[1.9rem] font-bold text-text tracking-[-0.025em]">
+                <h1 className="font-heading text-[1.5rem] font-bold text-text tracking-[-0.025em] sm:text-[1.9rem]">
                   {formatFullName(user)}
                 </h1>
-                <p className="mt-1 text-[0.9rem] text-text-muted">{user.email ?? "—"}</p>
+                <p className="mt-1 truncate text-[0.9rem] text-text-muted">{user.email ?? "—"}</p>
               </>
             )}
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto">
           {isEditing ? (
             <>
               <button
@@ -135,15 +135,15 @@ export function DashboardProfileView() {
       </div>
 
       {updateMe.isError && (
-        <p className="px-8 pt-4 text-[0.8rem] text-danger">
+        <p className="px-4 pt-4 text-[0.8rem] text-danger sm:px-8">
           Kaydedilemedi. Lütfen tekrar deneyin.
         </p>
       )}
 
-      <div className="px-8 py-6 text-[0.85rem]">
+      <div className="px-4 py-6 text-[0.85rem] sm:px-8">
         <div className="flex items-center gap-3 rounded-xl border border-border bg-bg-alt px-4 py-3">
           <IconChip icon={ShieldCheck} />
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <p className="text-text-muted">Roller</p>
             <p className="font-medium text-text">
               {user.roles.map((r) => ROLE_LABELS[r]).join(", ") || "—"}
@@ -153,7 +153,7 @@ export function DashboardProfileView() {
       </div>
 
       {user.roles.includes("student") && (
-        <div className="border-t border-border px-8 py-6">
+        <div className="border-t border-border px-4 py-6 sm:px-8">
           <StudentDemographicsForm />
         </div>
       )}

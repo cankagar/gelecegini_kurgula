@@ -15,8 +15,10 @@ export function Avatar({ name, src, size = 36, className = "" }: AvatarProps) {
       <img
         src={src}
         alt={name}
-        style={{ width: size, height: size }}
-        className={`inline-block shrink-0 rounded-full object-cover ${className}`}
+        width={size}
+        height={size}
+        style={{ width: size, height: size, minWidth: size, minHeight: size }}
+        className={`inline-block aspect-square shrink-0 rounded-full object-cover ${className}`}
       />
     );
   }

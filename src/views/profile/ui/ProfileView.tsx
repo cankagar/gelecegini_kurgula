@@ -66,7 +66,7 @@ export function ProfileView() {
   }
 
   return (
-    <div className="w-full px-8 py-14 lg:px-12">
+    <div className="w-full px-4 py-10 sm:px-8 sm:py-14 lg:px-12">
       <div className="mx-auto max-w-4xl">
         <motion.div
           initial="hidden"
@@ -78,7 +78,7 @@ export function ProfileView() {
             Hesabım
           </span>
 
-          <h1 className="mt-5 font-heading text-[2.5rem] font-bold leading-[1.05] tracking-[-0.03em] text-text sm:text-[3rem]">
+          <h1 className="mt-5 font-heading text-[2rem] font-bold leading-[1.05] tracking-[-0.03em] text-text sm:text-[2.5rem] lg:text-[3rem]">
             {formatFullName(user)}
           </h1>
           <p className="mt-2 font-serif text-[1.05rem] italic text-text-muted">{user.email ?? "—"}</p>
@@ -93,9 +93,9 @@ export function ProfileView() {
             transition={{ duration: 0.7, delay: 0.08, ease: EASE }}
             className="rounded-[2rem] bg-bg-alt p-2 ring-1 ring-border md:col-span-2"
           >
-            <div className="flex h-full flex-col justify-between rounded-[calc(2rem-0.5rem)] bg-bg p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-8">
+            <div className="flex h-full flex-col justify-between rounded-[calc(2rem-0.5rem)] bg-bg p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-7 md:p-8">
               <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex flex-1 items-start gap-4">
+                <div className="flex min-w-0 flex-1 items-start gap-4">
                   <AvatarUpload
                     userId={user.id}
                     name={formatFullName(user, user.email ?? "?")}
@@ -105,37 +105,37 @@ export function ProfileView() {
                     className="mt-1 shrink-0"
                   />
 
-                  <div className="flex-1">
+                  <div className="min-w-0 flex-1">
                     {isEditing && draft ? (
                       <div className="flex flex-col gap-2.5">
-                        <div className="flex gap-2.5">
+                        <div className="flex flex-col gap-2.5 sm:flex-row">
                           <input
                             type="text"
                             value={draft.firstName}
                             onChange={(e) => setDraft({ ...draft, firstName: e.target.value })}
                             placeholder="Ad"
-                            className={`${fieldClass} font-medium`}
+                            className={`${fieldClass} w-full font-medium sm:w-auto sm:flex-1`}
                           />
                           <input
                             type="text"
                             value={draft.lastName}
                             onChange={(e) => setDraft({ ...draft, lastName: e.target.value })}
                             placeholder="Soyad"
-                            className={`${fieldClass} font-medium`}
+                            className={`${fieldClass} w-full font-medium sm:w-auto sm:flex-1`}
                           />
                         </div>
-                        <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
+                        <p className="mt-0.5 truncate text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
                       </div>
                     ) : (
                       <>
                         <p className="text-[1.1rem] font-semibold text-text">{formatFullName(user)}</p>
-                        <p className="mt-0.5 text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
+                        <p className="mt-0.5 truncate text-[0.85rem] text-text-muted">{user.email ?? "—"}</p>
                       </>
                     )}
                   </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2.5">
+                <div className="flex w-full shrink-0 flex-wrap items-center gap-2.5 sm:w-auto">
                   {isEditing ? (
                     <>
                       <button
@@ -183,7 +183,7 @@ export function ProfileView() {
             transition={{ duration: 0.7, delay: 0.16, ease: EASE }}
             className="rounded-[2rem] bg-bg-alt p-2 ring-1 ring-border"
           >
-            <div className="flex h-full flex-col rounded-[calc(2rem-0.5rem)] bg-bg p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+            <div className="flex h-full flex-col rounded-[calc(2rem-0.5rem)] bg-bg p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-7 md:p-8">
               <p className="text-[0.72rem] uppercase tracking-[0.14em] text-text-muted">Roller</p>
 
               <div className="mt-4 flex flex-1 flex-col gap-2">

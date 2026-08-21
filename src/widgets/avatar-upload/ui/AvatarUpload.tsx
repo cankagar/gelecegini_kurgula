@@ -86,7 +86,8 @@ export function AvatarUpload({
         onClick={pickFile}
         disabled={isBusy}
         aria-label="Profil fotoğrafını değiştir"
-        className="relative block rounded-full disabled:cursor-not-allowed"
+        style={{ width: size, height: size }}
+        className="relative block shrink-0 rounded-full disabled:cursor-not-allowed"
       >
         <Avatar name={name} src={avatarUrl} size={size} />
         <span

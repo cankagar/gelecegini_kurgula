@@ -450,7 +450,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       transition={{ duration: 0.7, delay: 0.24, ease: EASE }}
       className="mt-5 rounded-[2rem] bg-bg-alt p-2 ring-1 ring-border"
     >
-      <div className="rounded-[calc(2rem-0.5rem)] bg-bg p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-8">
+      <div className="rounded-[calc(2rem-0.5rem)] bg-bg p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-7 md:p-8">
         {children}
       </div>
     </motion.div>
