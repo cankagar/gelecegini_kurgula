@@ -10,6 +10,25 @@ export const httpClient = axios.create({
 });
 
 const REFRESH_URL = "/v1/auth/refresh";
+const CSRF_COOKIE = "csrf_token";
+const CSRF_HEADER = "X-CSRF-Token";
+const UNSAFE_METHODS = new Set(["post", "put", "patch", "delete"]);
+
+function readCsrfCookie(): string | null {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${CSRF_COOKIE}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+httpClient.interceptors.request.use((config) => {
+  const method = config.method?.toLowerCase();
+  if (method && UNSAFE_METHODS.has(method) && typeof document !== "undefined") {
+    const token = readCsrfCookie();
+    if (token) {
+      config.headers.set(CSRF_HEADER, token);
+    }
+  }
+  return config;
+});
 
 declare module "axios" {
   export interface AxiosRequestConfig {
