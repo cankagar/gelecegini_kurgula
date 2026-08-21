@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrolledPast, NAV_HIDE_THRESHOLD, formatFullName } from "@/shared/lib";
-import { ChevronDownIcon } from "@/shared/ui/icons";
+import { ChevronDownIcon, ArrowRightIcon } from "@/shared/ui/icons";
 import { useSyncCurrentUser } from "@/entities/user";
 import { useLogout } from "@/features/auth";
 import { ROUTES } from "@/shared/lib/routes";
@@ -49,6 +49,14 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileOpen]);
+
   async function handleLogout() {
     setIsProfileOpen(false);
     setIsMobileOpen(false);
@@ -56,6 +64,7 @@ export default function Navbar() {
   }
 
   return (
+    <>
     <nav
       className={`sticky top-0 z-50 border-b border-[#EAEAEA] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "-translate-y-full" : "translate-y-0"}`}
       style={{ background: "rgba(251,251,250,0.92)", backdropFilter: "blur(12px)" }}
@@ -183,62 +192,117 @@ export default function Navbar() {
           />
         </button>
       </div>
-
-      {/* Mobile menu */}
-      {isMobileOpen && (
-        <div className="md:hidden border-t border-[#EAEAEA] bg-[#FBFBFA] px-4 pb-5 pt-2">
-          <ul className="flex flex-col">
-            {NAV_LINKS.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setIsMobileOpen(false)}
-                  className="block px-3 py-2.5 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] transition-colors"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-4 pt-4 border-t border-[#EAEAEA] flex flex-col gap-2">
-            {user ? (
-              <>
-                <Link
-                  href={ROUTES.PROFILE.HOME}
-                  onClick={() => setIsMobileOpen(false)}
-                  className="block text-center px-4 py-2.5 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] rounded-md transition-all"
-                >
-                  Profilim
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="block text-center px-4 py-2.5 rounded-md text-[0.82rem] font-semibold bg-[#111111] hover:bg-[#333333] text-white transition-colors"
-                >
-                  Çıkış Yap
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/auth/login"
-                  onClick={() => setIsMobileOpen(false)}
-                  className="block text-center px-4 py-2.5 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] hover:bg-[#F7F6F3] rounded-md transition-all"
-                >
-                  Giriş Yap
-                </Link>
-                <Link
-                  href="/auth/register"
-                  onClick={() => setIsMobileOpen(false)}
-                  className="block text-center px-4 py-2.5 rounded-md text-[0.82rem] font-semibold bg-[#111111] hover:bg-[#333333] text-white transition-colors"
-                >
-                  Kayıt Ol
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </nav>
+
+      {/* Mobile menu — fullscreen glass takeover below the sticky header, links reveal staggered */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+            className="md:hidden fixed inset-x-0 top-[65px] bottom-0 z-40 flex flex-col"
+            style={{ background: "rgba(251,251,250,0.98)", backdropFilter: "blur(24px)" }}
+          >
+            {user && !isOnlyUserRole && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="shrink-0 border-b border-[#EAEAEA] px-6 py-4"
+              >
+                <Link
+                  href={ROUTES.DASHBOARD.HOME}
+                  onClick={() => setIsMobileOpen(false)}
+                  className="group relative flex items-center justify-between overflow-hidden rounded-full bg-gradient-to-r from-[#111111] to-[#2A2A2A] px-5 py-3.5 text-[0.9rem] font-semibold text-white ring-1 ring-primary/40 shadow-[0_8px_20px_-8px_rgba(207,162,77,0.55)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]"
+                >
+                  <span className="relative z-10">Panele Git</span>
+                  <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-active:scale-90">
+                    <ArrowRightIcon size={15} className="text-primary" />
+                  </span>
+                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/25 to-transparent transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-full" />
+                </Link>
+              </motion.div>
+            )}
+
+            <div className="flex-1 overflow-y-auto px-6 pt-8 pb-4">
+              <ul className="flex flex-col">
+                {NAV_LINKS.map((item, i) => (
+                  <motion.li
+                    key={item.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, delay: 0.08 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                    className="border-b border-[#EAEAEA]"
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className="block py-4 font-heading text-[1.6rem] font-bold tracking-[-0.02em] text-[#111111] transition-colors duration-200 active:text-[#787774]"
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.45,
+                delay: 0.08 + NAV_LINKS.length * 0.06,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="shrink-0 border-t border-[#EAEAEA] px-6 pb-8 pt-4 flex flex-col gap-3"
+            >
+              {user ? (
+                <>
+                  <Link
+                    href={ROUTES.PROFILE.HOME}
+                    onClick={() => setIsMobileOpen(false)}
+                    className="flex items-center gap-3 rounded-2xl bg-[#F7F6F3] px-4 py-3 transition-colors active:bg-[#EFEEEA]"
+                  >
+                    <Avatar name={formatFullName(user, user.email ?? "?")} src={user.avatar_url} size={36} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[0.85rem] font-semibold text-[#111111]">
+                        {formatFullName(user, user.email ?? "")}
+                      </p>
+                      <p className="text-[0.78rem] text-[#787774]">Profilim</p>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="text-center text-[0.82rem] font-semibold text-[#B64F4F] transition-colors active:text-[#8F3939]"
+                  >
+                    Çıkış Yap
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/register"
+                    onClick={() => setIsMobileOpen(false)}
+                    className="block rounded-full bg-[#111111] px-5 py-3.5 text-center text-[0.88rem] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)] transition-all duration-300 active:scale-[0.98]"
+                  >
+                    Kayıt Ol
+                  </Link>
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setIsMobileOpen(false)}
+                    className="block py-2.5 text-center text-[0.85rem] font-medium text-[#787774] transition-colors active:text-[#111111]"
+                  >
+                    Giriş Yap
+                  </Link>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

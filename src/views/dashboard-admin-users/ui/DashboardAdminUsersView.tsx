@@ -74,14 +74,14 @@ export function DashboardAdminUsersView() {
         />
 
         {!isSearching && (
-          <div className="flex gap-1 border-b border-border sm:border-b-0">
+          <div className="-mx-8 flex touch-pan-x gap-1 overflow-x-auto overflow-y-hidden border-b border-border px-8 sm:mx-0 sm:border-b-0 sm:px-0">
             {TABS.map((tab) => {
               const active = activeRole === tab.role;
               return (
                 <button
                   key={tab.label}
                   onClick={() => setActiveRole(tab.role)}
-                  className={`-mb-px border-b-2 px-3 py-2 text-[0.85rem] font-medium transition-colors duration-150 ${
+                  className={`-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-[0.85rem] font-medium transition-colors duration-150 ${
                     active ? "border-primary text-text" : "border-transparent text-text-muted hover:text-text"
                   }`}
                 >
@@ -93,14 +93,14 @@ export function DashboardAdminUsersView() {
         )}
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-md border border-border">
-        <table className="w-full text-left text-[0.85rem]">
+      <div className="mt-6 overflow-x-auto rounded-md border border-border">
+        <table className="w-full min-w-[720px] text-left text-[0.85rem]">
           <thead>
             <tr className="border-b border-border bg-bg-alt text-text-muted">
-              <th className="px-4 py-2.5 font-medium">Ad Soyad</th>
-              <th className="px-4 py-2.5 font-medium">E-posta</th>
-              <th className="px-4 py-2.5 font-medium">Rol</th>
-              <th className="px-4 py-2.5 font-medium">Durum</th>
+              <th className="whitespace-nowrap px-4 py-2.5 font-medium">Ad Soyad</th>
+              <th className="whitespace-nowrap px-4 py-2.5 font-medium">E-posta</th>
+              <th className="whitespace-nowrap px-4 py-2.5 font-medium">Rol</th>
+              <th className="whitespace-nowrap px-4 py-2.5 font-medium">Durum</th>
             </tr>
           </thead>
           <tbody key={`${activeRole ?? "all"}-${search}`}>
@@ -134,17 +134,17 @@ export function DashboardAdminUsersView() {
                 onClick={() => router.push(ROUTES.ADMIN.USER_DETAIL(user.id))}
                 className="cursor-pointer border-b border-border text-text transition-colors duration-150 last:border-0 hover:bg-surface"
               >
-                <td className="px-4 py-2.5">
+                <td className="whitespace-nowrap px-4 py-2.5">
                   <div className="flex items-center gap-2.5">
                     <Avatar name={formatFullName(user, user.email ?? "?")} src={user.avatar_url} size={28} />
                     <span className="font-medium">{formatFullName(user, "—")}</span>
                   </div>
                 </td>
-                <td className="px-4 py-2.5 text-text-muted">{user.email ?? "—"}</td>
-                <td className="px-4 py-2.5">
+                <td className="whitespace-nowrap px-4 py-2.5 text-text-muted">{user.email ?? "—"}</td>
+                <td className="whitespace-nowrap px-4 py-2.5">
                   {user.roles.map((r) => ROLE_LABELS[r] ?? r).join(", ")}
                 </td>
-                <td className="px-4 py-2.5">
+                <td className="whitespace-nowrap px-4 py-2.5">
                   <span
                     className={`rounded-full px-2 py-0.5 text-[0.75rem] font-medium ${
                       user.is_active ? "bg-success-bg text-success" : "bg-danger-bg text-danger"
