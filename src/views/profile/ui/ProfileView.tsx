@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRequireAuth } from "@/features/auth";
 import { useUpdateMeMutation, ROLE_LABELS } from "@/entities/user";
-import { Avatar } from "@/shared/ui/avatar";
+import { AvatarUpload } from "@/widgets/avatar-upload";
 import { PenIcon } from "@/shared/ui/icons";
 import { formatFullName } from "@/shared/lib";
 
@@ -96,7 +96,14 @@ export function ProfileView() {
             <div className="flex h-full flex-col justify-between rounded-[calc(2rem-0.5rem)] bg-bg p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-8">
               <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-1 items-start gap-4">
-                  <Avatar name={formatFullName(user, user.email ?? "?")} size={64} className="mt-1 shrink-0" />
+                  <AvatarUpload
+                    userId={user.id}
+                    name={formatFullName(user, user.email ?? "?")}
+                    avatarUrl={user.avatar_url}
+                    size={64}
+                    canRemove
+                    className="mt-1 shrink-0"
+                  />
 
                   <div className="flex-1">
                     {isEditing && draft ? (

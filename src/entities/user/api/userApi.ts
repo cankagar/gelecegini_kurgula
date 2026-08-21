@@ -80,7 +80,6 @@ export async function confirmAvatarUpload(userId: string) {
   }
 }
 
-// Admin-only — backend 403 döner, kullanıcı kendi avatarını bile kaldıramaz.
 export async function removeAvatar(userId: string) {
   try {
     const { data } = await httpClient.delete<AdminUser>(`/v1/users/${userId}/avatar`);

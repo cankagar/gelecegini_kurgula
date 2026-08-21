@@ -13,14 +13,13 @@ type AvatarUploadProps = {
   name: string;
   avatarUrl: string | null;
   size?: number;
-  /** Sadece admin — kullanıcı kendi fotoğrafını kaldıramaz, sadece değiştirebilir. */
   canRemove?: boolean;
   className?: string;
 };
 
 // Profil-detay ve kendi-profil sayfalarının paylaştığı avatar düzenleme bloğu —
-// tıklayınca dosya seçtirir, client-side webp'e çevirip yükler; admin ayrıca
-// kaldırabilir. Bkz. entities/user/lib/useAvatarUploadMutation.
+// tıklayınca dosya seçtirir, client-side webp'e çevirip yükler; canRemove
+// açıksa kaldırma da sunar. Bkz. entities/user/lib/useAvatarUploadMutation.
 export function AvatarUpload({
   userId,
   name,
@@ -81,13 +80,13 @@ export function AvatarUpload({
   }
 
   return (
-    <div className={`relative inline-block ${className}`}>
+    <div className={`group relative inline-block ${className}`}>
       <button
         type="button"
         onClick={pickFile}
         disabled={isBusy}
         aria-label="Profil fotoğrafını değiştir"
-        className="group relative block rounded-full disabled:cursor-not-allowed"
+        className="relative block rounded-full disabled:cursor-not-allowed"
       >
         <Avatar name={name} src={avatarUrl} size={size} />
         <span
@@ -108,7 +107,7 @@ export function AvatarUpload({
           onClick={() => setIsConfirmingRemove(true)}
           disabled={isBusy}
           aria-label="Fotoğrafı kaldır"
-          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-bg text-text-muted transition-colors duration-150 hover:text-danger disabled:opacity-50"
+          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-bg text-text-muted opacity-0 transition-opacity duration-150 group-hover:opacity-100 hover:text-danger disabled:opacity-50"
         >
           <X size={12} />
         </button>

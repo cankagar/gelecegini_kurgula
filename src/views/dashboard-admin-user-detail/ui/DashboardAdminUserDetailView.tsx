@@ -160,7 +160,7 @@ export function DashboardAdminUserDetailView({ userId }: DashboardAdminUserDetai
                 userId={user.id}
                 name={formatFullName(user, user.email ?? "?")}
                 avatarUrl={user.avatar_url}
-                size={48}
+                size={72}
                 canRemove
                 className="mt-0.5"
               />
