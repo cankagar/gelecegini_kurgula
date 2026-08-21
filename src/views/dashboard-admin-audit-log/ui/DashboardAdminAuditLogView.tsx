@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AUDIT_LOG_PAGE_SIZE, useAuditLogQuery } from "@/entities/audit-log";
-import type { AuditLogEntry } from "@/entities/audit-log";
+import type { AuditLogEntry, AuditLogFilters } from "@/entities/audit-log";
 import { SpinnerIcon } from "@/shared/ui/icons";
 import { Modal, ModalDescription, ModalTitle } from "@/shared/ui/modal";
 import { Pagination } from "@/shared/ui/pagination";
@@ -78,27 +78,37 @@ function AuditLogDetailModal({ entry, onClose }: { entry: AuditLogEntry | null; 
   );
 }
 
+const EMPTY_FILTERS: AuditLogFilters = {};
+
+function toRangeStart(date: string) {
+  return date ? `${date}T00:00:00` : undefined;
+}
+
+function toRangeEnd(date: string) {
+  return date ? `${date}T23:59:59` : undefined;
+}
+
 export function DashboardAdminAuditLogView() {
-  const [actionFilter, setActionFilter] = useState("");
-  const [targetTypeFilter, setTargetTypeFilter] = useState("");
+  const [actionDraft, setActionDraft] = useState("");
+  const [targetTypeDraft, setTargetTypeDraft] = useState("");
+  const [dateFromDraft, setDateFromDraft] = useState("");
+  const [dateToDraft, setDateToDraft] = useState("");
+
+  const [appliedFilters, setAppliedFilters] = useState<AuditLogFilters>(EMPTY_FILTERS);
   const [page, setPage] = useState(1);
   const [selectedEntry, setSelectedEntry] = useState<AuditLogEntry | null>(null);
 
-  const { data, isLoading, isError } = useAuditLogQuery(
-    page,
-    targetTypeFilter || undefined,
-    actionFilter || undefined
-  );
+  const { data, isLoading, isError } = useAuditLogQuery(page, appliedFilters);
   const entries = data?.items;
   const totalPages = data ? Math.max(1, Math.ceil(data.total / AUDIT_LOG_PAGE_SIZE)) : 1;
 
-  function handleActionChange(value: string) {
-    setActionFilter(value);
-    setPage(1);
-  }
-
-  function handleTargetTypeChange(value: string) {
-    setTargetTypeFilter(value);
+  function handleSearch() {
+    setAppliedFilters({
+      targetType: targetTypeDraft || undefined,
+      action: actionDraft || undefined,
+      createdFrom: toRangeStart(dateFromDraft),
+      createdTo: toRangeEnd(dateToDraft),
+    });
     setPage(1);
   }
 
@@ -113,10 +123,10 @@ export function DashboardAdminAuditLogView() {
         </p>
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-3">
+      <div className="mt-8 flex flex-wrap items-end gap-3">
         <select
-          value={actionFilter}
-          onChange={(e) => handleActionChange(e.target.value)}
+          value={actionDraft}
+          onChange={(e) => setActionDraft(e.target.value)}
           className="rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text"
         >
           {ACTIONS.map((option) => (
@@ -127,8 +137,8 @@ export function DashboardAdminAuditLogView() {
         </select>
 
         <select
-          value={targetTypeFilter}
-          onChange={(e) => handleTargetTypeChange(e.target.value)}
+          value={targetTypeDraft}
+          onChange={(e) => setTargetTypeDraft(e.target.value)}
           className="rounded-md border border-border bg-bg px-3 py-2 text-[0.85rem] text-text"
         >
           {TARGET_TYPES.map((option) => (
@@ -137,6 +147,34 @@ export function DashboardAdminAuditLogView() {
             </option>
           ))}
         </select>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-[0.7rem] font-medium text-text-muted">Başlangıç</label>
+          <input
+            type="date"
+            value={dateFromDraft}
+            onChange={(e) => setDateFromDraft(e.target.value)}
+            className="rounded-md border border-border bg-bg px-3 py-[0.4rem] text-[0.85rem] text-text"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-[0.7rem] font-medium text-text-muted">Bitiş</label>
+          <input
+            type="date"
+            value={dateToDraft}
+            onChange={(e) => setDateToDraft(e.target.value)}
+            className="rounded-md border border-border bg-bg px-3 py-[0.4rem] text-[0.85rem] text-text"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={handleSearch}
+          className="rounded-md bg-primary px-4 py-2 text-[0.85rem] font-semibold text-cta-text transition-colors duration-150 hover:bg-primary-hover"
+        >
+          Ara
+        </button>
       </div>
 
       <div className="mt-6 overflow-hidden rounded-md border border-border">
