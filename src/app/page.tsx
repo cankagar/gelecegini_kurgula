@@ -621,7 +621,7 @@ export default function Home() {
     <main className="flex flex-col bg-bg">
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center overflow-hidden" style={{ background: '#1C2B3A' }}>
+      <section className="relative -mt-[104px] pt-[104px] min-h-[100dvh] flex items-center overflow-hidden" style={{ background: '#1C2B3A' }}>
 
         <div
           className="absolute inset-0 pointer-events-none select-none"

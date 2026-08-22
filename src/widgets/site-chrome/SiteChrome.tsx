@@ -19,7 +19,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
   return (
     <>
       <Navbar />
-      <main style={{ minHeight: "calc(100vh - 65px)" }}>{children}</main>
+      <main style={{ minHeight: "100vh", paddingTop: "104px" }}>{children}</main>
       <Footer />
     </>
   );

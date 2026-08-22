@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useScrolledPast, NAV_HIDE_THRESHOLD, formatFullName } from "@/shared/lib";
+import { useHeaderVisibility, NAV_HIDE_THRESHOLD, formatFullName } from "@/shared/lib";
 import { ChevronDownIcon, ArrowRightIcon } from "@/shared/ui/icons";
 import { useSyncCurrentUser } from "@/entities/user";
 import { useLogout } from "@/features/auth";
@@ -26,7 +26,7 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const scrolled = useScrolledPast(NAV_HIDE_THRESHOLD);
+  const { hidden, atTop } = useHeaderVisibility(NAV_HIDE_THRESHOLD);
   const user = useSyncCurrentUser();
   const logout = useLogout();
   const isOnlyUserRole = user ? user.roles.every((role) => role === "user") : false;
@@ -65,24 +65,34 @@ export default function Navbar() {
 
   return (
     <>
-    <nav
-      className={`sticky top-0 z-50 border-b border-[#EAEAEA] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "-translate-y-full" : "translate-y-0"}`}
-      style={{ background: "rgba(251,251,250,0.92)", backdropFilter: "blur(12px)" }}
+    <div className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+    <motion.nav
+      animate={{ y: !atTop && hidden ? "calc(-100% - 2rem)" : 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
+      className="mt-4 md:mt-5 w-full md:w-auto rounded-[28px] border border-black/[0.06] pointer-events-auto"
+      style={{
+        background: "rgba(251,251,250,0.78)",
+        backdropFilter: "blur(20px) saturate(160%)",
+        WebkitBackdropFilter: "blur(20px) saturate(160%)",
+        boxShadow: atTop
+          ? "0 1px 2px rgba(17,17,17,0.04)"
+          : "0 12px 32px -12px rgba(17,17,17,0.18), 0 1px 2px rgba(17,17,17,0.04)",
+      }}
     >
-      <div className="max-w-5xl mx-auto px-6 h-[65px] flex items-center justify-between gap-8">
+      <div className="flex items-center gap-8 h-[58px] pl-5 pr-2.5 md:pl-6 md:pr-3">
 
         {/* Logo */}
         <Link href="/" className="flex items-center shrink-0">
-          <Image src="/logo-stem.png" alt="PayaSTEM" width={110} height={44} className="h-10 w-auto" />
+          <Image src="/logo-stem.png" alt="PayaSTEM" width={110} height={44} className="h-9 w-auto" />
         </Link>
 
         {/* Desktop nav — identical for guests and logged-in users */}
-        <ul className="hidden md:flex items-center gap-0 flex-1">
+        <ul className="hidden md:flex items-center gap-0.5">
           {NAV_LINKS.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="block px-3.5 py-2 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] transition-colors duration-150"
+                className="block px-4 py-2 rounded-full text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] hover:bg-black/[0.035] transition-colors duration-150"
               >
                 {item.label}
               </Link>
@@ -91,7 +101,7 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop CTA — swaps between guest buttons and profile menu */}
-        <div className="hidden md:block relative h-10">
+        <div className="hidden md:block relative h-10 ml-2">
           <AnimatePresence mode="wait" initial={false}>
             {user ? (
               <motion.div
@@ -179,7 +189,7 @@ export default function Navbar() {
         <button
           onClick={() => setIsMobileOpen((v) => !v)}
           aria-label={isMobileOpen ? "Menüyü kapat" : "Menüyü aç"}
-          className="md:hidden flex flex-col justify-center gap-[5px] w-9 h-9 rounded-md hover:bg-[#F7F6F3] transition-colors"
+          className="md:hidden flex flex-col justify-center gap-[5px] w-11 h-11 rounded-full hover:bg-black/[0.04] transition-colors ml-auto"
         >
           <span
             className={`w-4 h-[1.5px] bg-[#2F3437] rounded-full mx-auto transition-all duration-200 ${isMobileOpen ? "translate-y-[6.5px] rotate-45" : ""}`}
@@ -192,9 +202,10 @@ export default function Navbar() {
           />
         </button>
       </div>
-    </nav>
+    </motion.nav>
+    </div>
 
-      {/* Mobile menu — fullscreen glass takeover below the sticky header, links reveal staggered */}
+      {/* Mobile menu — fullscreen glass takeover below the floating header, links reveal staggered */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div
@@ -203,7 +214,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-            className="md:hidden fixed inset-x-0 top-[65px] bottom-0 z-40 flex flex-col"
+            className="md:hidden fixed inset-x-0 top-0 bottom-0 z-40 flex flex-col pt-[92px]"
             style={{ background: "rgba(251,251,250,0.98)", backdropFilter: "blur(24px)" }}
           >
             {user && !isOnlyUserRole && (
