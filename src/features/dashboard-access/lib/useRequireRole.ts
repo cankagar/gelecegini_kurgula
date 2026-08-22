@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCurrentUserQuery } from "@/entities/user";
+import { useCurrentUserQuery, hasSessionFlag } from "@/entities/user";
 import type { DashboardRole } from "@/entities/dashboard";
 import { setStoredActiveRole } from "@/entities/dashboard";
 
@@ -16,9 +16,14 @@ export function useRequireRole(role: DashboardRole) {
   const router = useRouter();
   const { data: user, isError } = useCurrentUserQuery();
   const hasRole = !!user?.roles.includes(role);
+  // useCurrentUserQuery is `enabled: hasSessionFlag()` — with no session
+  // cookie the query never runs, so isError never flips true. Treat missing
+  // session as unauthenticated too, or a logged-out visitor sees a blank
+  // page forever instead of being redirected.
+  const unauthenticated = isError || !hasSessionFlag();
 
   useEffect(() => {
-    if (isError) {
+    if (unauthenticated) {
       // Never force an unauthenticated visitor onto the login page — dashboard
       // pages just aren't reachable without a session, so send them home.
       router.replace("/");
@@ -28,7 +33,7 @@ export function useRequireRole(role: DashboardRole) {
       // This is now the role the user is actively viewing the dashboard as.
       setStoredActiveRole(role);
     }
-  }, [isError, user, hasRole, role, router]);
+  }, [unauthenticated, user, hasRole, role, router]);
 
   return hasRole ? user! : null;
 }
