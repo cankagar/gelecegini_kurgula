@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
@@ -32,6 +32,8 @@ const SIZE_CLASSES = {
 export function Modal({ open, onClose, children, ariaLabel, variant = "default", size = "md" }: ModalProps) {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -52,8 +54,36 @@ export function Modal({ open, onClose, children, ariaLabel, variant = "default",
   useEffect(() => {
     if (!mounted) return;
 
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+
+    function getFocusable() {
+      const nodes = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      return nodes ? Array.from(nodes) : [];
+    }
+
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
 
     document.addEventListener("keydown", handleKeyDown);
@@ -61,13 +91,14 @@ export function Modal({ open, onClose, children, ariaLabel, variant = "default",
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
+      previousFocusRef.current?.focus();
     };
   }, [mounted, onClose]);
 
   if (!mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-10">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain px-4 py-6 sm:items-center sm:py-10">
       <div
         onClick={onClose}
         className={`fixed inset-0 bg-text/40 backdrop-blur-sm transition-opacity duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
@@ -76,15 +107,17 @@ export function Modal({ open, onClose, children, ariaLabel, variant = "default",
       />
 
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
+        tabIndex={-1}
         className={
           variant === "scroll"
-            ? `relative ${SIZE_CLASSES[size]} max-h-[85vh] origin-top overflow-y-auto rounded-[1.75rem] bg-bg p-8 shadow-xl transition-transform duration-[480ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:origin-center ${
+            ? `relative ${SIZE_CLASSES[size]} max-h-[85vh] origin-top overflow-y-auto overscroll-contain rounded-[1.75rem] bg-bg p-8 shadow-xl outline-none transition-transform duration-[480ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:origin-center ${
                 visible ? "scale-y-100" : "scale-y-0"
               }`
-            : `relative ${SIZE_CLASSES[size]} max-h-[85vh] overflow-y-auto rounded-[1.75rem] bg-bg p-6 shadow-xl transition-all duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            : `relative ${SIZE_CLASSES[size]} max-h-[85vh] overflow-y-auto overscroll-contain rounded-[1.75rem] bg-bg p-6 shadow-xl outline-none transition-[transform,opacity] duration-[250ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
                 visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-3 scale-[0.98] opacity-0"
               }`
         }
