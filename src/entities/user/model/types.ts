@@ -7,7 +7,7 @@ export type UserRole = "student" | "teacher" | "admin" | "author" | "user";
 // single column.
 export type User = {
   id: string;
-  email: string | null;
+  email: string;
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
