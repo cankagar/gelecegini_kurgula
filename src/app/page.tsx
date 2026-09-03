@@ -691,10 +691,10 @@ export default function Home() {
                   </span>
                 </Link>
                 <Link
-                  href="/auth/register"
+                  href="/auth/login"
                   className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[.07] hover:bg-white/[.13] px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
                 >
-                  Ücretsiz Kayıt Ol
+                  Giriş Yap
                 </Link>
               </motion.div>
 

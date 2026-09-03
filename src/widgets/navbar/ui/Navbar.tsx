@@ -170,15 +170,9 @@ export default function Navbar() {
               >
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-[0.82rem] font-medium text-[#787774] hover:text-[#111111] transition-colors duration-150"
-                >
-                  Giriş Yap
-                </Link>
-                <Link
-                  href="/auth/register"
                   className="px-4 py-2 bg-[#111111] hover:bg-[#333333] text-white text-[0.82rem] font-semibold rounded-md transition-colors duration-150 active:scale-[0.98]"
                 >
-                  Kayıt Ol
+                  Giriş Yap
                 </Link>
               </motion.div>
             )}
@@ -293,22 +287,13 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                <>
-                  <Link
-                    href="/auth/register"
-                    onClick={() => setIsMobileOpen(false)}
-                    className="block rounded-full bg-[#111111] px-5 py-3.5 text-center text-[0.88rem] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)] transition-all duration-300 active:scale-[0.98]"
-                  >
-                    Kayıt Ol
-                  </Link>
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsMobileOpen(false)}
-                    className="block py-2.5 text-center text-[0.85rem] font-medium text-[#787774] transition-colors active:text-[#111111]"
-                  >
-                    Giriş Yap
-                  </Link>
-                </>
+                <Link
+                  href="/auth/login"
+                  onClick={() => setIsMobileOpen(false)}
+                  className="block rounded-full bg-[#111111] px-5 py-3.5 text-center text-[0.88rem] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.4)] transition-all duration-300 active:scale-[0.98]"
+                >
+                  Giriş Yap
+                </Link>
               )}
             </motion.div>
           </motion.div>

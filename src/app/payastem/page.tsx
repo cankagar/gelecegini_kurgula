@@ -148,10 +148,10 @@ export default function PayaStemNedir() {
               </p>
             </div>
             <Link
-              href="/auth/register"
+              href="/auth/login"
               className="inline-flex items-center gap-2.5 rounded-full bg-primary hover:bg-primary-hover px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.97]"
             >
-              Topluluğa Katıl
+              Giriş Yap
             </Link>
           </motion.div>
         </div>
